@@ -10,12 +10,10 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LessonWithDetails } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 
 export default function Lessons() {
   const { data: lessons, isLoading } = useQuery<LessonWithDetails[]>({
     queryKey: ['/api/lessons/recommended'],
-    queryFn: () => apiRequest('/api/lessons/recommended?limit=6'),
   });
 
   return (
@@ -28,7 +26,7 @@ export default function Lessons() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
+            Array(6).fill(0).map((_, i) => (
               <LessonSkeleton key={i} />
             ))
           ) : lessons && lessons.length > 0 ? (

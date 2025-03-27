@@ -6,12 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoachWithUser } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 
 export default function Coaches() {
   const { data: coaches, isLoading } = useQuery<CoachWithUser[]>({
     queryKey: ['/api/coaches/top'],
-    queryFn: () => apiRequest('/api/coaches/top?limit=6'),
   });
 
   return (
@@ -24,7 +22,7 @@ export default function Coaches() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
+            Array(6).fill(0).map((_, i) => (
               <CoachSkeleton key={i} />
             ))
           ) : coaches && coaches.length > 0 ? (
