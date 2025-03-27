@@ -16,7 +16,7 @@ export default function Testimonials() {
     {
       id: 1,
       name: "이영준님",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.pexels.com/photos/9767912/pexels-photo-9767912.jpeg?auto=compress&cs=tinysrgb&w=100",
       rating: 5,
       comment: "김민수 코치님의 기초 축구 레슨을 받았어요. 30대 중반에 처음 축구를 시작했는데, 너무 쉽고 재미있게 알려주셔서 빠르게 실력이 향상되었습니다. 개인의 특성에 맞춰 교육해주시는 점이 정말 좋았습니다.",
       course: "기초부터 배우는 축구 입문 코스"
@@ -24,7 +24,7 @@ export default function Testimonials() {
     {
       id: 2,
       name: "김서연님",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100",
       rating: 4.5,
       comment: "여성 축구 동호회 활동을 위해 이지연 코치님의 레슨을 받았습니다. 여성의 신체적 특성을 고려한 맞춤형 교육과 친절한 설명이 정말 도움이 많이 되었어요. 동호회에서 실력이 눈에 띄게 향상되었다고 다들 놀라워해요!",
       course: "주말 축구 기술 향상 프로그램"
@@ -32,10 +32,34 @@ export default function Testimonials() {
     {
       id: 3,
       name: "박민석님",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80",
+      avatar: "https://images.pexels.com/photos/1687675/pexels-photo-1687675.jpeg?auto=compress&cs=tinysrgb&w=100",
       rating: 5,
       comment: "저희 팀이 박준호 코치님의 전술 마스터 클래스를 받았습니다. 실전 경기에서 어떻게 움직여야 하는지, 팀으로서 어떻게 호흡을 맞춰야 하는지 정말 체계적으로 배울 수 있었어요. 지역 대회에서 우승할 수 있었던 비결입니다!",
       course: "전술 마스터 클래스"
+    },
+    {
+      id: 4,
+      name: "최준혁님",
+      avatar: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=100",
+      rating: 5,
+      comment: "고급 기술 트레이닝 수업을 들었는데, 제가 부족했던 부분을 정확히 짚어주시고 개선 방법을 알려주셔서 큰 도움이 되었습니다. 특히 수비 포지션에서의 움직임과 패스 타이밍이 많이 향상되었어요.",
+      course: "포지션별 심화 트레이닝"
+    },
+    {
+      id: 5,
+      name: "윤지은님",
+      avatar: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=100",
+      rating: 4.5,
+      comment: "아이의 첫 축구 교실로 선택했는데 정말 만족스러웠습니다. 아이들의 눈높이에 맞춰 재미있게 가르쳐주셔서 매주 축구 수업을 기다릴 정도로 좋아하게 되었어요. 기초 체력도 함께 길러주셔서 감사합니다!",
+      course: "유소년 축구 기초 교실"
+    },
+    {
+      id: 6,
+      name: "정민호님",
+      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100",
+      rating: 5,
+      comment: "40대에 취미로 시작했는데, 나이가 많다고 무시하지 않고 세심하게 지도해주셨어요. 건강 관리와 부상 방지를 위한 스트레칭, 적절한 운동 강도 조절까지 모든 부분에서 배려를 느낄 수 있었습니다.",
+      course: "성인 취미반 축구 교실"
     }
   ];
 

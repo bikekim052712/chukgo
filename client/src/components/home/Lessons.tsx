@@ -10,10 +10,12 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LessonWithDetails } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Lessons() {
   const { data: lessons, isLoading } = useQuery<LessonWithDetails[]>({
     queryKey: ['/api/lessons/recommended'],
+    queryFn: () => apiRequest('/api/lessons/recommended?limit=6'),
   });
 
   return (

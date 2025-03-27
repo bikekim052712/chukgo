@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Star, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CoachWithUser } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Coaches() {
   const { data: coaches, isLoading } = useQuery<CoachWithUser[]>({
     queryKey: ['/api/coaches/top'],
+    queryFn: () => apiRequest('/api/coaches/top?limit=6'),
   });
 
   return (

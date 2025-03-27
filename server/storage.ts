@@ -128,7 +128,7 @@ export class MemStorage implements IStorage {
         email: "kim@example.com",
         fullName: "김민수",
         phone: "010-1234-5678",
-        profileImage: "https://images.unsplash.com/photo-1553108715-308e8537ce55?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        profileImage: "https://images.pexels.com/photos/3785424/pexels-photo-3785424.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "전 프로축구 선수 출신으로 10년 이상의 코칭 경력을 보유. 기초부터 고급 기술까지 체계적인 교육.",
         isCoach: true
       },
@@ -138,7 +138,7 @@ export class MemStorage implements IStorage {
         email: "lee@example.com",
         fullName: "이지연",
         phone: "010-2345-6789",
-        profileImage: "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        profileImage: "https://images.pexels.com/photos/6952392/pexels-photo-6952392.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "여성 축구 국가대표 출신으로 여성 및 유소년 선수 전문 코치. 친절하고 체계적인 교육 방식으로 인기가 높음.",
         isCoach: true
       },
@@ -148,7 +148,7 @@ export class MemStorage implements IStorage {
         email: "park@example.com",
         fullName: "박준호",
         phone: "010-3456-7890",
-        profileImage: "https://images.unsplash.com/photo-1560233026-369e6256b28a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        profileImage: "https://images.pexels.com/photos/6551072/pexels-photo-6551072.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "AFC A급 라이센스 보유, 중/고급자를 위한 전술 훈련 전문. 팀 코칭 및 개인 기술 향상에 특화.",
         isCoach: true
       },
@@ -217,7 +217,7 @@ export class MemStorage implements IStorage {
             groupSize: 5,
             duration: 90, // 90 minutes
             price: 180000, // 4주 과정
-            image: "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            image: "https://images.pexels.com/photos/3041176/pexels-photo-3041176.jpeg?auto=compress&cs=tinysrgb&w=800",
             tags: ["입문자 대상", "소그룹", "기초 기술"]
           });
         } else if (user.username === "leejiyeon") {
@@ -231,7 +231,7 @@ export class MemStorage implements IStorage {
             groupSize: 8,
             duration: 120, // 120 minutes
             price: 120000, // 월 4회
-            image: "https://images.unsplash.com/photo-1608553361735-d7846e7f7df9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            image: "https://images.pexels.com/photos/6638829/pexels-photo-6638829.jpeg?auto=compress&cs=tinysrgb&w=800",
             tags: ["주말 수업", "초중급자", "기술 향상"]
           });
         } else {
@@ -245,7 +245,7 @@ export class MemStorage implements IStorage {
             groupSize: 10,
             duration: 150, // 150 minutes
             price: 300000, // 8주 과정
-            image: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            image: "https://images.pexels.com/photos/4008431/pexels-photo-4008431.jpeg?auto=compress&cs=tinysrgb&w=800",
             tags: ["팀 전술", "고급자", "경기 분석"]
           });
         }
