@@ -54,34 +54,34 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
   
   return (
     <Card className="overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-      <div className="h-[220px] md:h-[180px] lg:h-[220px] overflow-hidden">
+      <div className="h-[160px] md:h-[140px] lg:h-[160px] overflow-hidden">
         <img 
           src={coach.user.profileImage || "https://via.placeholder.com/400x220?text=No+Image"} 
           alt={coach.user.fullName} 
           className="w-full h-full object-cover"
         />
       </div>
-      <CardContent className="p-5">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-bold">{coach.user.fullName} 코치</h3>
+      <CardContent className="p-4">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-base font-bold">{coach.user.fullName} 코치</h3>
           <div className="flex items-center text-[#F9A826]">
-            <Star className="h-4 w-4 fill-current" />
-            <span className="ml-1 font-medium">{rating}</span>
-            <span className="text-neutral-500 text-sm ml-1">({coach.reviewCount || 0})</span>
+            <Star className="h-3.5 w-3.5 fill-current" />
+            <span className="ml-1 font-medium text-sm">{rating}</span>
+            <span className="text-neutral-500 text-xs ml-1">({coach.reviewCount || 0})</span>
           </div>
         </div>
         
-        <p className="text-sm text-neutral-600 mb-3">
-          <MapPin className="inline-block h-4 w-4 text-neutral-400 mr-1" /> {coach.location}
+        <p className="text-xs text-neutral-600 mb-2">
+          <MapPin className="inline-block h-3.5 w-3.5 text-neutral-400 mr-1" /> {coach.location}
         </p>
         
-        <p className="text-sm mb-4 line-clamp-2">
+        <p className="text-xs mb-3 line-clamp-1">
           {coach.user.bio}
         </p>
         
-        <div className="flex flex-wrap gap-2 mb-4">
-          {coach.specializations?.map((specialization, index) => (
-            <Badge key={index} variant="outline" className="bg-neutral-100 text-neutral-600">
+        <div className="flex flex-wrap gap-1 mb-3">
+          {coach.specializations?.slice(0, 2).map((specialization, index) => (
+            <Badge key={index} variant="outline" className="bg-neutral-100 text-neutral-600 text-xs py-0">
               {specialization}
             </Badge>
           ))}
@@ -89,10 +89,10 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
         
         <div className="flex justify-between items-center">
           <p className="font-bold text-primary">
-            <span className="text-lg">₩{coach.hourlyRate?.toLocaleString()}</span>
-            <span className="text-sm text-neutral-500 font-normal">/시간</span>
+            <span className="text-sm">₩{coach.hourlyRate?.toLocaleString()}</span>
+            <span className="text-xs text-neutral-500 font-normal">/시간</span>
           </p>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="h-8 text-xs px-3">
             <Link href={`/coaches/${coach.id}`}>프로필 보기</Link>
           </Button>
         </div>
@@ -104,26 +104,25 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
 function CoachSkeleton() {
   return (
     <Card className="overflow-hidden">
-      <Skeleton className="h-[220px] md:h-[180px] lg:h-[220px] w-full" />
-      <CardContent className="p-5">
-        <div className="flex justify-between items-center mb-3">
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-4 w-16" />
+      <Skeleton className="h-[160px] md:h-[140px] lg:h-[160px] w-full" />
+      <CardContent className="p-4">
+        <div className="flex justify-between items-center mb-2">
+          <Skeleton className="h-5 w-28" />
+          <Skeleton className="h-3.5 w-14" />
         </div>
         
-        <Skeleton className="h-4 w-40 mb-3" />
+        <Skeleton className="h-3.5 w-32 mb-2" />
         
-        <Skeleton className="h-16 w-full mb-4" />
+        <Skeleton className="h-4 w-full mb-3" />
         
-        <div className="flex gap-2 mb-4">
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
-          <Skeleton className="h-6 w-16" />
+        <div className="flex gap-1 mb-3">
+          <Skeleton className="h-5 w-14" />
+          <Skeleton className="h-5 w-14" />
         </div>
         
         <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-9 w-28" />
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-8 w-24" />
         </div>
       </CardContent>
     </Card>

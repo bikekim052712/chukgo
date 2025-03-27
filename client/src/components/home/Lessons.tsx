@@ -76,19 +76,19 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
 
   return (
     <Card className="overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-      <div className="h-48 overflow-hidden relative">
+      <div className="h-36 overflow-hidden relative">
         <img 
           src={lesson.image || "https://via.placeholder.com/400x192?text=No+Image"} 
           alt={lesson.title} 
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-          <span className="text-white font-bold text-lg line-clamp-1">{lesson.title}</span>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+          <span className="text-white font-bold text-sm line-clamp-1">{lesson.title}</span>
         </div>
       </div>
-      <CardContent className="p-5">
-        <div className="flex items-center mb-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+      <CardContent className="p-4">
+        <div className="flex items-center mb-2">
+          <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
             <img 
               src={lesson.coach.user.profileImage || "https://via.placeholder.com/40x40?text=Coach"} 
               alt={lesson.coach.user.fullName} 
@@ -96,7 +96,7 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
             />
           </div>
           <div>
-            <p className="font-medium">{lesson.coach.user.fullName} 코치</p>
+            <p className="font-medium text-sm">{lesson.coach.user.fullName} 코치</p>
             <div className="flex items-center text-xs text-[#F9A826]">
               <Star className="h-3 w-3 fill-current" />
               <span className="ml-1">{rating}</span>
@@ -104,33 +104,33 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
           </div>
         </div>
         
-        <div className="mb-4">
-          <p className="text-sm text-neutral-600 mb-2">
-            <MapPin className="inline-block h-4 w-4 text-neutral-400 mr-1" /> {lesson.location}
+        <div className="mb-2">
+          <p className="text-xs text-neutral-600 mb-1">
+            <MapPin className="inline-block h-3 w-3 text-neutral-400 mr-1" /> {lesson.location}
           </p>
-          <p className="text-sm text-neutral-600 mb-2">
-            <Users className="inline-block h-4 w-4 text-neutral-400 mr-1" /> 최대 {lesson.groupSize}명 {
+          <p className="text-xs text-neutral-600 mb-1">
+            <Users className="inline-block h-3 w-3 text-neutral-400 mr-1" /> 최대 {lesson.groupSize}명 {
               lesson.groupSize <= 5 ? "소그룹" :
               lesson.groupSize <= 8 ? "그룹" : "팀"
             }
           </p>
-          <p className="text-sm text-neutral-600">
-            <GraduationCap className="inline-block h-4 w-4 text-neutral-400 mr-1" /> {lesson.skillLevel?.name || "모든 레벨"} 대상
+          <p className="text-xs text-neutral-600">
+            <GraduationCap className="inline-block h-3 w-3 text-neutral-400 mr-1" /> {lesson.skillLevel?.name || "모든 레벨"} 대상
           </p>
         </div>
         
-        <p className="text-sm mb-4 line-clamp-2">
+        <p className="text-xs mb-3 line-clamp-1">
           {lesson.description}
         </p>
         
         <div className="flex justify-between items-center">
           <p className="font-bold text-primary">
-            <span className="text-lg">{getPriceDisplay().split(' ')[0]}</span>
-            <span className="text-sm text-neutral-500 font-normal">
+            <span className="text-sm">{getPriceDisplay().split(' ')[0]}</span>
+            <span className="text-xs text-neutral-500 font-normal">
               {getPriceDisplay().split(' ').slice(1).join(' ')}
             </span>
           </p>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="h-8 text-xs px-3">
             <Link href={`/lessons/${lesson.id}`}>레슨 신청</Link>
           </Button>
         </div>
@@ -142,27 +142,27 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
 function LessonSkeleton() {
   return (
     <Card className="overflow-hidden">
-      <Skeleton className="h-48 w-full" />
-      <CardContent className="p-5">
-        <div className="flex items-center mb-3">
-          <Skeleton className="w-10 h-10 rounded-full mr-3" />
+      <Skeleton className="h-36 w-full" />
+      <CardContent className="p-4">
+        <div className="flex items-center mb-2">
+          <Skeleton className="w-8 h-8 rounded-full mr-2" />
           <div className="space-y-1">
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-3 w-14" />
           </div>
         </div>
         
-        <div className="space-y-2 mb-4">
-          <Skeleton className="h-4 w-40" />
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-4 w-32" />
+        <div className="space-y-1 mb-2">
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-3 w-24" />
         </div>
         
-        <Skeleton className="h-16 w-full mb-4" />
+        <Skeleton className="h-3 w-full mb-3" />
         
         <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-28" />
-          <Skeleton className="h-9 w-28" />
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-8 w-24" />
         </div>
       </CardContent>
     </Card>
