@@ -56,11 +56,11 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">축구 레슨 유형</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">기술 집중 훈련</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">축구 체력 훈련</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">달리기레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">체력훈련레슨</Link></li>
             </ul>
           </div>
           
