@@ -61,18 +61,11 @@ export default function Header() {
           
           {/* 데스크톱 로그인/회원가입/코치가입 버튼 */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link 
-              href="/login" 
-              className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2"
-            >
-              로그인
-            </Link>
-            <Link 
-              href="/signup" 
-              className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2"
-            >
-              회원가입
-            </Link>
+            <div className="text-sm font-medium">
+              <Link href="/login" className="text-gray-700 hover:text-[#5D3FD3]">로그인</Link>
+              <span className="mx-1 text-gray-400">/</span>
+              <Link href="/signup" className="text-gray-700 hover:text-[#5D3FD3]">회원가입</Link>
+            </div>
             <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
               <Link href="/coach-signup">코치가입</Link>
             </Button>
@@ -111,20 +104,23 @@ export default function Header() {
               ))}
               
               <div className="pt-3 border-t border-gray-100 mt-2 flex flex-col space-y-2">
-                <Link 
-                  href="/login" 
-                  className="py-2 text-sm font-medium text-gray-700"
-                  onClick={closeMobileMenu}
-                >
-                  로그인
-                </Link>
-                <Link 
-                  href="/signup" 
-                  className="py-2 text-sm font-medium text-gray-700"
-                  onClick={closeMobileMenu}
-                >
-                  회원가입
-                </Link>
+                <div className="py-2 text-sm font-medium text-gray-700">
+                  <Link 
+                    href="/login" 
+                    className="text-gray-700 hover:text-[#5D3FD3]"
+                    onClick={closeMobileMenu}
+                  >
+                    로그인
+                  </Link>
+                  <span className="mx-1 text-gray-400">/</span>
+                  <Link 
+                    href="/signup" 
+                    className="text-gray-700 hover:text-[#5D3FD3]"
+                    onClick={closeMobileMenu}
+                  >
+                    회원가입
+                  </Link>
+                </div>
                 <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white justify-center">
                   <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
                 </Button>

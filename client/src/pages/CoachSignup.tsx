@@ -31,6 +31,8 @@ const coachSignupSchema = z.object({
   specializations: z.array(z.string()).min(1, "최소 1개 이상의 전문 분야를 선택해 주세요."),
   experience: z.enum(["1년 미만", "1-3년", "3-5년", "5-10년", "10년 이상"]),
   introduction: z.string().min(30, "자기소개는 최소 30자 이상 작성해 주세요."),
+  personalHistory: z.string().min(30, "개인 이력은 최소 30자 이상 작성해 주세요."),
+  certifications: z.string().optional(),
   agreeTerms: z.boolean().refine((val) => val === true, {
     message: "이용약관에 동의해 주세요.",
   }),
@@ -67,6 +69,8 @@ export default function CoachSignup() {
       specializations: [],
       experience: "1년 미만",
       introduction: "",
+      personalHistory: "",
+      certifications: "",
       agreeTerms: false,
       agreePrivacy: false,
     },
@@ -362,6 +366,48 @@ export default function CoachSignup() {
                     {errors.introduction && (
                       <p className="mt-1 text-sm text-red-600">{errors.introduction.message}</p>
                     )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* 개인 이력 */}
+              <div className="pt-6 border-t border-gray-200 space-y-4">
+                <h3 className="text-lg font-medium text-gray-900">개인 이력</h3>
+                
+                {/* 개인 이력 */}
+                <div>
+                  <label htmlFor="personalHistory" className="block text-sm font-medium text-gray-700">
+                    축구 이력 및 선수 경험 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      id="personalHistory"
+                      rows={4}
+                      placeholder="선수 경력, 수상 내역, 참가한 대회 등 축구와 관련된 개인 이력을 자세히 적어주세요."
+                      className={`block w-full px-3 py-2 border ${
+                        errors.personalHistory ? "border-red-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                      {...register("personalHistory")}
+                    />
+                    {errors.personalHistory && (
+                      <p className="mt-1 text-sm text-red-600">{errors.personalHistory.message}</p>
+                    )}
+                  </div>
+                </div>
+                
+                {/* 자격증 */}
+                <div>
+                  <label htmlFor="certifications" className="block text-sm font-medium text-gray-700">
+                    보유 자격증 (선택)
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      id="certifications"
+                      rows={2}
+                      placeholder="축구 관련 자격증이 있다면 입력해 주세요. (예: AFC C급 라이센스, 생활체육지도자 자격증 등)"
+                      className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                      {...register("certifications")}
+                    />
                   </div>
                 </div>
               </div>
