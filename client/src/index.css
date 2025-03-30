@@ -66,7 +66,7 @@
   
   .auto-slide-content {
     display: flex;
-    animation: slideLeft 60s linear infinite;
+    animation: slideLeft 30s linear infinite; /* 60s에서 30s로 속도 2배 증가 */
     padding-right: 4px; /* margin between repeated content */
     min-width: 100%;
   }
