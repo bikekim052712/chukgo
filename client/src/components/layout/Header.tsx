@@ -53,7 +53,7 @@ export default function Header() {
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`text-xs hover:text-[#6b21ff] transition-colors ${
+                      className={`text-[10px] hover:text-[#6b21ff] transition-colors ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
@@ -70,14 +70,14 @@ export default function Header() {
             </nav>
           </div>
           
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-2">
             <div className="flex items-center bg-gray-100 rounded-lg shadow-sm overflow-hidden">
-              <Link href="/login" className="text-sm font-medium px-4 py-2 hover:bg-gray-200 transition-colors">로그인</Link>
-              <div className="w-[1px] h-6 bg-gray-300"></div>
-              <Link href="/signup" className="text-sm font-medium px-4 py-2 hover:bg-gray-200 transition-colors">회원가입</Link>
+              <Link href="/login" className="text-xs font-medium px-2 py-1.5 hover:bg-gray-200 transition-colors">로그인</Link>
+              <div className="w-[1px] h-4 bg-gray-300"></div>
+              <Link href="/signup" className="text-xs font-medium px-2 py-1.5 hover:bg-gray-200 transition-colors">회원가입</Link>
             </div>
             
-            <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-sm rounded-md px-4 py-2 h-9 ml-2">
+            <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-xs rounded-md px-3 py-1 h-7 ml-1">
               <Link href="/coach-signup">코치가입</Link>
             </Button>
           </div>
