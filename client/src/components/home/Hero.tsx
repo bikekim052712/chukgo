@@ -234,13 +234,12 @@ export default function Hero() {
                   <div className="w-full h-full flex items-center justify-center">
                     {/* 축구 코치 이미지 대신 축구 아이콘으로 대체 */}
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-24 h-24 bg-white rounded-full shadow-md flex items-center justify-center mb-4">
+                      <div className="w-24 h-24 bg-white rounded-full shadow-md flex items-center justify-center">
                         <svg viewBox="0 0 24 24" width="50" height="50" stroke="#5D3FD3" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10" />
                           <polygon points="12,7 8,12 12,17 16,12" />
                         </svg>
                       </div>
-                      <p className="text-[#5D3FD3] font-medium">축구 앱 설치하기</p>
                     </div>
                   </div>
                 </div>
