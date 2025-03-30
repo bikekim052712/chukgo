@@ -18,7 +18,7 @@ export default function Running() {
   return (
     <div className="container mx-auto px-4 py-16 mt-10">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">달리기 레슨</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">달리기레슨</h1>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
           체력 및 스피드 향상을 위한 전문적인 달리기 트레이닝을 받아보세요. 
           다양한 코스와 프로그램을 통해 당신의 러닝 실력을 향상시킬 수 있습니다.
@@ -53,7 +53,7 @@ export default function Running() {
 
       {/* 달리기 레슨 유형 */}
       <div className="mb-16">
-        <h2 className="text-2xl font-bold mb-8 text-center">달리기 레슨 유형</h2>
+        <h2 className="text-2xl font-bold mb-8 text-center">축구 레슨 유형</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             {
@@ -75,7 +75,7 @@ export default function Running() {
               features: ["포지셔닝 향상", "반사신경 훈련", "골킥 전문 훈련"]
             },
             {
-              title: "달리기",
+              title: "달리기레슨",
               description: "체력 및 스피드 향상 훈련",
               icon: "🏃",
               features: ["러닝 자세 교정", "인터벌 트레이닝", "유산소 능력 향상"]
