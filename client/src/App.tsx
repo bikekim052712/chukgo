@@ -12,6 +12,8 @@ import Booking from "@/pages/Booking";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import CoachSignup from "@/pages/CoachSignup";
+import LessonRequest from "@/pages/LessonRequest";
+import Reviews from "@/pages/Reviews";
 import Layout from "@/components/layout/Layout";
 
 function Router() {
@@ -22,6 +24,8 @@ function Router() {
       <Route path="/coaches/:id" component={CoachProfile} />
       <Route path="/lessons" component={LessonList} />
       <Route path="/lessons/:id" component={LessonDetail} />
+      <Route path="/lesson-request" component={LessonRequest} />
+      <Route path="/reviews" component={Reviews} />
       <Route path="/booking/:lessonId" component={Booking} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
