@@ -26,7 +26,7 @@ export default function Hero() {
               {/* 검색 박스 */}
               <div className="bg-white rounded-xl shadow-md p-5 mb-8">
                 <div className="flex flex-col space-y-3">
-                  <h3 className="text-base font-medium text-gray-700">내 지역 주변의 축구 코치 찾기</h3>
+                  <h3 className="text-base font-medium text-gray-700">전국 도시/군/구별 축구 코치 찾기</h3>
                   
                   <div className="flex flex-col md:flex-row gap-3">
                     {/* 위치 선택 */}
@@ -121,7 +121,7 @@ export default function Hero() {
                           <polygon points="12,7 8,12 12,17 16,12" />
                         </svg>
                       </div>
-                      <p className="text-[#5D3FD3] font-medium">축구 코치 찾기</p>
+                      <p className="text-[#5D3FD3] font-medium">축고 앱 설치하기</p>
                     </div>
                   </div>
                 </div>

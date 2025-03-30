@@ -21,7 +21,7 @@ export default function Header() {
     { name: "홈", href: "/" },
     { name: "코치 찾기", href: "/coaches" },
     { name: "레슨 목록", href: "/lessons" },
-    { name: "이용 방법", href: "/how-to-use" },
+    { name: "레슨 후기", href: "/reviews" },
   ];
 
   return (
@@ -59,13 +59,13 @@ export default function Header() {
             ))}
           </nav>
           
-          {/* 데스크톱 로그인/가입 버튼 */}
+          {/* 데스크톱 로그인/회원가입/코치가입 버튼 */}
           <div className="hidden md:flex items-center space-x-2">
-            <Link href="/login" className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-4 py-2">
-              로그인
+            <Link href="/login" className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2">
+              로그인/회원가입
             </Link>
             <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
-              <Link href="/signup">회원가입</Link>
+              <Link href="/coach-signup">코치가입</Link>
             </Button>
           </div>
           
@@ -107,10 +107,10 @@ export default function Header() {
                   className="py-2 text-sm font-medium text-gray-700"
                   onClick={closeMobileMenu}
                 >
-                  로그인
+                  로그인/회원가입
                 </Link>
                 <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white justify-center">
-                  <Link href="/signup" onClick={closeMobileMenu}>회원가입</Link>
+                  <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
                 </Button>
               </div>
             </nav>

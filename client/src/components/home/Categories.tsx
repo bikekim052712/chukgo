@@ -36,7 +36,7 @@ const lessonCategories = [
     href: "/lessons/goalkeeper",
   },
   {
-    name: "체력훈련",
+    name: "달리기",
     description: "체력 및 스피드 향상 훈련",
     icon: <Timer className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/lessons/running",
@@ -45,12 +45,6 @@ const lessonCategories = [
 
 // 연령대별 카테고리
 const ageCategories = [
-  {
-    name: "유아 (4-7세)",
-    description: "놀이를 통한 축구 입문",
-    icon: <Baby className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/toddler",
-  },
   {
     name: "초등 저학년",
     description: "기초 기술 익히기",
@@ -68,6 +62,18 @@ const ageCategories = [
     description: "포지션별 전문 훈련",
     icon: <Flag className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/ages/middle-school",
+  },
+  {
+    name: "고등학생",
+    description: "전술 이해와 프로 수준 기술",
+    icon: <Sparkles className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/ages/high-school",
+  },
+  {
+    name: "성인",
+    description: "취미 및 프로 지망생 맞춤 훈련",
+    icon: <UserCircle className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/ages/adult",
   },
 ];
 
