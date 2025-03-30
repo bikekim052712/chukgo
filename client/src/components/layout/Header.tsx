@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Search, ChevronDown } from "lucide-react";
+import { Menu, X, Search, ChevronDown, MapPin } from "lucide-react";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [showSubregions, setShowSubregions] = useState(false);
+
+  // 시/군/구 데이터 (간소화된 예시 데이터)
+  const subregions = {
+    "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+    "경기도": ["고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시", "수원시", "시흥시", "안산시", "안성시", "안양시", "양주시", "여주시", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", "하남시", "화성시"],
+    "부산광역시": ["강서구", "금정구", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구"],
+  };
+
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const region = e.target.value;
+    setSelectedRegion(region);
+    setShowSubregions(region !== "");
+  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -29,12 +44,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-[60px]">
           <div className="flex items-center">
             <Link href="/" className="flex items-center mr-8">
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-[#6b21ff] rounded-lg flex items-center justify-center mr-2">
-                  <span className="text-white font-bold text-lg">축</span>
-                </div>
-                <span className="text-[#6b21ff] font-bold text-2xl">축고</span>
-              </div>
+              <span className="text-[#6b21ff] font-bold text-xl">축고</span>
             </Link>
             
             <nav className="hidden md:block">
@@ -43,11 +53,11 @@ export default function Header() {
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`text-sm hover:text-[#6b21ff] transition-colors ${
+                      className={`text-xs hover:text-[#6b21ff] transition-colors ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
-                          ? 'text-[#6b21ff] font-medium'
+                          ? 'text-[#5a18dd] font-bold'
                           : 'text-neutral-800'
                       }`}
                       onClick={closeMobileMenu}
@@ -92,11 +102,11 @@ export default function Header() {
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`block py-2 transition-colors ${
+                      className={`block py-2 transition-colors text-xs ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
-                          ? 'text-[#6b21ff] font-medium'
+                          ? 'text-[#5a18dd] font-bold'
                           : 'text-neutral-800'
                       }`}
                       onClick={closeMobileMenu}
@@ -123,24 +133,27 @@ export default function Header() {
         )}
       </div>
       
-      {/* 검색 바 */}
-      <div className="bg-[#f8f5ff] shadow-sm border-b border-gray-200 hidden md:block">
+      {/* 검색 바 (숨고 스타일) */}
+      <div className="bg-[#f8f9fa] shadow-sm border-b border-gray-200 hidden md:block">
         <div className="container mx-auto px-4">
-          <div className="py-3 max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl shadow-md p-2 border border-gray-100 flex flex-row items-center">
-              <div className="flex-1 flex items-center gap-2 px-3">
-                <div className="relative w-40">
-                  <select className="w-full appearance-none bg-white border-none rounded-lg text-sm text-gray-800 font-medium py-2 pl-3 pr-8 focus:outline-none">
-                    <option value="">지역 전체</option>
+          <div className="py-3 max-w-3xl mx-auto">
+            <div className="flex gap-2">
+              <div className="flex items-center">
+                <div className="flex relative border border-gray-300 rounded-md shadow-sm bg-white">
+                  <select 
+                    className="appearance-none pl-8 pr-8 py-2 text-xs w-28 focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff]"
+                    onChange={handleRegionChange}
+                    value={selectedRegion}
+                  >
+                    <option value="">지역 선택</option>
                     <option value="서울특별시">서울특별시</option>
                     <option value="부산광역시">부산광역시</option>
-                    <option value="대구광역시">대구광역시</option>
-                    <option value="인천광역시">인천광역시</option>
-                    <option value="광주광역시">광주광역시</option>
-                    <option value="대전광역시">대전광역시</option>
-                    <option value="울산광역시">울산광역시</option>
-                    <option value="세종특별자치시">세종특별자치시</option>
                     <option value="경기도">경기도</option>
+                    <option value="인천광역시">인천광역시</option>
+                    <option value="대전광역시">대전광역시</option>
+                    <option value="대구광역시">대구광역시</option>
+                    <option value="울산광역시">울산광역시</option>
+                    <option value="광주광역시">광주광역시</option>
                     <option value="강원도">강원도</option>
                     <option value="충청북도">충청북도</option>
                     <option value="충청남도">충청남도</option>
@@ -150,38 +163,49 @@ export default function Header() {
                     <option value="경상남도">경상남도</option>
                     <option value="제주특별자치도">제주특별자치도</option>
                   </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                  <MapPin className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 </div>
                 
-                <div className="h-6 w-[1px] bg-gray-200 mx-1"></div>
-                
-                <div className="flex-1 flex items-center">
-                  <Search className="h-5 w-5 text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="내 주변 축구 코치 찾기"
-                    className="w-full px-1 py-2 text-base border-none focus:outline-none bg-transparent"
-                  />
-                </div>
+                {showSubregions && (
+                  <div className="flex relative border border-gray-300 rounded-md shadow-sm ml-2 bg-white">
+                    <select className="appearance-none pl-3 pr-8 py-2 text-xs w-28 focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff]">
+                      <option value="">시/군/구</option>
+                      {selectedRegion && subregions[selectedRegion as keyof typeof subregions]?.map((subregion) => (
+                        <option key={subregion} value={subregion}>{subregion}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+                  </div>
+                )}
               </div>
               
-              <Button className="bg-[#6b21ff] hover:bg-[#5a18dd] min-w-[100px] h-10 text-white font-medium">
-                검색
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="코치 이름, 레슨 종류 (예: 개인레슨, 골키퍼)"
+                  className="pl-9 pr-3 py-2 border border-gray-300 rounded-md text-xs w-full focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff] shadow-sm"
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
+              
+              <Button className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-xs h-auto py-2 px-4">
+                코치 찾기
               </Button>
             </div>
             
             {/* 인기 검색어 */}
             <div className="flex justify-between items-center mt-2 px-1 text-xs text-gray-500">
               <div className="flex gap-1 items-center">
-                <span>인기 검색어:</span>
-                <div className="flex gap-2">
-                  <span className="text-[#6b21ff] font-medium hover:underline cursor-pointer">개인레슨</span>
-                  <span className="text-[#6b21ff] font-medium hover:underline cursor-pointer">그룹레슨</span>
-                  <span className="text-[#6b21ff] font-medium hover:underline cursor-pointer">골키퍼</span>
-                  <span className="text-[#6b21ff] font-medium hover:underline cursor-pointer">주말레슨</span>
+                <span className="text-gray-400">인기 검색어:</span>
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-[#6b21ff] hover:underline cursor-pointer">개인레슨</span>
+                  <span className="text-[#6b21ff] hover:underline cursor-pointer">그룹레슨</span>
+                  <span className="text-[#6b21ff] hover:underline cursor-pointer">골키퍼</span>
+                  <span className="text-[#6b21ff] hover:underline cursor-pointer">주말레슨</span>
+                  <span className="text-[#6b21ff] hover:underline cursor-pointer">성인축구</span>
                 </div>
               </div>
-              <Link href="/search" className="text-gray-600 hover:underline">상세검색</Link>
             </div>
           </div>
         </div>
