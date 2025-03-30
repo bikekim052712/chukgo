@@ -46,22 +46,22 @@ const lessonCategories = [
 // 연령대별 카테고리
 const ageCategories = [
   {
-    name: "유아",
-    description: "재미있는 축구 입문 놀이",
-    icon: <Baby className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/toddler",
-  },
-  {
     name: "초등학생",
     description: "체계적인 기본기 훈련",
     icon: <School className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/ages/elementary",
   },
   {
-    name: "중·고등학생",
+    name: "중학생",
     description: "포지션별 전문 훈련",
     icon: <Backpack className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/teenagers",
+    href: "/ages/middle-school",
+  },
+  {
+    name: "고등학생",
+    description: "전술 및 경기 운영 훈련",
+    icon: <Flag className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/ages/high-school",
   },
   {
     name: "성인",
@@ -111,13 +111,13 @@ export default function Categories() {
           {/* 연령대별 섹션 */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
             <div>
-              <h2 className="text-2xl font-bold mb-2">연령별 맞춤형 커리큘럼</h2>
+              <h2 className="text-2xl font-bold mb-2">연령대별 레슨</h2>
               <p className="text-gray-600">
-                연령별 발달 단계를 고려한 최적화된 축구 레슨 프로그램
+                각 연령에 최적화된 체계적인 축구 교육 프로그램
               </p>
             </div>
             <Link href="/ages" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
-              모든 연령대 프로그램 보기
+              모든 연령대별 레슨 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
           </div>

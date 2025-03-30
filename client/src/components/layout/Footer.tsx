@@ -54,24 +54,24 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="text-sm font-bold text-gray-900 mb-3">레슨 카테고리</h3>
+            <h3 className="text-sm font-bold text-gray-900 mb-3">축구 레슨 유형</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인 레슨</Link></li>
               <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">축구 클리닉</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">축구 캠프</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼 전문</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼 레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">기술 집중 훈련</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">축구 체력 훈련</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-sm font-bold text-gray-900 mb-3">연령대별</h3>
+            <h3 className="text-sm font-bold text-gray-900 mb-3">연령대별 레슨</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">5-7세 (미취학)</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">8-10세 (초등 저학년)</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">11-13세 (초등 고학년)</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">14-16세 (중학생)</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">17-19세 (고등학생)</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">초등학생 레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
+              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
             </ul>
           </div>
           

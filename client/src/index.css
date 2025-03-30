@@ -69,6 +69,15 @@
     animation: slideLeft 30s linear infinite; /* 60s에서 30s로 속도 2배 증가 */
     padding-right: 4px; /* margin between repeated content */
     min-width: 100%;
+    gap: 1rem; /* 요소 사이 간격 추가 */
+    flex-wrap: nowrap; /* 요소들이 한 줄에 나타나도록 설정 */
+  }
+  
+  /* 요소들이 줄바꿈되지 않고 연속적으로 표시되도록 설정 */
+  .auto-slide-content > * {
+    flex: 0 0 auto;
+    width: 280px; /* 카드 width 고정 */
+    max-width: 280px;
   }
   
   /* 호버 시 애니메이션 일시 정지 */
@@ -79,5 +88,13 @@
   /* 클론 컨테이너 (무한 스크롤 효과) */
   .auto-slide-clone {
     display: flex;
+    gap: 1rem; /* 요소 사이 간격 추가 */
+  }
+  
+  /* 클론 컨테이너 내부 요소도 동일하게 설정 */
+  .auto-slide-clone > * {
+    flex: 0 0 auto;
+    width: 280px; /* 카드 width 고정 */
+    max-width: 280px;
   }
 }
