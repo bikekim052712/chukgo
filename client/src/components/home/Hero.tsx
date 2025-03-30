@@ -240,7 +240,7 @@ export default function Hero() {
                           <polygon points="12,7 8,12 12,17 16,12" />
                         </svg>
                       </div>
-                      <p className="text-[#5D3FD3] font-medium">축고 앱 설치하기</p>
+                      <p className="text-[#5D3FD3] font-medium">축구 앱 설치하기</p>
                     </div>
                   </div>
                 </div>
