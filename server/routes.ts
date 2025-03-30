@@ -215,6 +215,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: '로그인 처리 중 오류가 발생했습니다.' });
     }
   });
+  
+  // 코치 가입 API 엔드포인트
+  const coachRegisterSchema = registerSchema.extend({
+    fullName: z.string().min(2, "이름은 2자 이상이어야 합니다."),
+    phoneNumber: z.string().regex(/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/, "올바른 휴대폰 번호를 입력해 주세요."),
+    specializations: z.array(z.string()).min(1, "최소 1개 이상의 전문 분야를 선택해 주세요."),
+    experience: z.string(),
+    introduction: z.string().min(30, "자기소개는 최소 30자 이상 작성해 주세요.")
+  });
+  
+  app.post('/api/auth/coach-register', async (req: Request, res: Response) => {
+    try {
+      const coachData = coachRegisterSchema.parse(req.body);
+      
+      // 이미 존재하는 이메일 체크
+      const existingUser = await storage.getUserByUsername(coachData.username);
+      if (existingUser) {
+        return res.status(400).json({ message: '이미 사용 중인 이메일입니다.' });
+      }
+      
+      // 사용자 생성
+      const { experience, introduction, specializations, phoneNumber, ...userData } = coachData;
+      const user = await storage.createUser({
+        ...userData,
+        phone: phoneNumber,
+        bio: introduction,
+        isCoach: true
+      });
+      
+      // 코치 정보 생성
+      const coach = await storage.createCoach({
+        userId: user.id,
+        specializations,
+        experience,
+        location: "서울특별시", // 기본값
+        hourlyRate: 50000, // 기본값
+        rating: 0,
+        reviewCount: 0
+      });
+      
+      res.status(201).json({
+        message: '코치 가입 신청이 완료되었습니다. 검토 후 승인 결과를 안내해 드리겠습니다.',
+        coachId: coach.id
+      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: '유효하지 않은 코치 정보', errors: error.errors });
+      }
+      console.error('Coach register error:', error);
+      res.status(500).json({ message: '코치 가입 처리 중 오류가 발생했습니다.' });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
