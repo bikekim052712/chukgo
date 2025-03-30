@@ -38,17 +38,22 @@ export default function Lessons() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex overflow-x-auto gap-5 pb-4 -mx-4 px-4 hide-scrollbar">
             {isLoading ? (
-              Array(3).fill(0).map((_, i) => (
-                <LessonSkeleton key={i} />
+              Array(6).fill(0).map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-80">
+                  <LessonSkeleton />
+                </div>
               ))
             ) : lessons && lessons.length > 0 ? (
-              lessons.slice(0, 3).map((lesson) => (
-                <LessonCard key={lesson.id} lesson={lesson} />
+              // 6개보다 적은 경우 두 번 반복해서 표시
+              [...lessons, ...lessons].slice(0, 6).map((lesson, index) => (
+                <div key={`${lesson.id}-${index}`} className="flex-shrink-0 w-80">
+                  <LessonCard lesson={lesson} />
+                </div>
               ))
             ) : (
-              <div className="col-span-3 text-center py-8">
+              <div className="text-center py-8 w-full">
                 <p className="text-gray-500">등록된 레슨이 없습니다.</p>
               </div>
             )}

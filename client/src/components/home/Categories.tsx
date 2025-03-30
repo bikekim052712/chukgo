@@ -46,12 +46,6 @@ const lessonCategories = [
 // 연령대별 카테고리
 const ageCategories = [
   {
-    name: "초등 저학년",
-    description: "기초 기술 익히기",
-    icon: <Backpack className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/elementary-lower",
-  },
-  {
     name: "초등 고학년",
     description: "체계적인 기술 훈련",
     icon: <School className="h-6 w-6 text-[#5D3FD3]" />,
@@ -95,13 +89,13 @@ export default function Categories() {
             </Link>
           </div>
           
-          {/* 레슨 카테고리 카드 */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+          {/* 레슨 카테고리 카드 - 한 줄로 표시 */}
+          <div className="flex overflow-x-auto gap-6 pb-4 -mx-4 px-4 mb-16">
             {lessonCategories.map((category) => (
               <Link 
                 key={category.name} 
                 href={category.href}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 w-60"
               >
                 <div className="p-6">
                   <div className="w-12 h-12 bg-[#F0EBFF] rounded-full flex items-center justify-center mb-4">
@@ -128,13 +122,13 @@ export default function Categories() {
             </Link>
           </div>
           
-          {/* 연령대별 카드 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {/* 연령대별 카드 - 한 줄로 표시 */}
+          <div className="flex overflow-x-auto gap-6 pb-4 -mx-4 px-4">
             {ageCategories.map((category) => (
               <Link 
                 key={category.name} 
                 href={category.href}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 w-60"
               >
                 <div className="p-6">
                   <div className="w-12 h-12 bg-[#F0EBFF] rounded-full flex items-center justify-center mb-4">

@@ -12,7 +12,7 @@ type Testimonial = {
 };
 
 export default function Testimonials() {
-  // 더 집중된 후기를 위해 상위 3개만 표시
+  // 추가적인 후기들 포함하여 6개 표시
   const testimonials: Testimonial[] = [
     {
       id: 1,
@@ -43,6 +43,36 @@ export default function Testimonials() {
       comment: "아이가 학교 축구부에 들어갔는데 기초가 부족해서 시작했어요. 3개월간 집중 레슨 후 실력이 눈에 띄게 향상되어 학교에서도 인정받고 있습니다. 특히 드리블과 패스 능력이 많이 좋아졌어요. 코치님의 열정적인 지도 감사합니다!",
       course: "초등 고학년 실전 축구 프로그램",
       age: "12세"
+    },
+    {
+      id: 4,
+      name: "정엄마님",
+      relationship: "중학생 자녀",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=100",
+      rating: 5,
+      comment: "중학교 축구부에서 활동중인 아이가 더 실력을 향상시키고 싶어해서 시작했어요. 개인 맞춤형 레슨으로 아이의 약점을 정확히 파악하고 보완해주셔서 한 달 만에 실력이 눈에 띄게 좋아졌습니다. 전문적인 코칭에 정말 감사드립니다.",
+      course: "중등 축구 실력향상 프로그램",
+      age: "14세"
+    },
+    {
+      id: 5,
+      name: "최부모님",
+      relationship: "초등학생 자녀",
+      avatar: "",
+      rating: 4.5,
+      comment: "아이가 축구를 처음 접하는데 코치님이 정말 친절하고 인내심 있게 가르쳐주셔서 빠르게 적응했어요. 4주 프로그램 수강 후 아이가 너무 즐거워해서 계속 등록했습니다. 소규모 그룹이라 충분한 관심과 지도를 받을 수 있어 좋았습니다.",
+      course: "주말 유소년 축구 클래스",
+      age: "8세"
+    },
+    {
+      id: 6,
+      name: "한아빠님",
+      relationship: "초등학생 자녀",
+      avatar: "",
+      rating: 5,
+      comment: "골키퍼 포지션을 맡게 된 아이를 위해 특화 클래스를 찾다가 이 레슨을 선택했는데 정말 만족스러워요. 코치님이 골키퍼로서의 기본기와 심리적인 부분까지 꼼꼼하게 지도해주셔서 아이의 자신감이 크게 향상되었습니다. 감사합니다!",
+      course: "골키퍼 특화 트레이닝",
+      age: "11세"
     }
   ];
 
@@ -66,9 +96,11 @@ export default function Testimonials() {
             </a>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex overflow-x-auto gap-5 pb-4 -mx-4 px-4 hide-scrollbar">
             {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+              <div key={testimonial.id} className="flex-shrink-0 w-80">
+                <TestimonialCard testimonial={testimonial} />
+              </div>
             ))}
           </div>
           
