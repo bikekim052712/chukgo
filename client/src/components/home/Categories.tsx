@@ -36,7 +36,7 @@ const lessonCategories = [
     href: "/lessons/goalkeeper",
   },
   {
-    name: "달리기",
+    name: "달리기레슨",
     description: "체력 및 스피드 향상 훈련",
     icon: <Timer className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/lessons/running",
