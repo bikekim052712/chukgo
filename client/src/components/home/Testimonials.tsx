@@ -100,7 +100,7 @@ export default function Testimonials() {
             <div className="auto-slide-content">
               {/* 첫 번째 세트 */}
               {[...testimonials, ...testimonials].map((testimonial, index) => (
-                <div key={`${testimonial.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                <div key={`${testimonial.id}-${index}`}>
                   <TestimonialCard testimonial={testimonial} />
                 </div>
               ))}
@@ -108,7 +108,7 @@ export default function Testimonials() {
             <div className="auto-slide-content auto-slide-clone">
               {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
               {[...testimonials, ...testimonials].map((testimonial, index) => (
-                <div key={`clone-${testimonial.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                <div key={`clone-${testimonial.id}-${index}`}>
                   <TestimonialCard testimonial={testimonial} />
                 </div>
               ))}

@@ -52,7 +52,7 @@ export default function Lessons() {
                 <div className="auto-slide-content">
                   {/* 첫 번째 세트 */}
                   {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
-                    <div key={`${lesson.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                    <div key={`${lesson.id}-${index}`}>
                       <LessonCard lesson={lesson} />
                     </div>
                   ))}
@@ -60,7 +60,7 @@ export default function Lessons() {
                 <div className="auto-slide-content auto-slide-clone">
                   {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
                   {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
-                    <div key={`clone-${lesson.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                    <div key={`clone-${lesson.id}-${index}`}>
                       <LessonCard lesson={lesson} />
                     </div>
                   ))}

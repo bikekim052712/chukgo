@@ -44,7 +44,7 @@ export default function Coaches() {
                 <div className="auto-slide-content">
                   {/* 첫 번째 세트 */}
                   {[...coaches, ...coaches, ...coaches].map((coach, index) => (
-                    <div key={`${coach.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                    <div key={`${coach.id}-${index}`}>
                       <CoachCard coach={coach} />
                     </div>
                   ))}
@@ -52,7 +52,7 @@ export default function Coaches() {
                 <div className="auto-slide-content auto-slide-clone">
                   {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
                   {[...coaches, ...coaches, ...coaches].map((coach, index) => (
-                    <div key={`clone-${coach.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                    <div key={`clone-${coach.id}-${index}`}>
                       <CoachCard coach={coach} />
                     </div>
                   ))}
