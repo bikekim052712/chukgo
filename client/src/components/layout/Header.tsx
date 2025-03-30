@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Search, ChevronDown, MapPin } from "lucide-react";
@@ -34,31 +34,31 @@ export default function Header() {
     { name: "레슨요청", href: "#categories" },
     { name: "코치찾기", href: "/coaches" },
     { name: "레슨후기", href: "/reviews" },
-    { name: "커뮤니티", href: "/community" },
     { name: "이용방법", href: "/how-to-use" },
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 fixed w-full z-50 top-0">
+    <header className="bg-white fixed w-full z-50 top-0 shadow-sm">
+      {/* 메인 헤더 */}
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-[60px]">
+        <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center mr-8">
-              <span className="text-[#6b21ff] font-bold text-xl">축고</span>
+            <Link href="/" className="flex items-center mr-12">
+              <span className="text-[#6b21ff] font-bold text-2xl">축고</span>
             </Link>
             
             <nav className="hidden md:block">
-              <ul className="flex space-x-8">
+              <ul className="flex space-x-10">
                 {navItems.map((item) => (
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`text-xs hover:text-[#6b21ff] transition-colors ${
+                      className={`text-sm hover:text-[#6b21ff] transition-colors ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
-                          ? 'text-[#5a18dd] font-bold'
-                          : 'text-neutral-800'
+                          ? 'text-[#6b21ff] font-bold'
+                          : 'text-gray-700'
                       }`}
                       onClick={closeMobileMenu}
                     >
@@ -70,14 +70,12 @@ export default function Header() {
             </nav>
           </div>
           
-          <div className="hidden md:flex items-center space-x-2">
-            <div className="flex items-center bg-gray-100 rounded-lg shadow-sm overflow-hidden">
-              <Link href="/login" className="text-xs font-medium px-2 py-1.5 hover:bg-gray-200 transition-colors">로그인</Link>
-              <div className="w-[1px] h-4 bg-gray-300"></div>
-              <Link href="/signup" className="text-xs font-medium px-2 py-1.5 hover:bg-gray-200 transition-colors">회원가입</Link>
-            </div>
+          <div className="hidden md:flex items-center space-x-4">
+            <Button asChild variant="ghost" className="text-sm font-medium rounded-md h-9 px-4">
+              <Link href="/login">로그인</Link>
+            </Button>
             
-            <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-xs rounded-md px-3 py-1 h-7 ml-1">
+            <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-sm font-medium rounded-md px-4 py-2 h-9">
               <Link href="/coach-signup">코치가입</Link>
             </Button>
           </div>
@@ -95,19 +93,19 @@ export default function Header() {
         
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-neutral-200">
+          <div className="md:hidden py-4 border-t border-gray-200">
             <nav>
               <ul className="space-y-4">
                 {navItems.map((item) => (
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`block py-2 transition-colors text-xs ${
+                      className={`block py-2 transition-colors text-sm ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
-                          ? 'text-[#5a18dd] font-bold'
-                          : 'text-neutral-800'
+                          ? 'text-[#6b21ff] font-bold'
+                          : 'text-gray-700'
                       }`}
                       onClick={closeMobileMenu}
                     >
@@ -118,63 +116,73 @@ export default function Header() {
               </ul>
             </nav>
             
-            <div className="flex flex-col space-y-3 pt-4 border-t border-neutral-200 mt-4">
-              <div className="flex bg-gray-100 rounded-lg shadow-sm overflow-hidden">
-                <Link href="/login" className="flex-1 text-center text-sm font-medium py-2 hover:bg-gray-200 transition-colors" onClick={closeMobileMenu}>로그인</Link>
-                <div className="w-[1px] bg-gray-300"></div>
-                <Link href="/signup" className="flex-1 text-center text-sm font-medium py-2 hover:bg-gray-200 transition-colors" onClick={closeMobileMenu}>회원가입</Link>
-              </div>
+            <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200 mt-4">              
+              <Button variant="outline" asChild className="justify-center text-sm">
+                <Link href="/login" onClick={closeMobileMenu}>로그인</Link>
+              </Button>
               
-              <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] w-full justify-center mt-2">
+              <Button asChild className="bg-[#6b21ff] hover:bg-[#5a18dd] w-full justify-center text-sm">
                 <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
               </Button>
             </div>
           </div>
         )}
       </div>
-      
-      {/* 축구 배너 섹션 */}
-      <div className="bg-gradient-to-r from-[#f0ebff] to-[#e9f5ff] shadow-sm border-b border-gray-200 hidden md:block">
+
+      {/* 축구 코치 검색 섹션 */}
+      <div className="bg-white pt-8 pb-10 hidden md:block">
         <div className="container mx-auto px-4">
-          <div className="py-3 max-w-4xl mx-auto">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="text-sm font-bold text-[#5a18dd] mb-1">최고의 축구 코치를 만나보세요</h3>
-                <p className="text-xs text-gray-600 mb-2">개인 맞춤형 레슨부터 그룹 트레이닝까지, 모든 연령대에 적합한 프로그램</p>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-[10px] text-gray-700">검증된 코치진</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-[10px] text-gray-700">맞춤형 커리큘럼</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-[10px] text-gray-700">투명한 리뷰 시스템</span>
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-6 text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">내 지역에 맞는 축구 코치 찾기</h2>
+              <p className="text-gray-600 text-sm max-w-lg mx-auto">지역과 시/군/구를 선택하여 가까운 지역의 축구 코치를 찾아보세요</p>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
+              <div className="flex flex-col md:flex-row gap-4 items-end">
+                <div className="w-full md:w-1/3">
+                  <label htmlFor="region" className="block text-sm font-medium text-gray-700 mb-1">지역 선택</label>
+                  <div className="relative">
+                    <select 
+                      id="region"
+                      className="w-full appearance-none border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6b21ff] focus:border-transparent"
+                      onChange={handleRegionChange}
+                      value={selectedRegion}
+                    >
+                      <option value="">지역을 선택하세요</option>
+                      <option value="서울특별시">서울특별시</option>
+                      <option value="부산광역시">부산광역시</option>
+                      <option value="경기도">경기도</option>
+                      <option value="인천광역시">인천광역시</option>
+                      <option value="대전광역시">대전광역시</option>
+                      <option value="대구광역시">대구광역시</option>
+                      <option value="울산광역시">울산광역시</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-center w-32 h-24">
-                <div className="w-24 h-24 rounded-full bg-white shadow-md flex items-center justify-center relative overflow-hidden border-2 border-[#6b21ff]">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-16 w-16 text-[#6b21ff]">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1" fill="white" />
-                    <path d="M12 4 L12 8 M12 16 L12 20 M4 12 L8 12 M16 12 L20 12 M6 6 L9 9 M15 15 L18 18 M6 18 L9 15 M15 9 L18 6" stroke="currentColor" strokeWidth="1" />
-                    <polygon points="12,8 8,15 16,15" fill="currentColor" />
-                  </svg>
+                
+                <div className="w-full md:w-1/3">
+                  <label htmlFor="subregion" className="block text-sm font-medium text-gray-700 mb-1">시/군/구 선택</label>
+                  <div className="relative">
+                    <select 
+                      id="subregion"
+                      className="w-full appearance-none border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6b21ff] focus:border-transparent"
+                      disabled={!selectedRegion}
+                    >
+                      <option value="">시/군/구를 선택하세요</option>
+                      {selectedRegion && subregions[selectedRegion as keyof typeof subregions]?.map((subregion) => (
+                        <option key={subregion} value={subregion}>{subregion}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                  </div>
+                </div>
+                
+                <div className="w-full md:w-1/3">
+                  <Button className="w-full bg-[#6b21ff] hover:bg-[#5a18dd] font-medium h-10 px-6 text-white">
+                    축구 코치 찾기
+                  </Button>
                 </div>
               </div>
             </div>

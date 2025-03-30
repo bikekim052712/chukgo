@@ -4,7 +4,6 @@ import Services from "@/components/home/Services";
 import Coaches from "@/components/home/Coaches";
 import Lessons from "@/components/home/Lessons";
 import Testimonials from "@/components/home/Testimonials";
-import FAQ from "@/components/home/FAQ";
 
 export default function Home() {
   return (
@@ -15,7 +14,6 @@ export default function Home() {
       <Coaches />
       <Lessons />
       <Testimonials />
-      <FAQ />
     </>
   );
 }
