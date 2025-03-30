@@ -98,16 +98,14 @@ export default function Testimonials() {
           
           <div className="auto-slide-container">
             <div className="auto-slide-content">
-              {/* 첫 번째 세트 */}
-              {[...testimonials, ...testimonials].map((testimonial, index) => (
+              {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
                 <div key={`${testimonial.id}-${index}`}>
                   <TestimonialCard testimonial={testimonial} />
                 </div>
               ))}
             </div>
             <div className="auto-slide-content auto-slide-clone">
-              {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
-              {[...testimonials, ...testimonials].map((testimonial, index) => (
+              {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
                 <div key={`clone-${testimonial.id}-${index}`}>
                   <TestimonialCard testimonial={testimonial} />
                 </div>

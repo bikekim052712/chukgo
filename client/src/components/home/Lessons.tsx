@@ -50,7 +50,6 @@ export default function Lessons() {
             ) : lessons && lessons.length > 0 ? (
               <>
                 <div className="auto-slide-content">
-                  {/* 첫 번째 세트 */}
                   {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
                     <div key={`${lesson.id}-${index}`}>
                       <LessonCard lesson={lesson} />
@@ -58,7 +57,6 @@ export default function Lessons() {
                   ))}
                 </div>
                 <div className="auto-slide-content auto-slide-clone">
-                  {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
                   {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
                     <div key={`clone-${lesson.id}-${index}`}>
                       <LessonCard lesson={lesson} />

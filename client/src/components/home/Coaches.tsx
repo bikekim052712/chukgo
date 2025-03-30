@@ -42,7 +42,6 @@ export default function Coaches() {
             ) : coaches && coaches.length > 0 ? (
               <>
                 <div className="auto-slide-content">
-                  {/* 첫 번째 세트 */}
                   {[...coaches, ...coaches, ...coaches].map((coach, index) => (
                     <div key={`${coach.id}-${index}`}>
                       <CoachCard coach={coach} />
@@ -50,7 +49,6 @@ export default function Coaches() {
                   ))}
                 </div>
                 <div className="auto-slide-content auto-slide-clone">
-                  {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
                   {[...coaches, ...coaches, ...coaches].map((coach, index) => (
                     <div key={`clone-${coach.id}-${index}`}>
                       <CoachCard coach={coach} />
