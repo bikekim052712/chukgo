@@ -12,8 +12,8 @@ import Booking from "@/pages/Booking";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import CoachSignup from "@/pages/CoachSignup";
-import LessonRequest from "@/pages/LessonRequest";
-import Reviews from "@/pages/Reviews";
+import LessonRequest from "./pages/LessonRequest";
+import Reviews from "./pages/Reviews";
 import Layout from "@/components/layout/Layout";
 
 function Router() {

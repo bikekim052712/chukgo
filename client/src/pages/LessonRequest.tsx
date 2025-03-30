@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { CoachWithUser } from "@/shared/schema";
+import { CoachWithUser } from "../../shared/schema";
 import { FaStar, FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 
 export default function LessonRequest() {
@@ -30,7 +30,7 @@ export default function LessonRequest() {
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
 
   // 코치 목록 불러오기
-  const { data: coaches, isLoading } = useQuery({
+  const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({
     queryKey: ["/api/coaches"],
   });
 
@@ -48,7 +48,7 @@ export default function LessonRequest() {
 
   // 검색 및 필터링 적용
   useEffect(() => {
-    if (!coaches) {
+    if (!coaches || coaches.length === 0) {
       setFilteredCoaches([]);
       return;
     }
@@ -265,7 +265,7 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
         </CardHeader>
         <CardContent className="pt-0 pb-2">
           <div className="flex flex-wrap gap-1 mb-2">
-            {(coach.specializations || []).slice(0, 3).map((spec, index) => (
+            {(coach.specializations || []).slice(0, 3).map((spec: string, index: number) => (
               <span key={index} className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
                 {spec}
               </span>

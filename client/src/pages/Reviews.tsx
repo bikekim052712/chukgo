@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Review, LessonWithDetails } from "@/shared/schema";
+import { Review, LessonWithDetails } from "../../shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -325,9 +325,11 @@ export default function Reviews() {
         review.lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.lesson.coach.user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesRating = ratingFilter ? review.rating >= parseInt(ratingFilter) : true;
+      const matchesRating = ratingFilter && ratingFilter !== "all" 
+        ? review.rating >= parseInt(ratingFilter) 
+        : true;
       
-      const matchesCategory = categoryFilter 
+      const matchesCategory = categoryFilter && categoryFilter !== "all"
         ? review.lesson.lessonType?.name === categoryFilter || 
           (review.lesson.tags && review.lesson.tags.includes(categoryFilter))
         : true;
@@ -388,7 +390,7 @@ export default function Reviews() {
                     <SelectValue placeholder="평점 선택" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체 평점</SelectItem>
+                    <SelectItem value="all">전체 평점</SelectItem>
                     <SelectItem value="5">5점</SelectItem>
                     <SelectItem value="4">4점 이상</SelectItem>
                     <SelectItem value="3">3점 이상</SelectItem>
@@ -405,7 +407,7 @@ export default function Reviews() {
                     <SelectValue placeholder="카테고리 선택" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">전체 카테고리</SelectItem>
+                    <SelectItem value="all">전체 카테고리</SelectItem>
                     <SelectItem value="개인 레슨">개인 레슨</SelectItem>
                     <SelectItem value="그룹 레슨">그룹 레슨</SelectItem>
                     <SelectItem value="포지션 전문">포지션 전문</SelectItem>
