@@ -53,7 +53,7 @@ export default function Header() {
                   <li key={item.name}>
                     <Link 
                       href={item.href} 
-                      className={`text-[10px] hover:text-[#6b21ff] transition-colors ${
+                      className={`text-xs hover:text-[#6b21ff] transition-colors ${
                         (item.href === location || 
                          (item.href.startsWith('#') && location === '/' + item.href) || 
                          (item.href !== '/' && location.startsWith(item.href)))
@@ -133,77 +133,48 @@ export default function Header() {
         )}
       </div>
       
-      {/* 검색 바 (숨고 스타일) */}
-      <div className="bg-[#f8f9fa] shadow-sm border-b border-gray-200 hidden md:block">
+      {/* 축구 배너 섹션 */}
+      <div className="bg-gradient-to-r from-[#f0ebff] to-[#e9f5ff] shadow-sm border-b border-gray-200 hidden md:block">
         <div className="container mx-auto px-4">
-          <div className="py-3 max-w-3xl mx-auto">
-            <div className="flex gap-2">
-              <div className="flex items-center">
-                <div className="flex relative border border-gray-300 rounded-md shadow-sm bg-white">
-                  <select 
-                    className="appearance-none pl-8 pr-8 py-2 text-xs w-28 focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff]"
-                    onChange={handleRegionChange}
-                    value={selectedRegion}
-                  >
-                    <option value="">지역 선택</option>
-                    <option value="서울특별시">서울특별시</option>
-                    <option value="부산광역시">부산광역시</option>
-                    <option value="경기도">경기도</option>
-                    <option value="인천광역시">인천광역시</option>
-                    <option value="대전광역시">대전광역시</option>
-                    <option value="대구광역시">대구광역시</option>
-                    <option value="울산광역시">울산광역시</option>
-                    <option value="광주광역시">광주광역시</option>
-                    <option value="강원도">강원도</option>
-                    <option value="충청북도">충청북도</option>
-                    <option value="충청남도">충청남도</option>
-                    <option value="전라북도">전라북도</option>
-                    <option value="전라남도">전라남도</option>
-                    <option value="경상북도">경상북도</option>
-                    <option value="경상남도">경상남도</option>
-                    <option value="제주특별자치도">제주특별자치도</option>
-                  </select>
-                  <MapPin className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
-                </div>
-                
-                {showSubregions && (
-                  <div className="flex relative border border-gray-300 rounded-md shadow-sm ml-2 bg-white">
-                    <select className="appearance-none pl-3 pr-8 py-2 text-xs w-28 focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff]">
-                      <option value="">시/군/구</option>
-                      {selectedRegion && subregions[selectedRegion as keyof typeof subregions]?.map((subregion) => (
-                        <option key={subregion} value={subregion}>{subregion}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+          <div className="py-3 max-w-4xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-sm font-bold text-[#5a18dd] mb-1">최고의 축구 코치를 만나보세요</h3>
+                <p className="text-xs text-gray-600 mb-2">개인 맞춤형 레슨부터 그룹 트레이닝까지, 모든 연령대에 적합한 프로그램</p>
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-gray-700">검증된 코치진</span>
                   </div>
-                )}
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-gray-700">맞춤형 커리큘럼</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-[#6b21ff] flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] text-gray-700">투명한 리뷰 시스템</span>
+                  </div>
+                </div>
               </div>
-              
-              <div className="relative flex-1">
-                <input
-                  type="text"
-                  placeholder="코치 이름, 레슨 종류 (예: 개인레슨, 골키퍼)"
-                  className="pl-9 pr-3 py-2 border border-gray-300 rounded-md text-xs w-full focus:outline-none focus:ring-1 focus:ring-[#6b21ff] focus:border-[#6b21ff] shadow-sm"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              </div>
-              
-              <Button className="bg-[#6b21ff] hover:bg-[#5a18dd] text-white text-xs h-auto py-2 px-4">
-                코치 찾기
-              </Button>
-            </div>
-            
-            {/* 인기 검색어 */}
-            <div className="flex justify-between items-center mt-2 px-1 text-xs text-gray-500">
-              <div className="flex gap-1 items-center">
-                <span className="text-gray-400">인기 검색어:</span>
-                <div className="flex flex-wrap gap-2">
-                  <span className="text-[#6b21ff] hover:underline cursor-pointer">개인레슨</span>
-                  <span className="text-[#6b21ff] hover:underline cursor-pointer">그룹레슨</span>
-                  <span className="text-[#6b21ff] hover:underline cursor-pointer">골키퍼</span>
-                  <span className="text-[#6b21ff] hover:underline cursor-pointer">주말레슨</span>
-                  <span className="text-[#6b21ff] hover:underline cursor-pointer">성인축구</span>
+              <div className="flex items-center justify-center w-32 h-24">
+                <div className="w-24 h-24 rounded-full bg-white shadow-md flex items-center justify-center relative overflow-hidden border-2 border-[#6b21ff]">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-16 w-16 text-[#6b21ff]">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1" fill="white" />
+                    <path d="M12 4 L12 8 M12 16 L12 20 M4 12 L8 12 M16 12 L20 12 M6 6 L9 9 M15 15 L18 18 M6 18 L9 15 M15 9 L18 6" stroke="currentColor" strokeWidth="1" />
+                    <polygon points="12,8 8,15 16,15" fill="currentColor" />
+                  </svg>
                 </div>
               </div>
             </div>
