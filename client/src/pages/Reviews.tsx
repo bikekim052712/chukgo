@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Review, LessonWithDetails } from "../../shared/schema";
+import { Review, LessonWithDetails } from "@/../../shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 

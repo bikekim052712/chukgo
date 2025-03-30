@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { PROVINCES, DISTRICTS, SPECIALIZATIONS } from "../lib/constants";
-import { CoachWithUser } from "../../shared/schema";
+import { CoachWithUser } from "@/../../shared/schema";
 import {
   Card,
   CardContent,

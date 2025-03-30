@@ -15,6 +15,7 @@ import CoachSignup from "@/pages/CoachSignup";
 import LessonRequest from "./pages/LessonRequest";
 import Reviews from "./pages/Reviews";
 import CoachFinder from "./pages/CoachFinder";
+import Running from "./pages/Running";
 import Layout from "@/components/layout/Layout";
 
 function Router() {
@@ -32,6 +33,10 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/coach-signup" component={CoachSignup} />
+      <Route path="/running" component={Running} />
+      <Route path="/private-lesson" component={NotFound} />
+      <Route path="/group-lesson" component={NotFound} />
+      <Route path="/goalkeeper-lesson" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );

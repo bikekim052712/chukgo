@@ -19,9 +19,11 @@ export default function Header() {
   // 네비게이션 아이템
   const navItems = [
     { name: "홈", href: "/" },
-    { name: "코치 목록", href: "/coaches" },
     { name: "코치 찾기", href: "/coach-finder" },
-    { name: "레슨 목록", href: "/lessons" },
+    { name: "개인레슨", href: "/private-lesson" },
+    { name: "그룹레슨", href: "/group-lesson" },
+    { name: "골키퍼레슨", href: "/goalkeeper-lesson" },
+    { name: "달리기", href: "/running" },
     { name: "레슨 신청", href: "/lesson-request" },
     { name: "레슨 후기", href: "/reviews" },
   ];
