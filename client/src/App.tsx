@@ -14,6 +14,7 @@ import Signup from "@/pages/Signup";
 import CoachSignup from "@/pages/CoachSignup";
 import LessonRequest from "./pages/LessonRequest";
 import Reviews from "./pages/Reviews";
+import CoachFinder from "./pages/CoachFinder";
 import Layout from "@/components/layout/Layout";
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/coaches" component={CoachList} />
+      <Route path="/coach-finder" component={CoachFinder} />
       <Route path="/coaches/:id" component={CoachProfile} />
       <Route path="/lessons" component={LessonList} />
       <Route path="/lessons/:id" component={LessonDetail} />
