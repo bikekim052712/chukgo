@@ -60,9 +60,18 @@ export default function Header() {
           </nav>
           
           {/* 데스크톱 로그인/회원가입/코치가입 버튼 */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Link href="/login" className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2">
-              로그인/회원가입
+          <div className="hidden md:flex items-center space-x-3">
+            <Link 
+              href="/login" 
+              className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2"
+            >
+              로그인
+            </Link>
+            <Link 
+              href="/signup" 
+              className="text-sm text-gray-700 hover:text-[#5D3FD3] font-medium px-2 py-2"
+            >
+              회원가입
             </Link>
             <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
               <Link href="/coach-signup">코치가입</Link>
@@ -107,7 +116,14 @@ export default function Header() {
                   className="py-2 text-sm font-medium text-gray-700"
                   onClick={closeMobileMenu}
                 >
-                  로그인/회원가입
+                  로그인
+                </Link>
+                <Link 
+                  href="/signup" 
+                  className="py-2 text-sm font-medium text-gray-700"
+                  onClick={closeMobileMenu}
+                >
+                  회원가입
                 </Link>
                 <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white justify-center">
                   <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
