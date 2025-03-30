@@ -1,17 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { 
+  ChevronRight, 
   MapPin, 
   Users, 
   GraduationCap, 
   Star,
-  Calendar,
   Clock,
-  Trophy,
-  Sparkles
+  Calendar
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LessonWithDetails } from "@shared/schema";
@@ -22,38 +19,40 @@ export default function Lessons() {
   });
 
   return (
-    <section id="lessons" className="py-16 bg-white">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center mb-3">
-          <Sparkles className="text-primary mr-2 h-6 w-6" />
-          <h2 className="text-2xl md:text-3xl font-bold text-center">인기 유소년 레슨 프로그램</h2>
-        </div>
-        <p className="text-neutral-600 text-center max-w-2xl mx-auto mb-12">
-          아이의 연령과 수준에 맞춘 체계적인 축구 교육 프로그램을 만나보세요
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {isLoading ? (
-            Array(6).fill(0).map((_, i) => (
-              <LessonSkeleton key={i} />
-            ))
-          ) : lessons && lessons.length > 0 ? (
-            lessons.map((lesson) => (
-              <LessonCard key={lesson.id} lesson={lesson} />
-            ))
-          ) : (
-            <div className="col-span-3 text-center py-8">
-              <p className="text-neutral-500">등록된 레슨이 없습니다.</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">인기 레슨 프로그램</h2>
+              <p className="text-gray-600">
+                유소년 선수들이 좋아하는 인기 축구 레슨을 소개합니다
+              </p>
             </div>
-          )}
-        </div>
-        
-        <div className="text-center mt-10">
-          <Button variant="outline" asChild className="border-primary text-primary hover:bg-primary/5">
-            <Link href="/lessons">
-              모든 레슨 프로그램 보기 <span className="ml-2">→</span>
+            <Link 
+              href="/lessons" 
+              className="flex items-center text-[#5D3FD3] font-medium text-sm mt-4 md:mt-0"
+            >
+              모든 레슨 보기
+              <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
-          </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {isLoading ? (
+              Array(3).fill(0).map((_, i) => (
+                <LessonSkeleton key={i} />
+              ))
+            ) : lessons && lessons.length > 0 ? (
+              lessons.slice(0, 3).map((lesson) => (
+                <LessonCard key={lesson.id} lesson={lesson} />
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">등록된 레슨이 없습니다.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
@@ -63,7 +62,7 @@ export default function Lessons() {
 function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
   const rating = lesson.coach.rating ? (lesson.coach.rating / 10).toFixed(1) : "0.0";
   
-  // Format price for display - e.g. "₩180,000 /4주 과정" or "₩50,000 /시간"
+  // Format price for display - e.g. "₩180,000 /4주 과정" or "₩50,000 /회"
   const getPriceDisplay = () => {
     let priceText = `₩${lesson.price.toLocaleString()}`;
     
@@ -79,7 +78,7 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
     }
     
     // Default hourly pricing
-    return `${priceText} /시간`;
+    return `${priceText} /회`;
   };
   
   // 레슨 유형에 따른 대상 연령대 설정
@@ -119,115 +118,176 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
     return tags.slice(0, 2); // 최대 2개까지만 표시
   };
 
+  // 레슨 난이도 색상 결정
+  const getDifficultyColor = () => {
+    if (!lesson.skillLevel) return "#9CA3AF"; // 기본 회색
+    
+    const levelName = lesson.skillLevel.name.toLowerCase();
+    if (levelName.includes("초보") || levelName.includes("입문")) {
+      return "#4ADE80"; // 연두색 (쉬움)
+    } else if (levelName.includes("중급")) {
+      return "#FCD34D"; // 노란색 (중간)
+    } else if (levelName.includes("고급") || levelName.includes("전문")) {
+      return "#F87171"; // 빨간색 (어려움)
+    }
+    
+    return "#9CA3AF"; // 기본 회색
+  };
+
   return (
-    <Card className="overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-neutral-200">
-      <div className="h-36 overflow-hidden relative">
-        <img 
-          src={lesson.image || "https://via.placeholder.com/400x192?text=No+Image"} 
-          alt={lesson.title} 
-          className="w-full h-full object-cover"
-        />
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
+      {/* 레슨 이미지 */}
+      <div className="relative h-48 bg-gray-100 overflow-hidden">
+        {lesson.image ? (
+          <img 
+            src={lesson.image} 
+            alt={lesson.title} 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-[#F5F3FF]">
+            <Calendar className="h-16 w-16 text-[#5D3FD3]" />
+          </div>
+        )}
+        
+        {/* 연령대 배지 */}
         {getAgeGroup() !== "전 연령" && (
-          <div className="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded-full flex items-center">
+          <div className="absolute top-3 right-3 bg-[#5D3FD3] text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm">
             <Users className="w-3 h-3 mr-1" /> {getAgeGroup()}
           </div>
         )}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-          <span className="text-white font-bold text-sm line-clamp-1">{lesson.title}</span>
+        
+        {/* 난이도 표시 */}
+        <div className="absolute left-3 top-3 flex items-center bg-white/80 backdrop-blur-sm text-xs py-0.5 px-2 rounded-full">
+          <span className="w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: getDifficultyColor() }}></span>
+          <span className="font-medium">{lesson.skillLevel?.name || "모든 레벨"}</span>
         </div>
       </div>
-      <CardContent className="p-4">
-        <div className="flex items-center mb-3">
-          <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-            <img 
-              src={lesson.coach.user.profileImage || "https://via.placeholder.com/40x40?text=Coach"} 
-              alt={lesson.coach.user.fullName} 
-              className="w-full h-full object-cover" 
-            />
+      
+      {/* 레슨 정보 */}
+      <div className="p-5">
+        {/* 제목 */}
+        <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">{lesson.title}</h3>
+        
+        {/* 코치 정보 */}
+        <div className="flex items-center mb-3 pb-3 border-b border-gray-100">
+          <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 mr-2">
+            {lesson.coach.user.profileImage ? (
+              <img 
+                src={lesson.coach.user.profileImage} 
+                alt={lesson.coach.user.fullName || "코치"} 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <div className="w-full h-full bg-[#5D3FD3] flex items-center justify-center text-white text-xs font-bold">
+                {lesson.coach.user.fullName ? lesson.coach.user.fullName.charAt(0) : "C"}
+              </div>
+            )}
           </div>
-          <div>
-            <p className="font-medium text-sm">{lesson.coach.user.fullName} 코치</p>
-            <div className="flex items-center text-xs text-[#F9A826]">
-              <Star className="h-3 w-3 fill-current" />
-              <span className="ml-1">{rating}</span>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">{lesson.coach.user.fullName} 코치</p>
+              <div className="flex items-center">
+                <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />
+                <span className="ml-1 text-xs font-medium">{rating}</span>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="flex flex-wrap gap-2 mb-3">
+        {/* 레슨 태그 */}
+        <div className="flex flex-wrap gap-1.5 mb-3">
           {getLessonTags().map((tag, index) => (
-            <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border-none text-xs">
+            <span key={index} className="text-xs bg-[#F0EBFF] text-[#5D3FD3] px-2 py-0.5 rounded-full">
               {tag}
-            </Badge>
+            </span>
           ))}
           {lesson.lessonType && (
-            <Badge variant="outline" className="bg-neutral-100 text-neutral-600 text-xs py-0">
+            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
               {lesson.lessonType.name}
-            </Badge>
+            </span>
           )}
         </div>
         
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <p className="text-xs text-neutral-600 flex items-center">
-            <MapPin className="h-3 w-3 text-neutral-400 mr-1 shrink-0" /> 
+        {/* 레슨 세부 정보 */}
+        <div className="grid grid-cols-2 gap-y-2 mb-4">
+          <div className="flex items-center text-gray-600 text-xs">
+            <MapPin className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
             <span className="truncate">{lesson.location}</span>
-          </p>
-          <p className="text-xs text-neutral-600 flex items-center">
-            <Users className="h-3 w-3 text-neutral-400 mr-1 shrink-0" /> 
+          </div>
+          <div className="flex items-center text-gray-600 text-xs">
+            <Users className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
             <span>최대 {lesson.groupSize}명</span>
-          </p>
-          <p className="text-xs text-neutral-600 flex items-center">
-            <GraduationCap className="h-3 w-3 text-neutral-400 mr-1 shrink-0" /> 
+          </div>
+          <div className="flex items-center text-gray-600 text-xs">
+            <GraduationCap className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
             <span>{lesson.skillLevel?.name || "전체 레벨"}</span>
-          </p>
-          <p className="text-xs text-neutral-600 flex items-center">
-            <Clock className="h-3 w-3 text-neutral-400 mr-1 shrink-0" /> 
+          </div>
+          <div className="flex items-center text-gray-600 text-xs">
+            <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
             <span>{lesson.duration}분 수업</span>
-          </p>
+          </div>
         </div>
         
+        {/* 가격 및 버튼 */}
         <div className="flex justify-between items-center">
-          <p className="font-bold text-primary">
-            <span className="text-sm">{getPriceDisplay().split(' ')[0]}</span>
-            <span className="text-xs text-neutral-500 font-normal">
-              {getPriceDisplay().split(' ').slice(1).join(' ')}
-            </span>
-          </p>
-          <Button asChild size="sm" className="h-8 text-xs px-3 bg-primary hover:bg-primary/90">
-            <Link href={`/lessons/${lesson.id}`}>레슨 신청</Link>
-          </Button>
+          <div>
+            <p className="text-[#5D3FD3] font-bold">
+              <span className="text-lg">{getPriceDisplay().split(' ')[0]}</span>
+              <span className="text-xs text-gray-500 font-normal ml-1">
+                {getPriceDisplay().split(' ').slice(1).join(' ')}
+              </span>
+            </p>
+          </div>
+          <Link href={`/lessons/${lesson.id}`}>
+            <Button className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white">
+              자세히 보기
+            </Button>
+          </Link>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
 function LessonSkeleton() {
   return (
-    <Card className="overflow-hidden">
-      <Skeleton className="h-36 w-full" />
-      <CardContent className="p-4">
-        <div className="flex items-center mb-2">
-          <Skeleton className="w-8 h-8 rounded-full mr-2" />
-          <div className="space-y-1">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-3 w-14" />
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+      {/* 이미지 스켈레톤 */}
+      <Skeleton className="h-48 w-full" />
+      
+      {/* 내용 스켈레톤 */}
+      <div className="p-5">
+        <Skeleton className="h-6 w-3/4 mb-2" />
+        
+        <div className="flex items-center mb-3 pb-3 border-b border-gray-100">
+          <Skeleton className="w-7 h-7 rounded-full mr-2" />
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-10" />
+            </div>
           </div>
         </div>
         
-        <div className="space-y-1 mb-2">
-          <Skeleton className="h-3 w-32" />
-          <Skeleton className="h-3 w-28" />
-          <Skeleton className="h-3 w-24" />
+        <div className="flex gap-1.5 mb-3">
+          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-5 w-16 rounded-full" />
         </div>
         
-        <Skeleton className="h-3 w-full mb-3" />
+        <div className="grid grid-cols-2 gap-y-2 mb-4">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-24" />
+        </div>
         
         <div className="flex justify-between items-center">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-10 w-28 rounded-md" />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

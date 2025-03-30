@@ -1,6 +1,4 @@
-import { Star, Star as StarIcon, MessageCircle, Quote } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Star, Star as StarIcon, MessageCircle, Quote, ChevronRight } from "lucide-react";
 
 type Testimonial = {
   id: number;
@@ -14,6 +12,7 @@ type Testimonial = {
 };
 
 export default function Testimonials() {
+  // 더 집중된 후기를 위해 상위 3개만 표시
   const testimonials: Testimonial[] = [
     {
       id: 1,
@@ -44,62 +43,54 @@ export default function Testimonials() {
       comment: "아이가 학교 축구부에 들어갔는데 기초가 부족해서 시작했어요. 3개월간 집중 레슨 후 실력이 눈에 띄게 향상되어 학교에서도 인정받고 있습니다. 특히 드리블과 패스 능력이 많이 좋아졌어요. 코치님의 열정적인 지도 감사합니다!",
       course: "초등 고학년 실전 축구 프로그램",
       age: "12세"
-    },
-    {
-      id: 4,
-      name: "최맘님",
-      relationship: "중학생 자녀",
-      avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100",
-      rating: 5,
-      comment: "중학교 1학년인 아들이 축구부 지원을 위해 김민수 코치님께 개인 레슨을 받았어요. 체계적인 훈련 프로그램과 영상 분석을 통한 피드백이 정말 도움이 많이 되었습니다. 덕분에 축구부 선발에도 합격했어요!",
-      course: "중등부 축구 전술 마스터 클래스",
-      age: "14세"
-    },
-    {
-      id: 5,
-      name: "윤엄마님",
-      relationship: "유치원생 자녀",
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100",
-      rating: 4.5,
-      comment: "여자아이라 축구를 시킬까 망설였는데, 정말 잘 시작했다고 생각해요. 이지연 코치님이 남녀 차별 없이 아이들 각자의 특성에 맞게 지도해주셔서 딸아이가 자신감을 많이 얻었어요. 아이가 매주 레슨 날짜를 손꼽아 기다릴 정도로 즐겁게 배우고 있습니다.",
-      course: "유소년 축구 기초 교실",
-      age: "7세"
-    },
-    {
-      id: 6,
-      name: "정맘님",
-      relationship: "초등학생 자녀",
-      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=100",
-      rating: 5,
-      comment: "초등학교 3학년 아들이 다른 운동에는 관심이 없었는데, 축구는 정말 좋아해요. 박코치님이 아이 성향을 빠르게 파악하시고 적합한 포지션과 훈련법을 제안해주셔서 빠르게 실력이 향상되었어요. 무엇보다 축구를 통해 협동심과 끈기가 길러진 것 같아 만족합니다.",
-      course: "주말 축구 클리닉",
-      age: "9세"
     }
   ];
 
   return (
-    <section className="py-16 bg-neutral-50">
+    <section className="py-16 bg-[#FAFAFE]">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center mb-3">
-          <MessageCircle className="text-primary mr-2 h-6 w-6" />
-          <h2 className="text-2xl md:text-3xl font-bold text-center">학부모 후기</h2>
-        </div>
-        <p className="text-neutral-600 text-center max-w-2xl mx-auto mb-12">
-          실제 아이들이 레슨을 받은 학부모님들의 생생한 후기를 확인해보세요
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
-        </div>
-        
-        <div className="mt-12 bg-primary/5 rounded-xl p-6 max-w-3xl mx-auto text-center border border-primary/10">
-          <h3 className="text-lg font-semibold mb-2">93% 학부모님이 레슨 후 재신청!</h3>
-          <p className="text-neutral-600">
-            코치들의 전문성과 친절한 지도 방식에 만족하시는 학부모님들이 꾸준히 재등록하고 있습니다.
-            아이의 미래를 위한 가장 좋은 선택, 지금 바로 경험해보세요.
-          </p>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">학부모 추천 후기</h2>
+              <p className="text-gray-600">
+                축고 레슨을 경험한 학부모님들의 생생한 후기
+              </p>
+            </div>
+            <a 
+              href="#" 
+              className="flex items-center text-[#5D3FD3] font-medium text-sm mt-4 md:mt-0"
+            >
+              모든 후기 보기
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </a>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial) => (
+              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+            ))}
+          </div>
+          
+          {/* 통계 지표 */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+              <p className="text-3xl font-bold text-[#5D3FD3] mb-1">93%</p>
+              <p className="text-sm text-gray-600">레슨 후 재신청율</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+              <p className="text-3xl font-bold text-[#5D3FD3] mb-1">4.9/5</p>
+              <p className="text-sm text-gray-600">평균 학부모 만족도</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+              <p className="text-3xl font-bold text-[#5D3FD3] mb-1">97%</p>
+              <p className="text-sm text-gray-600">기술 향상 경험</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+              <p className="text-3xl font-bold text-[#5D3FD3] mb-1">3.5개월</p>
+              <p className="text-sm text-gray-600">평균 레슨 기간</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -115,15 +106,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     
     // Full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} className="h-4 w-4 fill-current text-[#F9A826]" />);
+      stars.push(<StarIcon key={`full-${i}`} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
     }
     
     // Half star if needed
     if (hasHalfStar) {
       stars.push(
         <div key="half" className="relative">
-          <StarIcon className="h-4 w-4 text-[#F9A826]" />
-          <StarIcon className="absolute top-0 left-0 h-4 w-4 fill-current text-[#F9A826] w-1/2 overflow-hidden" />
+          <StarIcon className="h-4 w-4 text-yellow-400" />
+          <StarIcon className="absolute top-0 left-0 h-4 w-4 fill-yellow-400 text-yellow-400 w-1/2 overflow-hidden" />
         </div>
       );
     }
@@ -131,51 +122,58 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     // Empty stars to make 5 total
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarIcon key={`empty-${i}`} className="h-4 w-4 text-[#F9A826]" />);
+      stars.push(<StarIcon key={`empty-${i}`} className="h-4 w-4 text-gray-300" />);
     }
     
     return stars;
   };
 
   return (
-    <Card className="bg-white border border-neutral-200 shadow-sm hover:shadow-md transition duration-300 h-full">
-      <CardContent className="p-6 flex flex-col h-full">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full overflow-hidden mr-3">
-              <img 
-                src={testimonial.avatar} 
-                alt={testimonial.name} 
-                className="w-full h-full object-cover" 
-              />
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100 relative">
+      {/* 인용부호 */}
+      <div className="absolute -top-3 -left-3 w-10 h-10 bg-[#5D3FD3] rounded-full flex items-center justify-center text-white shadow-md">
+        <Quote className="h-5 w-5" />
+      </div>
+      
+      {/* 평점 */}
+      <div className="flex mb-5 justify-end">
+        <div className="flex items-center gap-1">
+          {renderStars(testimonial.rating)}
+        </div>
+      </div>
+      
+      {/* 후기 내용 */}
+      <p className="text-gray-700 mb-6 text-sm">
+        "{testimonial.comment.length > 160 
+          ? `${testimonial.comment.substring(0, 160)}...` 
+          : testimonial.comment}"
+      </p>
+      
+      {/* 프로필 */}
+      <div className="flex items-center border-t border-gray-100 pt-4">
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 mr-3">
+          {testimonial.avatar ? (
+            <img 
+              src={testimonial.avatar} 
+              alt={testimonial.name} 
+              className="w-full h-full object-cover" 
+            />
+          ) : (
+            <div className="w-full h-full bg-[#F0EBFF] flex items-center justify-center text-[#5D3FD3] font-bold">
+              {testimonial.name.charAt(0)}
             </div>
-            <div>
-              <p className="font-medium">{testimonial.name}</p>
-              <div className="flex items-center space-x-1">
-                {renderStars(testimonial.rating)}
-              </div>
-            </div>
+          )}
+        </div>
+        <div>
+          <p className="font-medium text-sm">{testimonial.name}</p>
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <span className="bg-[#F0EBFF] text-[#5D3FD3] px-2 py-0.5 rounded-full text-xs">
+              {testimonial.age}
+            </span>
+            <span>{testimonial.relationship}</span>
           </div>
-          <Quote className="h-8 w-8 text-primary/20" />
         </div>
-        
-        <div className="flex flex-wrap gap-2 mb-3">
-          <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-xs">
-            {testimonial.age}
-          </Badge>
-          <Badge variant="outline" className="bg-neutral-100 text-neutral-600 text-xs py-0">
-            {testimonial.relationship}
-          </Badge>
-        </div>
-        
-        <p className="text-neutral-700 mb-4 flex-grow text-sm">
-          "{testimonial.comment}"
-        </p>
-        
-        <p className="text-xs text-neutral-500 pt-2 border-t border-neutral-100">
-          수강 프로그램: <span className="font-medium text-neutral-700">{testimonial.course}</span>
-        </p>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
