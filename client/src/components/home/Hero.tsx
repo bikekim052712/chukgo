@@ -54,18 +54,17 @@ export default function Hero() {
   return (
     <section className="pt-20 pb-16 md:pt-24 md:pb-20 bg-no-repeat bg-cover bg-center relative" 
              style={{ 
-               backgroundImage: "url('https://images.pexels.com/photos/3041176/pexels-photo-3041176.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')" 
+               backgroundImage: "url('https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')" 
              }}>
       {/* 오버레이 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#5D3FD3]/90 to-[#5D3FD3]/70"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#5D3FD3]/80 to-[#7C66DC]/70"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* 타이틀 영역 */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
-              <span className="text-white font-extrabold">축고</span>에서 찾는<br/>
-              <span className="text-white font-extrabold">축구 레슨 코치</span>
+              <span className="text-white font-extrabold">축고</span>에서 찾는 <span className="text-white font-extrabold">축구 레슨 코치</span>
             </h1>
             <p className="text-white/90 text-lg max-w-3xl mx-auto">
               검증된 축구 코치와 함께 맞춤형 레슨으로 더 빠른 실력 향상을 경험하세요. 

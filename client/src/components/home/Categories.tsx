@@ -46,26 +46,26 @@ const lessonCategories = [
 // 연령대별 카테고리
 const ageCategories = [
   {
+    name: "유아",
+    description: "재미있는 축구 입문 놀이",
+    icon: <Baby className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/ages/toddler",
+  },
+  {
     name: "초등학생",
-    description: "체계적인 기술 훈련",
+    description: "체계적인 기본기 훈련",
     icon: <School className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/ages/elementary",
   },
   {
-    name: "중학생",
+    name: "중·고등학생",
     description: "포지션별 전문 훈련",
-    icon: <Flag className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/middle-school",
-  },
-  {
-    name: "고등학생",
-    description: "전술 이해와 프로 수준 기술",
-    icon: <Sparkles className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/high-school",
+    icon: <Backpack className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/ages/teenagers",
   },
   {
     name: "성인",
-    description: "취미 및 프로 지망생 맞춤 훈련",
+    description: "취미 및 프로 지망생 맞춤형",
     icon: <UserCircle className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/ages/adult",
   },
@@ -78,13 +78,13 @@ export default function Categories() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
             <div>
-              <h2 className="text-2xl font-bold mb-2">다양한 레슨 옵션</h2>
+              <h2 className="text-2xl font-bold mb-2">특화된 축구 레슨 유형</h2>
               <p className="text-gray-600">
-                나에게 딱 맞는 맞춤형 축구 레슨을 찾아보세요
+                목표와 수준에 맞는 최적의 레슨 방식을 선택하세요
               </p>
             </div>
             <Link href="/lessons" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
-              모든 레슨 보기
+              모든 레슨 유형 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
           </div>
@@ -111,13 +111,13 @@ export default function Categories() {
           {/* 연령대별 섹션 */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
             <div>
-              <h2 className="text-2xl font-bold mb-2">연령대별 맞춤 레슨</h2>
+              <h2 className="text-2xl font-bold mb-2">연령별 맞춤형 커리큘럼</h2>
               <p className="text-gray-600">
-                각 연령에 최적화된 커리큘럼으로 효과적인 축구 교육
+                연령별 발달 단계를 고려한 최적화된 축구 레슨 프로그램
               </p>
             </div>
             <Link href="/ages" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
-              모든 연령대 보기
+              모든 연령대 프로그램 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
           </div>
