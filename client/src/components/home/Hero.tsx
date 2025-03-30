@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, ChevronRight, X } from "lucide-react";
+import { Search, MapPin, ChevronDown, ChevronRight, X } from "lucide-react";
 import { PROVINCES, DISTRICTS } from "@/lib/constants";
 
 export default function Hero() {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDistricts, setShowDistricts] = useState(false);
 
   // 전체 선택된 위치 문자열 생성 (검색에 사용)
   const getFullLocation = () => {
@@ -32,12 +33,14 @@ export default function Hero() {
     setSelectedProvince(province);
     setSelectedDistrict("");
     setSearchQuery("");
+    setShowDistricts(true);
   };
 
   // 시군구 항목 클릭 핸들러
   const handleDistrictClick = (district: string) => {
     setSelectedDistrict(district);
     setSearchQuery(`${selectedProvince.slice(0, 2)} ${district}`);
+    setShowDistricts(false);
   };
 
   // 초기화 버튼 핸들러
@@ -45,6 +48,7 @@ export default function Hero() {
     setSelectedProvince("");
     setSelectedDistrict("");
     setSearchQuery("");
+    setShowDistricts(false);
   };
 
   return (
@@ -94,57 +98,62 @@ export default function Hero() {
                 )}
               </div>
 
-              {/* 지역 검색 영역 - 2단 레이아웃 */}
-              <div className="flex">
-                {/* 좌측: 광역시/도 목록 */}
-                <div className="w-1/2 pr-2 border-r">
-                  <div className="overflow-y-auto max-h-64">
-                    {PROVINCES.map(province => (
-                      <button
-                        key={province}
-                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 flex items-center justify-between ${
-                          selectedProvince === province 
-                            ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
-                            : 'hover:bg-gray-50 text-gray-700'
-                        }`}
-                        onClick={() => handleProvinceClick(province)}
-                      >
-                        <span>{province}</span>
-                        {province !== "세종특별자치시" && (
-                          <ChevronRight size={16} className={selectedProvince === province ? "text-[#5D3FD3]" : "text-gray-400"} />
-                        )}
-                      </button>
-                    ))}
-                  </div>
+              {/* 광역시/도 선택 (가로 메뉴) */}
+              <div className="mb-4">
+                <p className="text-xs font-medium text-gray-500 mb-2">광역시/도 선택</p>
+                <div className="flex flex-wrap gap-1">
+                  {PROVINCES.map(province => (
+                    <button
+                      key={province}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        selectedProvince === province 
+                          ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
+                          : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                      }`}
+                      onClick={() => handleProvinceClick(province)}
+                    >
+                      {province.length > 5 ? province.substring(0, 5) : province}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* 우측: 선택한 광역시/도의 시군구 목록 또는 안내 메시지 */}
-                <div className="w-1/2 pl-2">
-                  {selectedProvince ? (
-                    selectedProvince === "세종특별자치시" ? (
-                      <div className="text-center py-4">
-                        <p className="text-sm text-gray-500 mb-4">세종시는 단일 행정구역입니다</p>
-                        <Button 
-                          className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white w-full"
-                          asChild
+              {/* 시군구 선택 */}
+              {showDistricts && selectedProvince && (
+                <div className="mb-4">
+                  {selectedProvince === "세종특별자치시" ? (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-500 mb-4">세종시는 단일 행정구역입니다</p>
+                      <Button 
+                        className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white w-full"
+                        asChild
+                      >
+                        <Link href="/coaches?location=세종시">
+                          <Search size={16} className="mr-2" />
+                          세종시 코치 찾기
+                        </Link>
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-xs font-medium text-gray-500">{selectedProvince} 시/군/구 선택</p>
+                        <button 
+                          className="text-xs text-[#5D3FD3]"
+                          onClick={() => setShowDistricts(false)}
                         >
-                          <Link href="/coaches?location=세종시">
-                            <Search size={16} className="mr-2" />
-                            세종시 코치 찾기
-                          </Link>
-                        </Button>
+                          닫기
+                        </button>
                       </div>
-                    ) : (
-                      <>
-                        <p className="text-xs font-medium text-gray-500 mb-2">{selectedProvince} 시/군/구</p>
-                        <div className="overflow-y-auto max-h-60 pr-1">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="flex flex-wrap gap-1">
                           {DISTRICTS[selectedProvince]?.map(district => (
                             <button
                               key={district}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors mb-1 ${
+                              className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                                 selectedDistrict === district 
                                   ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
-                                  : 'hover:bg-gray-50 text-gray-700'
+                                  : 'bg-white hover:bg-gray-100 text-gray-700'
                               }`}
                               onClick={() => handleDistrictClick(district)}
                             >
@@ -152,17 +161,11 @@ export default function Hero() {
                             </button>
                           ))}
                         </div>
-                      </>
-                    )
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full py-6">
-                      <p className="text-sm text-gray-400 text-center">
-                        왼쪽에서 광역시/도를<br />선택해주세요
-                      </p>
-                    </div>
+                      </div>
+                    </>
                   )}
                 </div>
-              </div>
+              )}
 
               {/* 코치 찾기 버튼 (시군구 선택 시에만 활성화) */}
               {selectedDistrict && (
