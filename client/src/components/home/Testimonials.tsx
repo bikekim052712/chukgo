@@ -96,12 +96,23 @@ export default function Testimonials() {
             </a>
           </div>
           
-          <div className="flex overflow-x-auto gap-5 pb-4 -mx-4 px-4 hide-scrollbar">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="flex-shrink-0 w-80">
-                <TestimonialCard testimonial={testimonial} />
-              </div>
-            ))}
+          <div className="auto-slide-container">
+            <div className="auto-slide-content">
+              {/* 첫 번째 세트 */}
+              {[...testimonials, ...testimonials].map((testimonial, index) => (
+                <div key={`${testimonial.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                  <TestimonialCard testimonial={testimonial} />
+                </div>
+              ))}
+            </div>
+            <div className="auto-slide-content auto-slide-clone">
+              {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
+              {[...testimonials, ...testimonials].map((testimonial, index) => (
+                <div key={`clone-${testimonial.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                  <TestimonialCard testimonial={testimonial} />
+                </div>
+              ))}
+            </div>
           </div>
           
           {/* 통계 지표 */}

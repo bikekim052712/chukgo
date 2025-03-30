@@ -46,10 +46,10 @@ const lessonCategories = [
 // 연령대별 카테고리
 const ageCategories = [
   {
-    name: "초등 고학년",
+    name: "초등학생",
     description: "체계적인 기술 훈련",
     icon: <School className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/elementary-upper",
+    href: "/ages/elementary",
   },
   {
     name: "중학생",

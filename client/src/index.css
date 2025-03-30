@@ -46,4 +46,38 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+  
+  /* 자동 슬라이딩 효과 */
+  @keyframes slideLeft {
+    0% { 
+      transform: translateX(0); 
+    }
+    100% { 
+      transform: translateX(-50%); 
+    }
+  }
+  
+  .auto-slide-container {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+  
+  .auto-slide-content {
+    display: flex;
+    animation: slideLeft 60s linear infinite;
+    padding-right: 4px; /* margin between repeated content */
+    min-width: 100%;
+  }
+  
+  /* 호버 시 애니메이션 일시 정지 */
+  .auto-slide-container:hover .auto-slide-content {
+    animation-play-state: paused;
+  }
+  
+  /* 클론 컨테이너 (무한 스크롤 효과) */
+  .auto-slide-clone {
+    display: flex;
+  }
 }

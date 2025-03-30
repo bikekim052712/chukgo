@@ -30,20 +30,34 @@ export default function Coaches() {
             </Link>
           </div>
 
-          <div className="flex overflow-x-auto gap-5 pb-4 -mx-4 px-4 hide-scrollbar">
+          <div className="auto-slide-container">
             {isLoading ? (
-              Array(6).fill(0).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-80">
-                  <CoachSkeleton />
-                </div>
-              ))
+              <div className="flex gap-5 pb-4">
+                {Array(6).fill(0).map((_, i) => (
+                  <div key={i} className="flex-shrink-0 w-80">
+                    <CoachSkeleton />
+                  </div>
+                ))}
+              </div>
             ) : coaches && coaches.length > 0 ? (
-              // 6개보다 적은 경우 두 번 반복해서 표시
-              [...coaches, ...coaches].slice(0, 6).map((coach, index) => (
-                <div key={`${coach.id}-${index}`} className="flex-shrink-0 w-80">
-                  <CoachCard coach={coach} />
+              <>
+                <div className="auto-slide-content">
+                  {/* 첫 번째 세트 */}
+                  {[...coaches, ...coaches, ...coaches].map((coach, index) => (
+                    <div key={`${coach.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                      <CoachCard coach={coach} />
+                    </div>
+                  ))}
                 </div>
-              ))
+                <div className="auto-slide-content auto-slide-clone">
+                  {/* 두 번째 세트 (무한 스크롤을 위한 복제) */}
+                  {[...coaches, ...coaches, ...coaches].map((coach, index) => (
+                    <div key={`clone-${coach.id}-${index}`} className="flex-shrink-0 w-80 mx-2.5">
+                      <CoachCard coach={coach} />
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
               <div className="text-center py-8 w-full">
                 <p className="text-gray-500">등록된 코치가 없습니다.</p>
