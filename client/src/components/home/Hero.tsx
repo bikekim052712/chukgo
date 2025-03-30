@@ -1,27 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, ChevronDown, ChevronRight, X } from "lucide-react";
+import { Search, MapPin, ChevronRight, X } from "lucide-react";
 import { PROVINCES, DISTRICTS } from "@/lib/constants";
 
 export default function Hero() {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedProvince, setExpandedProvince] = useState<string | null>(null);
-
-  // 도/광역시 선택 핸들러 (확장 기능 포함)
-  const handleProvinceClick = (province: string) => {
-    if (expandedProvince === province) {
-      // 이미 확장된 경우, 축소시킴
-      setExpandedProvince(null);
-    } else {
-      // 새로운 지역 확장
-      setExpandedProvince(province);
-      setSelectedProvince(province);
-      setSelectedDistrict("");
-    }
-  };
 
   // 전체 선택된 위치 문자열 생성 (검색에 사용)
   const getFullLocation = () => {
@@ -41,6 +27,13 @@ export default function Hero() {
     return `/coaches?location=${encodeURIComponent(fullLocation)}`;
   };
 
+  // 도/광역시 항목 클릭 핸들러
+  const handleProvinceClick = (province: string) => {
+    setSelectedProvince(province);
+    setSelectedDistrict("");
+    setSearchQuery("");
+  };
+
   // 시군구 항목 클릭 핸들러
   const handleDistrictClick = (district: string) => {
     setSelectedDistrict(district);
@@ -52,7 +45,6 @@ export default function Hero() {
     setSelectedProvince("");
     setSelectedDistrict("");
     setSearchQuery("");
-    setExpandedProvince(null);
   };
 
   return (
@@ -73,7 +65,7 @@ export default function Hero() {
           <div className="bg-white rounded-xl shadow-lg mb-8 max-w-3xl mx-auto">
             <div className="p-5 border-b border-gray-100">
               <h3 className="text-base font-bold text-gray-800">전국 지역별 축구 코치 찾기</h3>
-              <p className="text-sm text-gray-500 mt-1">지역을 선택하고 해당 지역의 코치를 찾아보세요</p>
+              <p className="text-sm text-gray-500 mt-1">광역시/도를 선택하고 해당 지역의 코치를 찾아보세요</p>
             </div>
             
             <div className="p-5">
@@ -102,52 +94,36 @@ export default function Hero() {
                 )}
               </div>
 
-              {/* 지역 리스트 */}
-              <div className="border rounded-lg divide-y">
-                {PROVINCES.map(province => (
-                  <div key={province} className="overflow-hidden">
-                    {/* 광역시/도 */}
-                    <button
-                      className={`w-full px-4 py-3 flex items-center justify-between transition-colors ${
-                        expandedProvince === province 
-                          ? 'bg-gray-50' 
-                          : 'hover:bg-gray-50'
-                      }`}
-                      onClick={() => handleProvinceClick(province)}
-                    >
-                      <span className="text-sm font-medium">{province}</span>
-                      {province === "세종특별자치시" ? null : (
-                        expandedProvince === province ? 
-                          <ChevronDown size={18} className="text-gray-500" /> : 
-                          <ChevronRight size={18} className="text-gray-500" />
-                      )}
-                    </button>
+              {/* 지역 검색 영역 - 2단 레이아웃 */}
+              <div className="flex">
+                {/* 좌측: 광역시/도 목록 */}
+                <div className="w-1/2 pr-2 border-r">
+                  <div className="overflow-y-auto max-h-64">
+                    {PROVINCES.map(province => (
+                      <button
+                        key={province}
+                        className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors mb-1 flex items-center justify-between ${
+                          selectedProvince === province 
+                            ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
+                            : 'hover:bg-gray-50 text-gray-700'
+                        }`}
+                        onClick={() => handleProvinceClick(province)}
+                      >
+                        <span>{province}</span>
+                        {province !== "세종특별자치시" && (
+                          <ChevronRight size={16} className={selectedProvince === province ? "text-[#5D3FD3]" : "text-gray-400"} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                    {/* 시군구 목록 */}
-                    {expandedProvince === province && province !== "세종특별자치시" && (
-                      <div className="bg-gray-50 px-4 py-2">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
-                          {DISTRICTS[province]?.map(district => (
-                            <button
-                              key={district}
-                              className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                                selectedDistrict === district 
-                                  ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
-                                  : 'hover:bg-gray-100 text-gray-700'
-                              }`}
-                              onClick={() => handleDistrictClick(district)}
-                            >
-                              {district}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 세종시 선택 시 */}
-                    {expandedProvince === province && province === "세종특별자치시" && (
-                      <div className="bg-gray-50 p-4 text-center">
-                        <p className="text-sm text-gray-500 mb-2">세종시는 단일 행정구역입니다</p>
+                {/* 우측: 선택한 광역시/도의 시군구 목록 또는 안내 메시지 */}
+                <div className="w-1/2 pl-2">
+                  {selectedProvince ? (
+                    selectedProvince === "세종특별자치시" ? (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-gray-500 mb-4">세종시는 단일 행정구역입니다</p>
                         <Button 
                           className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white w-full"
                           asChild
@@ -158,9 +134,34 @@ export default function Hero() {
                           </Link>
                         </Button>
                       </div>
-                    )}
-                  </div>
-                ))}
+                    ) : (
+                      <>
+                        <p className="text-xs font-medium text-gray-500 mb-2">{selectedProvince} 시/군/구</p>
+                        <div className="overflow-y-auto max-h-60 pr-1">
+                          {DISTRICTS[selectedProvince]?.map(district => (
+                            <button
+                              key={district}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors mb-1 ${
+                                selectedDistrict === district 
+                                  ? 'bg-[#F0EBFF] text-[#5D3FD3] font-medium' 
+                                  : 'hover:bg-gray-50 text-gray-700'
+                              }`}
+                              onClick={() => handleDistrictClick(district)}
+                            >
+                              {district}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full py-6">
+                      <p className="text-sm text-gray-400 text-center">
+                        왼쪽에서 광역시/도를<br />선택해주세요
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* 코치 찾기 버튼 (시군구 선택 시에만 활성화) */}
