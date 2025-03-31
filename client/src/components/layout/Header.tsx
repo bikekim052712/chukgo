@@ -22,6 +22,7 @@ export default function Header() {
     { name: "코치 찾기", href: "/coach-finder" },
     { name: "레슨 신청", href: "/lesson-request" },
     { name: "레슨 후기", href: "/reviews" },
+    { name: "커뮤니티", href: "https://cafe.naver.com/forland", external: true },
   ];
 
   return (
@@ -44,18 +45,30 @@ export default function Header() {
           {/* 데스크톱 메뉴 */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link 
-                key={item.name} 
-                href={item.href} 
-                className={`text-sm font-medium hover:text-[#5D3FD3] transition-colors ${
-                  (item.href === location || 
-                   (item.href !== '/' && location.startsWith(item.href)))
-                    ? 'text-[#5D3FD3]'
-                    : 'text-gray-700'
-                }`}
-              >
-                {item.name}
-              </Link>
+              item.external ? (
+                <a 
+                  key={item.name} 
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium hover:text-[#5D3FD3] transition-colors text-gray-700"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link 
+                  key={item.name} 
+                  href={item.href} 
+                  className={`text-sm font-medium hover:text-[#5D3FD3] transition-colors ${
+                    (item.href === location || 
+                     (item.href !== '/' && location.startsWith(item.href)))
+                      ? 'text-[#5D3FD3]'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </nav>
           
@@ -88,19 +101,32 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-gray-100">
             <nav className="flex flex-col space-y-3">
               {navItems.map((item) => (
-                <Link 
-                  key={item.name} 
-                  href={item.href} 
-                  className={`py-2 text-sm font-medium transition-colors ${
-                    (item.href === location || 
-                     (item.href !== '/' && location.startsWith(item.href)))
-                      ? 'text-[#5D3FD3]'
-                      : 'text-gray-700'
-                  }`}
-                  onClick={closeMobileMenu}
-                >
-                  {item.name}
-                </Link>
+                item.external ? (
+                  <a 
+                    key={item.name} 
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 text-sm font-medium transition-colors text-gray-700 hover:text-[#5D3FD3]"
+                    onClick={closeMobileMenu}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link 
+                    key={item.name} 
+                    href={item.href} 
+                    className={`py-2 text-sm font-medium transition-colors ${
+                      (item.href === location || 
+                       (item.href !== '/' && location.startsWith(item.href)))
+                        ? 'text-[#5D3FD3]'
+                        : 'text-gray-700'
+                    }`}
+                    onClick={closeMobileMenu}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               
               <div className="pt-3 border-t border-gray-100 mt-2 flex flex-col space-y-2">
