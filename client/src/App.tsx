@@ -15,6 +15,7 @@ import Reviews from "./pages/Reviews";
 import CoachFinder from "./pages/CoachFinder";
 import Running from "./pages/Running";
 import InsuranceAnalysis from "@/pages/InsuranceAnalysis";
+import ChatPage from "@/pages/ChatPage";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Layout from "@/components/layout/Layout";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis/:id" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis" component={InsuranceAnalysis} />
+      <Route path="/chat" component={ChatPage} />
       <Route path="/private-lesson" component={NotFound} />
       <Route path="/group-lesson" component={NotFound} />
       <Route path="/goalkeeper-lesson" component={NotFound} />

@@ -20,8 +20,9 @@ export default function Header() {
   const navItems = [
     { name: "홈", href: "/" },
     { name: "코치 찾기", href: "/coaches" },
-    { name: "레슨 신청", href: "/lessons" },
+    { name: "레슨 신청", href: "/lesson-request" },
     { name: "레슨 후기", href: "/reviews" },
+    { name: "실시간 채팅", href: "/chat" },
     { name: "보험보장분석", href: "/insurance-analysis" },
     { name: "커뮤니티", href: "https://cafe.naver.com/forland", external: true },
   ];
