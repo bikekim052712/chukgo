@@ -40,7 +40,7 @@ export default function Hero() {
               className="bg-white text-[#5D3FD3] hover:bg-gray-100 font-bold text-base shadow-lg px-8 py-6"
               asChild
             >
-              <Link href="/coaches">
+              <Link href="/coaches/search">
                 모든 코치 보기
               </Link>
             </Button>

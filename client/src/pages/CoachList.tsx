@@ -61,7 +61,7 @@ export default function CoachList() {
     const nameMatch = coach.user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
     
     // Filter by location
-    const locationMatch = !locationFilter || coach.location.includes(locationFilter);
+    const locationMatch = !locationFilter || locationFilter === "all_regions" || coach.location.includes(locationFilter);
     
     // Filter by specialization
     const specializationMatch = !specialization || 
@@ -135,7 +135,7 @@ export default function CoachList() {
                       <SelectValue placeholder="모든 지역" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">모든 지역</SelectItem>
+                      <SelectItem value="all_regions">모든 지역</SelectItem>
                       {LOCATIONS.map(loc => (
                         <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                       ))}
@@ -224,7 +224,7 @@ export default function CoachList() {
                     className="w-full"
                     onClick={() => {
                       setSearchTerm("");
-                      setLocationFilter("");
+                      setLocationFilter("all_regions");
                       setSpecialization("");
                     }}
                   >
@@ -260,7 +260,7 @@ export default function CoachList() {
                 variant="outline"
                 onClick={() => {
                   setSearchTerm("");
-                  setLocationFilter("");
+                  setLocationFilter("all_regions");
                   setSpecialization("");
                 }}
               >
