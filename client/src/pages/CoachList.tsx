@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Star, 
   MapPin,
   Search,
-  Filter 
+  Filter,
+  ChevronRight,
+  User as UserIcon,
+  Sliders,
+  Calendar,
+  CheckCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,17 +30,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CoachWithUser } from "@shared/schema";
 import { LOCATIONS } from "@/lib/constants";
 
 export default function CoachList() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [location, setLocation] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
   const [specialization, setSpecialization] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [sortBy, setSortBy] = useState("rating");
   
   const { data: coaches, isLoading } = useQuery<CoachWithUser[]>({
     queryKey: ['/api/coaches'],
   });
+  
+  // Set URL parameters from location on component mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const locationParam = params.get('location');
+    
+    if (locationParam) {
+      setLocationFilter(locationParam);
+    }
+  }, []);
   
   // Filter coaches based on search term and filters
   const filteredCoaches = coaches?.filter((coach) => {
@@ -43,14 +61,40 @@ export default function CoachList() {
     const nameMatch = coach.user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
     
     // Filter by location
-    const locationMatch = !location || coach.location.includes(location);
+    const locationMatch = !locationFilter || coach.location.includes(locationFilter);
     
     // Filter by specialization
     const specializationMatch = !specialization || 
       (coach.specializations && coach.specializations.some(spec => spec.includes(specialization)));
     
-    return nameMatch && locationMatch && specializationMatch;
+    // Filter by tab
+    let tabMatch = true;
+    if (activeTab === "youth") {
+      tabMatch = coach.specializations?.includes("유소년") || false;
+    } else if (activeTab === "adult") {
+      tabMatch = coach.specializations?.includes("성인") || false;
+    } else if (activeTab === "female") {
+      tabMatch = coach.specializations?.includes("여성 특화") || false;
+    } else if (activeTab === "professional") {
+      tabMatch = coach.specializations?.includes("프로") || false;
+    }
+    
+    return nameMatch && locationMatch && specializationMatch && tabMatch;
   });
+  
+  // Sort coaches
+  const sortedCoaches = filteredCoaches ? [...filteredCoaches].sort((a, b) => {
+    if (sortBy === "rating") {
+      return (b.rating || 0) - (a.rating || 0);
+    } else if (sortBy === "reviews") {
+      return (b.reviewCount || 0) - (a.reviewCount || 0);
+    } else if (sortBy === "price_low") {
+      return (a.hourlyRate || 0) - (b.hourlyRate || 0);
+    } else if (sortBy === "price_high") {
+      return (b.hourlyRate || 0) - (a.hourlyRate || 0);
+    }
+    return 0;
+  }) : [];
   
   return (
     <div className="container mx-auto px-4 py-12">
@@ -86,7 +130,7 @@ export default function CoachList() {
                 
                 <div>
                   <label className="block text-sm font-medium mb-2">지역</label>
-                  <Select value={location} onValueChange={setLocation}>
+                  <Select value={locationFilter} onValueChange={setLocationFilter}>
                     <SelectTrigger>
                       <SelectValue placeholder="모든 지역" />
                     </SelectTrigger>
@@ -180,7 +224,7 @@ export default function CoachList() {
                     className="w-full"
                     onClick={() => {
                       setSearchTerm("");
-                      setLocation("");
+                      setLocationFilter("");
                       setSpecialization("");
                     }}
                   >
@@ -216,7 +260,7 @@ export default function CoachList() {
                 variant="outline"
                 onClick={() => {
                   setSearchTerm("");
-                  setLocation("");
+                  setLocationFilter("");
                   setSpecialization("");
                 }}
               >

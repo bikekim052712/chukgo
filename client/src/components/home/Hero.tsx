@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section className="pt-24 pb-20 md:pt-32 md:pb-28 bg-no-repeat bg-cover bg-center relative" 
              style={{ 
-               backgroundImage: "url('https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')" 
+               backgroundImage: "url('https://images.pexels.com/photos/8985402/pexels-photo-8985402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')" 
              }}>
       {/* 오버레이 */}
       <div className="absolute inset-0 bg-black/50"></div>

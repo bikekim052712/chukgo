@@ -9,15 +9,16 @@ import LessonDetail from "@/pages/LessonDetail";
 import CoachList from "@/pages/CoachList";
 import LessonList from "@/pages/LessonList";
 import Booking from "@/pages/Booking";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
 import CoachSignup from "@/pages/CoachSignup";
 import LessonRequest from "./pages/LessonRequest";
 import Reviews from "./pages/Reviews";
 import CoachFinder from "./pages/CoachFinder";
 import Running from "./pages/Running";
 import InsuranceAnalysis from "@/pages/InsuranceAnalysis";
+import AuthPage from "@/pages/auth-page";
 import Layout from "@/components/layout/Layout";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
@@ -28,12 +29,16 @@ function Router() {
       <Route path="/coaches/:id" component={CoachProfile} />
       <Route path="/lessons" component={LessonList} />
       <Route path="/lessons/:id" component={LessonDetail} />
-      <Route path="/lesson-request" component={LessonRequest} />
-      <Route path="/reviews" component={Reviews} />
-      <Route path="/booking/:lessonId" component={Booking} />
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
-      <Route path="/coach-signup" component={CoachSignup} />
+      
+      {/* 인증이 필요한 경로 */}
+      <ProtectedRoute path="/lesson-request" component={LessonRequest} />
+      <ProtectedRoute path="/reviews" component={Reviews} />
+      <ProtectedRoute path="/booking/:lessonId" component={Booking} />
+      <ProtectedRoute path="/coach-signup" component={CoachSignup} />
+      
+      {/* 인증 페이지 */}
+      <Route path="/auth" component={AuthPage} />
+      
       <Route path="/running" component={Running} />
       <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis/:id" component={InsuranceAnalysis} />
@@ -49,10 +54,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Router />
-      </Layout>
-      <Toaster />
+      <AuthProvider>
+        <Layout>
+          <Router />
+        </Layout>
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

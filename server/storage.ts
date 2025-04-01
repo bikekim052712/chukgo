@@ -4,6 +4,8 @@ import {
   Inquiry, InsertInquiry, LessonType, InsertLessonType, SkillLevel, InsertSkillLevel,
   CoachWithUser, LessonWithDetails
 } from "@shared/schema";
+import session from "express-session";
+import createMemoryStore from "memorystore";
 
 // Storage interface
 export interface IStorage {
@@ -57,6 +59,9 @@ export interface IStorage {
   
   // Inquiries
   createInquiry(inquiry: InsertInquiry): Promise<Inquiry>;
+  
+  // Session store
+  sessionStore: any; // Memorystore/SessionStore
 }
 
 export class MemStorage implements IStorage {
@@ -69,6 +74,8 @@ export class MemStorage implements IStorage {
   private reviews: Map<number, Review>;
   private schedules: Map<number, Schedule>;
   private inquiries: Map<number, Inquiry>;
+  
+  readonly sessionStore: any; // Memorystore SessionStore
   
   private userId: number = 1;
   private coachId: number = 1;
@@ -90,6 +97,11 @@ export class MemStorage implements IStorage {
     this.reviews = new Map();
     this.schedules = new Map();
     this.inquiries = new Map();
+    
+    const MemoryStore = createMemoryStore(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // 24 hours
+    });
     
     this.initializeData();
   }

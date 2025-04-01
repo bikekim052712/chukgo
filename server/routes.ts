@@ -4,8 +4,11 @@ import { storage } from "./storage";
 import { contactFormSchema, insertBookingSchema, insertUserSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { z } from "zod";
+import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up auth with session and passport
+  setupAuth(app);
   // Get all lesson types
   app.get('/api/lesson-types', async (req: Request, res: Response) => {
     try {
@@ -153,7 +156,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 회원가입 API 엔드포인트
+  // 이전 인증 라우트는 setupAuth()로 대체되었습니다
+  
+  /* 
+  // 회원가입 API 엔드포인트 
   const registerSchema = insertUserSchema.extend({
     password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다.")
   });
@@ -215,8 +221,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: '로그인 처리 중 오류가 발생했습니다.' });
     }
   });
+  */
   
   // 코치 가입 API 엔드포인트
+  const registerSchema = insertUserSchema.extend({
+    password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다.")
+  });
+  
   const coachRegisterSchema = registerSchema.extend({
     fullName: z.string().min(2, "이름은 2자 이상이어야 합니다."),
     phoneNumber: z.string().regex(/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/, "올바른 휴대폰 번호를 입력해 주세요."),
