@@ -35,6 +35,8 @@ function Router() {
       <Route path="/signup" component={Signup} />
       <Route path="/coach-signup" component={CoachSignup} />
       <Route path="/running" component={Running} />
+      <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />
+      <Route path="/insurance-analysis/:id" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis" component={InsuranceAnalysis} />
       <Route path="/private-lesson" component={NotFound} />
       <Route path="/group-lesson" component={NotFound} />
