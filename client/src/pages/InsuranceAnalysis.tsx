@@ -1,60 +1,86 @@
-import React, { useState, useRef } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useLocation, useRoute, Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose
-} from "@/components/ui/dialog";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Loader2, Eye, MessageSquare, ThumbsUp, Clock, FileText, PenSquare } from "lucide-react";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { useLocation, Link, useParams } from "wouter";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-// 글 작성 스키마 정의
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Search, 
+  Eye, 
+  MessageSquare, 
+  ThumbsUp, 
+  Filter, 
+  CalendarDays, 
+  User,
+  MoreVertical,
+  Edit,
+  Trash,
+  ArrowUp,
+  Share2,
+  Send,
+  FileText
+} from "lucide-react";
+
+// 게시글 스키마
 const insurancePostSchema = z.object({
-  title: z.string().min(2, "제목은 2자 이상이어야 합니다.").max(100, "제목은 100자 이하여야 합니다."),
-  content: z.string().min(10, "내용은 10자 이상이어야 합니다."),
-  category: z.string().min(1, "카테고리를 선택해주세요"),
+  title: z.string().min(2, "제목은 최소 2자 이상이어야 합니다"),
+  content: z.string().min(10, "내용은 최소 10자 이상이어야 합니다"),
+  category: z.string(),
+  imageUrl: z.string().optional(),
 });
 
-// 댓글 작성 스키마 정의
+// 댓글 스키마
 const commentSchema = z.object({
-  content: z.string().min(2, "댓글은 2자 이상이어야 합니다.").max(500, "댓글은 500자 이하여야 합니다."),
+  content: z.string().min(1, "댓글 내용을 입력해주세요"),
 });
 
-// 게시물 타입 정의
+// 타입 정의
 type InsurancePost = {
   id: number;
   title: string;
@@ -70,12 +96,10 @@ type InsurancePost = {
   category: string;
 };
 
-// 상세 게시물 타입 정의 (댓글 포함)
 type PostDetail = InsurancePost & {
   comments: Comment[];
 };
 
-// 댓글 타입 정의
 type Comment = {
   id: number;
   postId: number;
@@ -86,663 +110,822 @@ type Comment = {
   likes: number;
 };
 
-// 카테고리 정의
-const categories = [
-  "일반",
-  "부상보험",
-  "단체보험",
-  "유소년보험",
-  "프로선수보험",
-  "코치보험"
-];
-
 type InsurancePostFormValues = z.infer<typeof insurancePostSchema>;
 type CommentFormValues = z.infer<typeof commentSchema>;
 
-// 메인 게시판 컴포넌트
+// 게시글 목록 컴포넌트
 function InsuranceBoardList() {
-  const [location, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState("전체");
-  const { toast } = useToast();
-  
-  // 게시물 목록 불러오기
-  const { data: posts, isLoading } = useQuery<InsurancePost[]>({
-    queryKey: ["/api/insurance-posts", activeTab],
-    queryFn: () => {
-      // 임시로 더미 데이터 반환
-      let mockPosts = [
-        {
-          id: 1,
-          title: "자녀 축구 다이렉트 보험 상품 분석",
-          content: "축구를 하는 자녀를 위한 다이렉트 보험 상품에 대한 상세 분석입니다. 이 보험은 경기 중 부상에 대한 보장을 제공하며, 기본적인 의료비 지원부터 심각한 부상에 대한 보상까지 다양한 보장 옵션이 있습니다.\n\n1. A손해보험 - 어린이 스포츠안전보험\n   - 장점: 축구 부상에 특화된 보장, 합리적인 보험료\n   - 단점: 가입 연령 제한, 치아 부상 보장 미흡\n\n2. B생명 - 유소년 스포츠 종합보험\n   - 장점: 폭넓은 보장 범위, 성장판 부상 특별 보장\n   - 단점: 상대적으로 높은 보험료\n\n3. C화재 - 스포츠 안전 플러스\n   - 장점: 경기 중 사고뿐만 아니라 훈련 중 부상도 보장\n   - 단점: 보험금 청구 절차가 복잡함\n\n위 상품들 중에서는 A손해보험의 어린이 스포츠안전보험이 가성비가 가장 좋다고 판단됩니다. 특히 축구 종목에 특화된 보장 내용을 갖추고 있어 추천드립니다.\n\n다만, 자녀의 연령과 축구 활동 빈도에 따라 적합한 상품이 달라질 수 있으니 개별 상담을 받아보시는 것을 권장합니다.",
-          author: "김보험",
-          authorId: 1,
-          createdAt: "2025-03-10T12:00:00Z",
-          views: 245,
-          likes: 18,
-          commentCount: 12,
-          category: "유소년보험",
-          imageUrl: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-        },
-        {
-          id: 2,
-          title: "청소년 스포츠 종합보험 비교",
-          content: "다양한 청소년 스포츠 종합보험 상품을 비교 분석했습니다. A사의 경우 축구 부상에 대한 보장이 더 높은 반면, B사는 재활 치료에 대한 보장이 더 강점입니다. 자세한 내용은 아래를 참고하세요.\n\n1. 보장 범위 비교\n   - A사: 부상 치료비 최대 3천만원, 입원비 일당 5만원\n   - B사: 부상 치료비 최대 2천만원, 입원비 일당 8만원\n   - C사: 부상 치료비 최대 2천5백만원, 입원비 일당 6만원\n\n2. 특화 보장 내용\n   - A사: 골절, 인대 파열에 대한 보장 강화\n   - B사: 재활 치료, 물리치료 특약 제공\n   - C사: 수술비 추가 보장, 상해 후유장해 보장 강화\n\n3. 보험료 비교 (13세 남자 기준)\n   - A사: 월 25,000원\n   - B사: 월 28,000원\n   - C사: 월 23,000원\n\n축구를 주로 하는 청소년이라면 골절과 인대 부상이 많은 점을 고려했을 때 A사의 상품을 추천합니다. 다만 장기적인 치료가 필요한 부상의 경우에는 B사의 재활 치료 보장이 더 유리할 수 있습니다.",
-          author: "박애널리스트",
-          authorId: 2,
-          createdAt: "2025-03-05T14:30:00Z",
-          views: 187,
-          likes: 8,
-          commentCount: 5,
-          category: "유소년보험"
-        },
-        {
-          id: 3,
-          title: "축구부 단체보험 가입시 주의사항",
-          content: "학교나 동호회에서 축구부 단체보험 가입시 반드시 확인해야 할 사항들을 정리했습니다. 특히 보장 범위와 면책 조항에 대해서 상세히 살펴봐야 합니다.\n\n1. 보장 내용 확인 포인트\n   - 경기 중 부상뿐만 아니라 연습 중 부상도 보장되는지\n   - 이동 중 사고도 보장 범위에 포함되는지\n   - 치아 부상, 안면 부상 등 특수 부위 보장 여부\n   - 후유장해에 대한 보장 등급 및 금액\n\n2. 면책 조항 주의사항\n   - 기존 질환과의 인과관계가 있는 부상은 보장에서 제외되는 경우가 많음\n   - 고의적인 규칙 위반으로 인한 부상은 보장되지 않을 수 있음\n   - 음주 상태에서의 부상은 대부분 보장에서 제외됨\n\n3. 단체보험 가입 시 확인할 서류\n   - 보험 약관 전문 (특히 면책 조항)\n   - 보험금 청구 절차 안내서\n   - 보험 가입자 명단 정확성 확인\n\n4. 효율적인 단체보험 활용 방법\n   - 상해 사고 발생 시 즉시 사고 경위서 작성 습관화\n   - 치료 영수증, 진단서 등 증빙서류 철저히 보관\n   - 단체 담당자와 보험사 담당자 연락처 공유\n\n위 내용을 참고하여 축구부 단체보험 가입 시 불이익을 받지 않도록 주의하시기 바랍니다.",
-          author: "이컨설턴트",
-          authorId: 3,
-          createdAt: "2025-02-28T09:15:00Z",
-          views: 342,
-          likes: 25,
-          commentCount: 18,
-          category: "단체보험",
-          imageUrl: "https://images.unsplash.com/photo-1600679472829-3044539ce8ed?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-        },
-        {
-          id: 4,
-          title: "프로 축구 선수를 위한 커리어 보험",
-          content: "프로 축구 선수들을 위한 커리어 보험에 대해 알아보겠습니다. 부상으로 인한 선수 생활 중단 시 경제적 안정을 제공하는 이 보험은 선수들에게 매우 중요합니다.\n\n주요 보장 내용:\n1. 영구적 경기 불가 상태에 대한 일시금 보상\n2. 재활 기간 동안의 월 소득 보장\n3. 심각한 부상 후 진로 전환 지원금\n4. 해외 치료 비용 지원\n\n가입 시 고려사항:\n- 현재 연봉과 계약 기간에 따른 보장 금액 설정\n- 부상 이력에 따른 보험료 차등\n- 포지션별 위험도 평가\n- 보험사의 재정 안정성\n\n국내 주요 커리어 보험 상품 비교:\n1. D생명 - 프로선수 안심 플랜\n2. E화재 - 스포츠 커리어 보장보험\n3. F손해보험 - 애슬릿 프로텍션\n\n각 상품별 특징과 장단점에 대한 자세한 내용은 개별 상담을 통해 확인하시기 바랍니다.",
-          author: "최에이전트",
-          authorId: 4,
-          createdAt: "2025-02-15T16:45:00Z",
-          views: 156,
-          likes: 12,
-          commentCount: 7,
-          category: "프로선수보험"
-        },
-        {
-          id: 5,
-          title: "코치와 감독을 위한 책임보험 분석",
-          content: "축구 코치와 감독들이 알아야 할 책임보험에 대해 분석했습니다. 지도 과정에서 발생할 수 있는 다양한 법적 책임으로부터 자신을 보호하기 위한 필수 정보입니다.\n\n1. 책임보험의 필요성\n   - 선수 부상에 대한 과실 책임 발생 가능성\n   - 부모나 구단과의 분쟁 시 법적 대응 비용\n   - 시설 관련 사고에 대한 책임\n\n2. 주요 보장 내용\n   - 지도 과정에서의 선수 부상에 대한 배상 책임\n   - 법적 분쟁 시 변호사 비용\n   - 판결에 따른 배상금 보장\n   - 응급 처치 과정에서의 의료 과실 책임\n\n3. 국내 코치 책임보험 상품 비교\n   - G손해보험 - 스포츠 지도자 안심보험\n   - H화재 - 코치 프로텍터\n   - I생명 - 지도자 종합보장\n\n4. 가입 시 확인사항\n   - 보장 한도액 (사고당, 연간 총액)\n   - 자기부담금 설정\n   - 특약 가입 여부 (성폭력, 폭언 등 특수 상황 보장)\n\n코치와 감독분들은 자신을 보호하기 위해 반드시 책임보험에 가입하시고, 계약 내용을 꼼꼼히 확인하시기 바랍니다.",
-          author: "김변호사",
-          authorId: 5,
-          createdAt: "2025-02-10T10:20:00Z",
-          views: 205,
-          likes: 15,
-          commentCount: 9,
-          category: "코치보험"
-        }
-      ];
-      
-      // 탭에 따라 필터링
-      if (activeTab !== "전체") {
-        mockPosts = mockPosts.filter(post => post.category === activeTab);
-      }
-      
-      return Promise.resolve(mockPosts);
-    }
-  });
+  const [, navigate] = useLocation();
+  const [page, setPage] = useState(1);
+  const [category, setCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
-  // 날짜 포맷 함수
-  const formatDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'numeric', 
-      day: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString('ko-KR', options);
-  };
+  // 가상의 게시글 데이터 (실제로는 API로 가져올 것)
+  const mockPosts: InsurancePost[] = Array.from({ length: 20 }).map((_, i) => ({
+    id: i + 1,
+    title: `[보험보장분석] ${i % 3 === 0 ? '축구부상 관련 보험 추천' : i % 3 === 1 ? '유소년 선수 특화 보험' : '코치를 위한 책임보험'}`,
+    content: "보험 상품 추천 및 분석 내용이 담긴 게시글입니다...",
+    author: `축구보험전문가${i % 5 + 1}`,
+    authorId: i % 5 + 1,
+    createdAt: new Date(Date.now() - i * 86400000).toISOString(),
+    views: Math.floor(Math.random() * 100) + 10,
+    likes: Math.floor(Math.random() * 20),
+    commentCount: Math.floor(Math.random() * 10),
+    category: i % 4 === 0 ? "상해보험" : i % 4 === 1 ? "책임보험" : i % 4 === 2 ? "의료보험" : "종합보험",
+  }));
+
+  // 카테고리별 필터링
+  const filteredPosts = mockPosts.filter(post => {
+    if (category === "all") return true;
+    return post.category === category;
+  });
   
-  // 새 글 작성으로 이동
-  const handleNewPost = () => {
-    navigate("/insurance-analysis/write");
+  // 검색 결과 필터링
+  const searchedPosts = isSearching && searchTerm 
+    ? filteredPosts.filter(post => 
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.author.toLowerCase().includes(searchTerm.toLowerCase()))
+    : filteredPosts;
+
+  // 페이지네이션
+  const postsPerPage = 10;
+  const totalPages = Math.ceil(searchedPosts.length / postsPerPage);
+  const paginatedPosts = searchedPosts.slice((page - 1) * postsPerPage, page * postsPerPage);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSearching(true);
+    setPage(1);
   };
-  
-  // 게시물 상세보기로 이동
-  const handleViewPost = (postId: number) => {
-    navigate(`/insurance-analysis/${postId}`);
+
+  const resetSearch = () => {
+    setSearchTerm("");
+    setIsSearching(false);
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-gray-900">보험보장분석</h1>
-        <p className="text-lg text-gray-600">
-          축구와 관련된 다양한 보험 상품 분석 및 보장 내용을 확인하세요
-        </p>
-      </div>
-      
-      {/* 카테고리 탭 */}
-      <div className="mb-6">
-        <Tabs defaultValue="전체" onValueChange={setActiveTab}>
-          <TabsList className="mb-4 w-full overflow-x-auto flex flex-nowrap pb-1" style={{ scrollbarWidth: 'none' }}>
-            <TabsTrigger value="전체">전체</TabsTrigger>
-            {categories.map(category => (
-              <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </div>
-      
-      {/* 글쓰기 버튼 */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">게시물 목록</h2>
-        <Button onClick={handleNewPost}>
-          <PenSquare className="mr-2 h-4 w-4" />
-          새 글 작성
-        </Button>
-      </div>
-      
-      {/* 게시물 목록 */}
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">보험보장분석</h1>
+          <p className="text-gray-600 mt-1">
+            축구 관련 보험 상품의 보장 내용을 분석하고 추천받는 커뮤니티입니다
+          </p>
         </div>
-      ) : posts && posts.length > 0 ? (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[60px] text-center">번호</TableHead>
-                <TableHead className="w-[100px] text-center">카테고리</TableHead>
-                <TableHead>제목</TableHead>
-                <TableHead className="w-[120px] text-center">작성자</TableHead>
-                <TableHead className="w-[120px] text-center">작성일</TableHead>
-                <TableHead className="w-[80px] text-center">조회</TableHead>
-                <TableHead className="w-[80px] text-center">좋아요</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {posts.map((post) => (
-                <TableRow 
-                  key={post.id} 
-                  className="cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleViewPost(post.id)}
-                >
+        <div className="mt-4 md:mt-0">
+          <Button onClick={() => navigate("/insurance-analysis/write")}>
+            글쓰기
+          </Button>
+        </div>
+      </div>
+
+      {/* 필터 및 검색 */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 bg-gray-50 p-4 rounded-lg mb-6">
+        <div className="flex items-center space-x-2">
+          <Filter className="h-5 w-5 text-gray-500" />
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="카테고리 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">전체 카테고리</SelectItem>
+              <SelectItem value="상해보험">상해보험</SelectItem>
+              <SelectItem value="책임보험">책임보험</SelectItem>
+              <SelectItem value="의료보험">의료보험</SelectItem>
+              <SelectItem value="종합보험">종합보험</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <form onSubmit={handleSearch} className="flex w-full md:w-auto">
+          <div className="relative flex-1 md:flex-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="검색어를 입력하세요"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-16 w-full md:w-[300px]"
+            />
+            {isSearching && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-14 top-1/2 transform -translate-y-1/2 h-7 text-xs px-2"
+                onClick={resetSearch}
+              >
+                초기화
+              </Button>
+            )}
+            <Button
+              type="submit"
+              size="sm"
+              className="absolute right-0 top-0 h-full rounded-l-none"
+            >
+              검색
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* 검색 결과 정보 */}
+      {isSearching && (
+        <div className="mb-4 p-3 bg-blue-50 rounded-md">
+          <p className="text-blue-700">
+            <span className="font-semibold">'{searchTerm}'</span>에 대한 검색 결과:
+            <span className="font-semibold ml-1">{searchedPosts.length}개</span>의 게시글을 찾았습니다
+          </p>
+        </div>
+      )}
+
+      {/* 게시글 목록 테이블 */}
+      <Card className="mb-6 border shadow-sm">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[70px] text-center">번호</TableHead>
+              <TableHead className="w-[100px] text-center">카테고리</TableHead>
+              <TableHead>제목</TableHead>
+              <TableHead className="w-[120px] text-center">작성자</TableHead>
+              <TableHead className="w-[120px] text-center">작성일</TableHead>
+              <TableHead className="w-[80px] text-center">조회</TableHead>
+              <TableHead className="w-[80px] text-center">추천</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedPosts.length > 0 ? (
+              paginatedPosts.map((post) => (
+                <TableRow key={post.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/insurance-analysis/${post.id}`)}>
                   <TableCell className="text-center font-medium">{post.id}</TableCell>
                   <TableCell className="text-center">
-                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
                       {post.category}
-                    </span>
+                    </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium text-gray-900 truncate">{post.title}</div>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                    <div className="flex items-center">
+                      <span className="font-medium">{post.title}</span>
                       {post.commentCount > 0 && (
-                        <span className="flex items-center">
-                          <MessageSquare className="h-3 w-3 mr-1" />
-                          {post.commentCount}
-                        </span>
+                        <span className="ml-2 text-sm text-blue-600">[{post.commentCount}]</span>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-center">{post.author}</TableCell>
-                  <TableCell className="text-center text-gray-500">{formatDate(post.createdAt)}</TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center">
+                      <Avatar className="h-6 w-6 mr-2">
+                        <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span>{post.author}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center text-gray-500">
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </TableCell>
                   <TableCell className="text-center text-gray-500">{post.views}</TableCell>
                   <TableCell className="text-center text-gray-500">{post.likes}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} className="h-32 text-center">
+                  게시글이 없습니다
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {/* 페이지네이션 */}
+      <div className="flex justify-center items-center space-x-2 my-8">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        
+        <div className="flex items-center space-x-1">
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            // 페이지 범위 계산
+            let pageNum;
+            if (totalPages <= 5) {
+              pageNum = i + 1;
+            } else if (page <= 3) {
+              pageNum = i + 1;
+            } else if (page >= totalPages - 2) {
+              pageNum = totalPages - 4 + i;
+            } else {
+              pageNum = page - 2 + i;
+            }
+
+            return (
+              <Button
+                key={pageNum}
+                variant={page === pageNum ? "default" : "outline"}
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setPage(pageNum)}
+              >
+                {pageNum}
+              </Button>
+            );
+          })}
+          
+          {totalPages > 5 && page < totalPages - 2 && (
+            <>
+              <span className="px-1">...</span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setPage(totalPages)}
+              >
+                {totalPages}
+              </Button>
+            </>
+          )}
         </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-500">해당 카테고리에 작성된 게시물이 없습니다.</p>
-          <Button onClick={handleNewPost} variant="outline" className="mt-4">
-            첫 번째 게시물 작성하기
-          </Button>
-        </div>
-      )}
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }
 
-// 게시물 작성 컴포넌트
+// 게시글 작성 컴포넌트
 function InsurancePostWrite() {
-  const { toast } = useToast();
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
-  // 폼 설정
   const form = useForm<InsurancePostFormValues>({
     resolver: zodResolver(insurancePostSchema),
     defaultValues: {
       title: "",
       content: "",
-      category: "",
-    }
+      category: "상해보험",
+      imageUrl: "",
+    },
   });
 
-  // 파일 선택 처리
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // 글 작성 처리
   const onSubmit = (data: InsurancePostFormValues) => {
     setIsSubmitting(true);
     
-    // 실제 API 연동 시 여기에 구현
-    // 현재는 임시로 setTimeout으로 처리
+    // 실제로는 API 요청을 보낼 것
+    console.log('게시글 작성 데이터:', data);
+    
+    // 가상의 서버 응답 대기
     setTimeout(() => {
       setIsSubmitting(false);
-      toast({
-        title: "글 작성 완료",
-        description: "보험 분석 글이 성공적으로 등록되었습니다.",
-      });
       navigate("/insurance-analysis");
     }, 1000);
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2 text-gray-900">보험 분석 게시물 작성</h1>
-        <p className="text-gray-600">
-          축구와 관련된 보험 상품에 대한 분석 내용을 작성해주세요
-        </p>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex items-center mb-6">
+        <Button variant="ghost" onClick={() => navigate("/insurance-analysis")}>
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          목록으로
+        </Button>
+        <h1 className="text-2xl font-bold text-gray-900 ml-4">보험보장분석 글쓰기</h1>
       </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>카테고리</FormLabel>
-                  <select
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    {...field}
+
+      <Card>
+        <CardContent className="pt-6">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <Label htmlFor="category" className="md:text-right">카테고리</Label>
+                <div className="md:col-span-3">
+                  <Select
+                    value={form.watch('category')}
+                    onValueChange={(value) => form.setValue('category', value)}
                   >
-                    <option value="">카테고리 선택</option>
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>제목</FormLabel>
-                  <FormControl>
-                    <Input placeholder="보험 분석 제목을 입력하세요" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>내용</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="보험 분석 내용을 상세히 작성해주세요. 보험 상품명, 보장 내용, 장단점 등을 포함하면 더욱 좋습니다." 
-                      className="min-h-[300px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div>
-              <FormLabel htmlFor="image" className="block mb-2">이미지 (선택사항)</FormLabel>
-              <Input
-                id="image"
-                type="file"
-                ref={fileInputRef}
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mb-2"
-              />
-              {selectedImage && (
-                <div className="mt-2 relative">
-                  <img
-                    src={selectedImage}
-                    alt="선택된 이미지"
-                    className="w-full max-h-60 object-cover rounded-md"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute top-2 right-2"
-                    onClick={() => {
-                      setSelectedImage(null);
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = "";
-                      }
-                    }}
-                  >
-                    삭제
-                  </Button>
+                    <SelectTrigger>
+                      <SelectValue placeholder="카테고리 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="상해보험">상해보험</SelectItem>
+                      <SelectItem value="책임보험">책임보험</SelectItem>
+                      <SelectItem value="의료보험">의료보험</SelectItem>
+                      <SelectItem value="종합보험">종합보험</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <Button 
-                type="button" 
-                variant="outline"
-                onClick={() => navigate("/insurance-analysis")}
-                className="flex-1"
-              >
-                취소
-              </Button>
-              <Button 
-                type="submit" 
-                className="flex-1" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    등록 중...
-                  </>
-                ) : (
-                  "게시물 등록"
-                )}
-              </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <Label htmlFor="title" className="md:text-right">제목</Label>
+                <div className="md:col-span-3">
+                  <Input
+                    id="title"
+                    {...form.register('title')}
+                    placeholder="제목을 입력하세요"
+                  />
+                  {form.formState.errors.title && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {form.formState.errors.title.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                <Label htmlFor="content" className="md:text-right pt-2">내용</Label>
+                <div className="md:col-span-3">
+                  <Textarea
+                    id="content"
+                    {...form.register('content')}
+                    placeholder="내용을 입력하세요"
+                    className="min-h-[300px]"
+                  />
+                  {form.formState.errors.content && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {form.formState.errors.content.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                <Label htmlFor="imageUrl" className="md:text-right">이미지 URL</Label>
+                <div className="md:col-span-3">
+                  <Input
+                    id="imageUrl"
+                    {...form.register('imageUrl')}
+                    placeholder="이미지 URL (선택사항)"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/insurance-analysis")}
+                >
+                  취소
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "등록 중..." : "등록하기"}
+                </Button>
+              </div>
             </div>
           </form>
-        </Form>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-// 게시물 상세 컴포넌트
+// 게시글 상세 컴포넌트
 function InsurancePostDetail() {
-  const { toast } = useToast();
-  const [location, navigate] = useLocation();
-  const [, id] = location.match(/\/insurance-analysis\/(\d+)/) || ['', '0'];
-  const postId = parseInt(id);
-  const [isLiked, setIsLiked] = useState(false);
+  const [, navigate] = useLocation();
+  const [, params] = useRoute("/insurance-analysis/:id");
+  const postId = params?.id ? parseInt(params.id) : 0;
+  const [liked, setLiked] = useState(false);
   
   // 댓글 폼
   const commentForm = useForm<CommentFormValues>({
     resolver: zodResolver(commentSchema),
     defaultValues: {
-      content: ""
-    }
+      content: "",
+    },
   });
+
+  // 가상의 게시글 데이터 (실제로는 API로 가져올 것)
+  const [post, setPost] = useState<PostDetail | null>(null);
   
-  // 게시물 상세 불러오기
-  const { data: post, isLoading } = useQuery<PostDetail>({
-    queryKey: ["/api/insurance-posts", postId],
-    queryFn: () => {
-      // 임시 데이터
+  useEffect(() => {
+    // 실제로는 API 요청을 보낼 것
+    setTimeout(() => {
+      // 가상의 게시글 데이터
       const mockPost: PostDetail = {
-        id: 1,
-        title: "자녀 축구 다이렉트 보험 상품 분석",
-        content: "축구를 하는 자녀를 위한 다이렉트 보험 상품에 대한 상세 분석입니다. 이 보험은 경기 중 부상에 대한 보장을 제공하며, 기본적인 의료비 지원부터 심각한 부상에 대한 보상까지 다양한 보장 옵션이 있습니다.\n\n1. A손해보험 - 어린이 스포츠안전보험\n   - 장점: 축구 부상에 특화된 보장, 합리적인 보험료\n   - 단점: 가입 연령 제한, 치아 부상 보장 미흡\n\n2. B생명 - 유소년 스포츠 종합보험\n   - 장점: 폭넓은 보장 범위, 성장판 부상 특별 보장\n   - 단점: 상대적으로 높은 보험료\n\n3. C화재 - 스포츠 안전 플러스\n   - 장점: 경기 중 사고뿐만 아니라 훈련 중 부상도 보장\n   - 단점: 보험금 청구 절차가 복잡함\n\n위 상품들 중에서는 A손해보험의 어린이 스포츠안전보험이 가성비가 가장 좋다고 판단됩니다. 특히 축구 종목에 특화된 보장 내용을 갖추고 있어 추천드립니다.\n\n다만, 자녀의 연령과 축구 활동 빈도에 따라 적합한 상품이 달라질 수 있으니 개별 상담을 받아보시는 것을 권장합니다.",
-        author: "김보험",
+        id: postId,
+        title: "[보험보장분석] 축구부상 관련 보험 추천",
+        content: `
+          # 축구 부상 발생 시 필요한 보험 추천
+          
+          안녕하세요, 축구보험전문가입니다. 오늘은 축구 활동 중 발생할 수 있는 부상에 대비한 보험 상품들을 분석해보겠습니다.
+          
+          ## 1. 스포츠 상해보험
+          
+          스포츠 활동 중 발생하는 부상에 특화된 상해보험 상품입니다. 일반 상해보험과 달리 스포츠 활동 중 부상에 대한 보장이 강화되어 있습니다.
+          
+          ### 주요 보장 내용
+          - 골절, 인대 파열, 탈구 등 운동 중 흔한 부상 보장
+          - 수술비, 입원비, 통원치료비 보장
+          - 특약으로 스포츠용품 손상 보장 추가 가능
+          
+          ### 추천 대상
+          - 주 1회 이상 정기적으로 축구를 하는 일반인
+          - 동호회 활동을 하는 축구 애호가
+          
+          ## 2. 프로선수 특화 보험
+          
+          프로 및 세미프로 선수들을 위한 특화된 보험 상품입니다.
+          
+          ### 주요 보장 내용
+          - 경기 중 부상으로 인한 소득 손실 보장
+          - 영구적 장애 발생 시 일시금 지급
+          - 재활 치료비 특약 가능
+          
+          ### 추천 대상
+          - 프로 및 세미프로 축구 선수
+          - 축구를 통해 수입이 발생하는 코치 및 지도자
+          
+          ## 3. 유소년 선수 보험
+          
+          성장기 유소년 선수들을 위한 특화된 보험 상품입니다.
+          
+          ### 주요 보장 내용
+          - 성장판 손상 등 유소년 특화 부상 보장
+          - 치아 손상 보장 (마우스가드 미착용 시에도)
+          - 학업 중단에 대한 보장 특약 가능
+          
+          ### 추천 대상
+          - 엘리트 축구 교육을 받는 유소년 선수
+          - 학교 대표팀 소속 학생 선수
+          
+          ## 4. 코치 및 지도자 책임보험
+          
+          축구 지도 활동 중 발생할 수 있는 법적 책임을 보장하는 보험입니다.
+          
+          ### 주요 보장 내용
+          - 지도 중 발생한 피지도자 부상에 대한 배상책임
+          - 시설 이용 중 사고에 대한 배상책임
+          - 관리자 배상책임 특약 가능
+          
+          ### 추천 대상
+          - 축구 지도자, 코치
+          - 축구 교실, 클럽 운영자
+          
+          ## 보험 가입 시 주의사항
+          
+          1. **면책 조항 확인**: 음주 후 운동, 무면허 시설 이용 등은 면책될 수 있음
+          2. **보장 범위 확인**: 아마추어/프로 구분, 공식/비공식 경기 구분 등
+          3. **갱신 조건 확인**: 보험료 인상률, 재가입 조건 등
+          
+          궁금한 사항이 있으시면 댓글로 남겨주세요. 개인별 상황에 맞는 상품을 추천해드리겠습니다.
+        `,
+        author: "축구보험전문가1",
         authorId: 1,
-        createdAt: "2025-03-10T12:00:00Z",
-        views: 245,
-        likes: 18,
-        commentCount: 3,
-        category: "유소년보험",
-        imageUrl: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        comments: [
-          {
-            id: 1,
-            postId: 1,
-            content: "정말 유용한 정보 감사합니다. A손해보험 상품에 대해 더 자세한 정보를 알 수 있을까요?",
-            author: "축구맘",
-            authorId: 5,
-            createdAt: "2025-03-10T14:25:00Z",
-            likes: 3
-          },
-          {
-            id: 2,
-            postId: 1,
-            content: "우리 아이도 축구를 시작했는데, 이런 보험이 있는지 몰랐네요. 가입 방법도 알려주시면 감사하겠습니다.",
-            author: "축구아빠",
-            authorId: 6,
-            createdAt: "2025-03-11T09:40:00Z",
-            likes: 2
-          },
-          {
-            id: 3,
-            postId: 1,
-            content: "B생명 상품은 저희 아이가 가입했는데, 작년에 성장판 부상으로 보험금을 받았습니다. 보장이 꽤 괜찮았어요.",
-            author: "경험자",
-            authorId: 7,
-            createdAt: "2025-03-12T16:15:00Z",
-            likes: 5
-          }
-        ]
+        createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+        views: 153,
+        likes: 24,
+        commentCount: 8,
+        category: "상해보험",
+        comments: Array.from({ length: 8 }).map((_, i) => ({
+          id: i + 1,
+          postId,
+          content: i % 3 === 0 
+            ? "유소년 선수 보험 중 가장 추천하는 상품이 있을까요?" 
+            : i % 3 === 1 
+            ? "코치 책임보험은 어떤 보험사 상품이 좋을까요? 비교 분석해주시면 감사하겠습니다."
+            : "좋은 정보 감사합니다. 저는 주 2회 축구를 하는데 스포츠 상해보험에 가입해야겠네요.",
+          author: `축구팬${i + 1}`,
+          authorId: i + 10,
+          createdAt: new Date(Date.now() - i * 10000000).toISOString(),
+          likes: Math.floor(Math.random() * 5),
+        })),
       };
       
-      return Promise.resolve(mockPost);
+      setPost(mockPost);
+    }, 500);
+  }, [postId]);
+
+  const handleLike = () => {
+    if (!liked && post) {
+      setPost({
+        ...post,
+        likes: post.likes + 1
+      });
+      setLiked(true);
     }
-  });
-  
-  // 날짜 포맷 함수
-  const formatDate = (dateString: string): string => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleDateString('ko-KR', options);
   };
-  
-  // 댓글 작성 처리
+
   const handleSubmitComment = (data: CommentFormValues) => {
-    // 임시 댓글 추가 처리
-    toast({
-      title: "댓글 등록 완료",
-      description: "댓글이 성공적으로 등록되었습니다.",
+    if (!post) return;
+    
+    // 실제로는 API 요청을 보낼 것
+    console.log('댓글 작성 데이터:', data);
+    
+    // 가상으로 댓글 추가
+    const newComment: Comment = {
+      id: post.comments.length + 1,
+      postId,
+      content: data.content,
+      author: "현재사용자",
+      authorId: 999,
+      createdAt: new Date().toISOString(),
+      likes: 0,
+    };
+    
+    setPost({
+      ...post,
+      comments: [...post.comments, newComment],
+      commentCount: post.commentCount + 1,
     });
+    
+    // 댓글 폼 초기화
     commentForm.reset();
   };
-  
-  // 좋아요 처리
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    toast({
-      title: isLiked ? "좋아요 취소" : "좋아요",
-      description: isLiked ? "게시물 좋아요가 취소되었습니다." : "게시물에 좋아요를 표시했습니다.",
-    });
-  };
-  
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4 flex justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-      </div>
-    );
-  }
-  
+
   if (!post) {
     return (
-      <div className="container mx-auto py-8 px-4 text-center">
-        <p className="text-gray-500">게시물을 찾을 수 없습니다.</p>
-        <Button 
-          variant="outline" 
-          className="mt-4"
-          onClick={() => navigate("/insurance-analysis")}
-        >
-          게시물 목록으로
-        </Button>
+      <div className="container mx-auto px-4 py-16 max-w-5xl flex justify-center">
+        <div className="animate-pulse space-y-8 w-full">
+          <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+          <div className="h-64 bg-gray-200 rounded w-full"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      {/* 게시물 헤더 */}
-      <div className="mb-4">
-        <Button 
-          variant="ghost" 
-          className="mb-4"
-          onClick={() => navigate("/insurance-analysis")}
-        >
-          ← 목록으로
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="mb-6">
+        <Button variant="ghost" onClick={() => navigate("/insurance-analysis")}>
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          목록으로
         </Button>
       </div>
-      
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        {/* 게시물 제목 영역 */}
-        <div className="p-6 border-b">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                  {post.category}
-                </span>
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{post.title}</h1>
-              <div className="flex items-center text-sm text-gray-500">
-                <span className="font-medium text-gray-700 mr-2">{post.author}</span>
-                <span className="mr-2">•</span>
-                <span>{formatDate(post.createdAt)}</span>
+
+      <Card className="mb-8 overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex items-center mb-1">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 mr-3">
+              {post.category}
+            </Badge>
+            <CardTitle className="text-2xl">{post.title}</CardTitle>
+          </div>
+          
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center">
+              <Avatar className="h-8 w-8 mr-2">
+                <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <span className="font-medium">{post.author}</span>
+                <div className="flex items-center text-sm text-gray-500">
+                  <CalendarDays className="mr-1 h-3 w-3" />
+                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            
+            <div className="flex items-center space-x-4 text-sm text-gray-500">
               <div className="flex items-center">
-                <Eye className="h-4 w-4 mr-1" />
-                {post.views}
+                <Eye className="mr-1 h-4 w-4" />
+                <span>{post.views}</span>
               </div>
               <div className="flex items-center">
-                <MessageSquare className="h-4 w-4 mr-1" />
-                {post.commentCount}
+                <MessageSquare className="mr-1 h-4 w-4" />
+                <span>{post.commentCount}</span>
+              </div>
+              <div className="flex items-center">
+                <ThumbsUp className="mr-1 h-4 w-4" />
+                <span>{post.likes}</span>
               </div>
             </div>
           </div>
-        </div>
+        </CardHeader>
         
-        {/* 게시물 내용 */}
-        <div className="p-6">
+        <Separator />
+        
+        <CardContent className="py-6">
+          <div className="prose max-w-none">
+            {post.content.split('\n').map((paragraph, idx) => {
+              if (paragraph.startsWith('# ')) {
+                return <h1 key={idx} className="text-2xl font-bold mt-6 mb-4">{paragraph.substring(2)}</h1>;
+              } else if (paragraph.startsWith('## ')) {
+                return <h2 key={idx} className="text-xl font-bold mt-5 mb-3">{paragraph.substring(3)}</h2>;
+              } else if (paragraph.startsWith('### ')) {
+                return <h3 key={idx} className="text-lg font-bold mt-4 mb-2">{paragraph.substring(4)}</h3>;
+              } else if (paragraph.startsWith('- ')) {
+                return <li key={idx} className="ml-4">{paragraph.substring(2)}</li>;
+              } else if (paragraph.startsWith('1. ')) {
+                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
+              } else if (paragraph.startsWith('2. ')) {
+                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
+              } else if (paragraph.startsWith('3. ')) {
+                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
+              } else if (paragraph.trim() === '') {
+                return <div key={idx} className="h-4"></div>;
+              } else {
+                return <p key={idx} className="mb-4">{paragraph}</p>;
+              }
+            })}
+          </div>
+
           {post.imageUrl && (
-            <div className="mb-6">
+            <div className="mt-6">
               <img
                 src={post.imageUrl}
-                alt={post.title}
-                className="max-w-full rounded-lg mx-auto"
+                alt="게시글 이미지"
+                className="rounded-md max-h-96 object-contain"
               />
             </div>
           )}
-          
-          <div className="prose max-w-none">
-            {post.content.split('\n').map((paragraph, index) => (
-              <p key={index} className="mb-4">{paragraph}</p>
-            ))}
-          </div>
-        </div>
+        </CardContent>
         
-        {/* 게시물 액션 */}
-        <div className="p-6 border-t border-b bg-gray-50 flex justify-center">
-          <Button 
-            variant={isLiked ? "default" : "outline"}
-            className="w-40"
-            onClick={handleLike}
-          >
-            <ThumbsUp className={`mr-2 h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-            좋아요 {post.likes + (isLiked ? 1 : 0)}
-          </Button>
-        </div>
+        <Separator />
         
-        {/* 댓글 영역 */}
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">댓글 {post.comments.length}개</h3>
-          
-          {/* 댓글 작성 폼 */}
-          <div className="mb-6">
-            <Form {...commentForm}>
-              <form onSubmit={commentForm.handleSubmit(handleSubmitComment)} className="space-y-4">
-                <FormField
-                  control={commentForm.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="댓글을 작성해주세요" 
-                          className="min-h-[100px]"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end">
-                  <Button type="submit">댓글 작성</Button>
-                </div>
-              </form>
-            </Form>
+        <CardFooter className="py-4 flex justify-between">
+          <div className="flex space-x-2">
+            <Button
+              variant={liked ? "default" : "outline"}
+              size="sm"
+              onClick={handleLike}
+              disabled={liked}
+              className={liked ? "bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800" : ""}
+            >
+              <ThumbsUp className="mr-1 h-4 w-4" />
+              추천
+              <span className="ml-1 font-semibold">{post.likes}</span>
+            </Button>
+            <Button variant="outline" size="sm">
+              <Share2 className="mr-1 h-4 w-4" />
+              공유
+            </Button>
           </div>
           
-          {/* 댓글 목록 */}
-          <div className="space-y-4">
-            {post.comments.length > 0 ? (
-              post.comments.map((comment) => (
-                <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <span className="font-medium text-gray-800">{comment.author}</span>
-                      <span className="text-xs text-gray-500 ml-2">{formatDate(comment.createdAt)}</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Edit className="mr-2 h-4 w-4" />
+                <span>수정하기</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-red-600">
+                <Trash className="mr-2 h-4 w-4" />
+                <span>삭제하기</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>신고하기</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardFooter>
+      </Card>
+
+      {/* 댓글 섹션 */}
+      <Card className="mb-8">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center">
+            <MessageSquare className="mr-2 h-5 w-5" />
+            댓글 {post.commentCount}개
+          </CardTitle>
+        </CardHeader>
+        
+        <Separator />
+        
+        <CardContent className="pt-4">
+          {post.comments.length > 0 ? (
+            <ScrollArea className="h-[400px] pr-4">
+              <div className="space-y-4">
+                {post.comments.map((comment) => (
+                  <div key={comment.id} className="py-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-start">
+                        <Avatar className="h-8 w-8 mr-2">
+                          <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center">
+                            <span className="font-medium">{comment.author}</span>
+                            <span className="text-xs text-gray-500 ml-2">
+                              {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-gray-800">{comment.content}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Button variant="ghost" size="sm" className="h-7 px-2">
+                          <ThumbsUp className="h-3 w-3 mr-1" />
+                          <span className="text-xs">{comment.likes}</span>
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-7 px-2">
+                          <MoreVertical className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-8 px-2">
-                      <ThumbsUp className="h-3 w-3 mr-1" />
-                      <span className="text-xs">{comment.likes}</span>
-                    </Button>
+                    
+                    {comment.id !== post.comments.length && (
+                      <Separator className="mt-3" />
+                    )}
                   </div>
-                  <p className="text-gray-700">{comment.content}</p>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-6 text-gray-500">
-                <p>아직 작성된 댓글이 없습니다.</p>
-                <p className="mt-1">첫 번째 댓글을 작성해보세요!</p>
+                ))}
               </div>
+            </ScrollArea>
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+              <p>첫 번째 댓글을 남겨보세요</p>
+            </div>
+          )}
+        </CardContent>
+        
+        <Separator />
+        
+        <CardFooter className="py-4">
+          <form onSubmit={commentForm.handleSubmit(handleSubmitComment)} className="w-full">
+            <div className="flex space-x-3 w-full">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>
+                  <User className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 relative">
+                <Textarea
+                  placeholder="댓글을 입력하세요"
+                  className="resize-none min-h-[80px] pr-12"
+                  {...commentForm.register('content')}
+                />
+                <Button 
+                  size="sm" 
+                  className="absolute bottom-2 right-2"
+                  type="submit"
+                  disabled={!commentForm.watch('content')}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            {commentForm.formState.errors.content && (
+              <p className="text-sm text-red-500 mt-1 ml-11">
+                {commentForm.formState.errors.content.message}
+              </p>
             )}
-          </div>
-        </div>
-      </div>
+          </form>
+        </CardFooter>
+      </Card>
+
+      {/* 관련 게시글 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">관련 게시글</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i}>
+                <Link 
+                  href={`/insurance-analysis/${postId + i + 1}`} 
+                  className="flex items-center py-1 hover:text-blue-600"
+                >
+                  <ChevronRight className="h-4 w-4 mr-1 text-gray-400" />
+                  <span className="text-sm">
+                    [{post.category}] {i % 2 === 0 ? '선수 부상 관련 보험금 청구 방법' : '코치를 위한 맞춤형 보험 상품 비교'}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-// 메인 보험보장분석 컴포넌트
+// 메인 컴포넌트
 export default function InsuranceAnalysis() {
-  const [location] = useLocation();
+  const [match, params] = useRoute("/insurance-analysis/:id");
+  const matchWrite = useRoute("/insurance-analysis/write")[0];
   
-  // 현재 경로에 따라 적절한 컴포넌트 렌더링
-  if (location === "/insurance-analysis/write") {
+  // 게시글 작성 페이지
+  if (matchWrite) {
     return <InsurancePostWrite />;
-  } else if (location.match(/^\/insurance-analysis\/\d+$/)) {
-    return <InsurancePostDetail />;
-  } else {
-    return <InsuranceBoardList />;
   }
+  
+  // 게시글 상세 페이지
+  if (match && params?.id) {
+    return <InsurancePostDetail />;
+  }
+  
+  // 게시글 목록 페이지
+  return <InsuranceBoardList />;
 }

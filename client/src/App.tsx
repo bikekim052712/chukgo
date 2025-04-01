@@ -16,15 +16,15 @@ import LessonRequest from "./pages/LessonRequest";
 import Reviews from "./pages/Reviews";
 import CoachFinder from "./pages/CoachFinder";
 import Running from "./pages/Running";
-import InsuranceAnalysis from "./pages/InsuranceAnalysis";
+import InsuranceAnalysis from "@/pages/InsuranceAnalysis";
 import Layout from "@/components/layout/Layout";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/coaches/search" component={CoachFinder} />
       <Route path="/coaches" component={CoachList} />
-      <Route path="/coach-finder" component={CoachFinder} />
       <Route path="/coaches/:id" component={CoachProfile} />
       <Route path="/lessons" component={LessonList} />
       <Route path="/lessons/:id" component={LessonDetail} />

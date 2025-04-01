@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { PROVINCES, DISTRICTS, SPECIALIZATIONS } from "../lib/constants";
 import { CoachWithUser } from "@/../../shared/schema";
@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { FaStar, FaMapMarkerAlt, FaSearch, FaFilter, FaAward, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 export default function CoachFinder() {
+  const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
@@ -46,6 +47,34 @@ export default function CoachFinder() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
   const [maxResults, setMaxResults] = useState<number>(12);
   const [showMore, setShowMore] = useState<boolean>(false);
+  
+  // URL 쿼리 파라미터 파싱
+  useEffect(() => {
+    try {
+      const parts = location.split('?');
+      if (parts.length > 1) {
+        const params = new URLSearchParams(parts[1]);
+        const provinceParam = params.get('province');
+        const districtParam = params.get('district');
+        
+        if (provinceParam) {
+          setSelectedProvince(provinceParam);
+          
+          // 해당 지역의 구/군 목록 설정
+          if (DISTRICTS[provinceParam]) {
+            setDistrictsForProvince(DISTRICTS[provinceParam]);
+            
+            // 구/군 파라미터가 있으면 설정
+            if (districtParam && DISTRICTS[provinceParam].includes(districtParam)) {
+              setSelectedDistrict(districtParam);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("URL 파라미터 파싱 오류:", error);
+    }
+  }, [location]);
 
   // API에서 코치 목록 불러오기
   const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({
@@ -461,15 +490,15 @@ export default function CoachFinder() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger>레슨 시간과 장소는 어떻게 정하나요?</AccordionTrigger>
+            <AccordionTrigger>레슨을 취소하거나 일정을 변경할 수 있나요?</AccordionTrigger>
             <AccordionContent>
-              코치와 직접 상담 후 상호 협의된 시간과 장소에서 레슨이 진행됩니다. 일부 코치는 자체 훈련장을 보유하고 있으며, 그렇지 않은 경우 지역 내 공용 시설을 이용할 수 있습니다.
+              레슨 시작 24시간 전까지는 무료로 취소 및 일정 변경이 가능합니다. 그 이후에는 코치의 정책에 따라 취소 수수료가 부과될 수 있습니다.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
-            <AccordionTrigger>레슨을 취소하고 싶으면 어떻게 하나요?</AccordionTrigger>
+            <AccordionTrigger>그룹 레슨도 가능한가요?</AccordionTrigger>
             <AccordionContent>
-              레슨 시작 24시간 전까지 취소 시 100% 환불이 가능합니다. 24시간 이내 취소 시에는 코치의 취소 정책에 따라 환불 금액이 결정됩니다.
+              네, 많은 코치들이 그룹 레슨을 제공하고 있습니다. 코치 프로필에서 그룹 레슨 가능 여부와 최대 인원수를 확인할 수 있습니다.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -479,102 +508,105 @@ export default function CoachFinder() {
 }
 
 function CoachCard({ coach }: { coach: CoachWithUser }) {
-  // 코치 경력 텍스트 최대 길이 제한
-  const truncateExperience = (experience: string | undefined, maxLength: number = 80) => {
-    if (!experience) return "경력 정보 없음";
-    return experience.length > maxLength
-      ? `${experience.substring(0, maxLength)}...`
-      : experience;
-  };
-
   return (
-    <Link href={`/coaches/${coach.id}`}>
-      <Card className="h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={coach.user?.profileImage || "https://via.placeholder.com/500x300?text=축고+코치"}
-            alt={coach.user?.fullName || "코치 프로필"}
-            className="w-full h-full object-cover"
-          />
-          {coach.certifications && (
-            <div className="absolute bottom-2 left-2 bg-purple-700 text-white text-xs px-2 py-1 rounded-full">
-              <FaAward className="inline mr-1" />
-              자격증 보유
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <CardHeader className="p-0">
+        <div className="relative h-48 bg-gray-100">
+          {coach.user?.profileImage ? (
+            <img 
+              src={coach.user.profileImage} 
+              alt={coach.user.fullName} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+              <FaUser className="text-gray-400 text-4xl" />
             </div>
           )}
-        </div>
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-xl">{coach.user?.fullName || "코치"}</CardTitle>
-            <div className="flex items-center">
-              <FaStar className="text-yellow-400 mr-1" />
-              <span className="font-medium">{coach.rating || "신규"}</span>
-              {coach.reviewCount ? (
-                <span className="text-gray-400 text-sm ml-1">({coach.reviewCount})</span>
-              ) : null}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+            <div className="flex items-center space-x-1 text-white">
+              <FaStar className="text-yellow-400" />
+              <span className="font-medium">{coach.rating?.toFixed(1) || '신규'}</span>
+              {coach.reviewCount && coach.reviewCount > 0 ? (
+                <span className="text-xs ml-1">({coach.reviewCount}개 리뷰)</span>
+              ) : (
+                <span className="text-xs ml-1">(리뷰 없음)</span>
+              )}
             </div>
           </div>
-          <CardDescription className="flex items-center">
-            <FaMapMarkerAlt className="text-gray-400 mr-1" />
-            {coach.location || "위치 정보 없음"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0 pb-2">
-          <div className="flex flex-wrap gap-1 mb-2">
-            {(coach.specializations || []).slice(0, 3).map((spec: string, index: number) => (
-              <span key={index} className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
-                {spec}
-              </span>
-            ))}
-            {(coach.specializations || []).length > 3 && (
-              <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full">
-                +{(coach.specializations || []).length - 3}
-              </span>
-            )}
+        </div>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-bold truncate">{coach.user?.fullName}</h3>
+            <div className="flex items-center text-sm text-gray-500 mt-1">
+              <FaMapMarkerAlt className="mr-1 text-gray-400" />
+              <span>{coach.location}</span>
+            </div>
           </div>
-          <p className="line-clamp-2 text-sm text-gray-600 h-10">
-            {truncateExperience(coach.experience)}
+          <Badge variant="outline" className="font-normal bg-blue-50">
+            {coach.specializations?.[0] || '일반 코칭'}
+          </Badge>
+        </div>
+        
+        <div className="mt-3">
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {coach.user?.bio?.substring(0, 100) || "축구 코칭 전문가입니다. 자세한 내용은 프로필을 확인해주세요."}
           </p>
-        </CardContent>
-        <CardFooter className="pt-2 border-t">
-          <div className="w-full flex justify-between items-center">
-            <span className="font-bold text-purple-600">
-              {coach.hourlyRate?.toLocaleString() || "가격 정보 없음"}원
-              <span className="text-xs text-gray-500 font-normal"> / 시간</span>
-            </span>
-            <Button size="sm">프로필 보기</Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </Link>
+        </div>
+        
+        <div className="flex flex-wrap gap-1 mt-3">
+          {coach.specializations?.slice(0, 3).map((spec, i) => (
+            <Badge key={i} variant="secondary" className="font-normal text-xs">
+              {spec}
+            </Badge>
+          ))}
+          {(coach.specializations?.length || 0) > 3 && (
+            <Badge variant="secondary" className="font-normal text-xs">
+              +{(coach.specializations?.length || 0) - 3}
+            </Badge>
+          )}
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between items-center border-t pt-4">
+        <div className="text-base font-bold">
+          {coach.hourlyRate?.toLocaleString()}원<span className="text-xs font-normal text-gray-500">/시간</span>
+        </div>
+        <Link to={`/coaches/${coach.id}`}>
+          <Button size="sm">프로필 보기</Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }
 
 function CoachSkeleton() {
   return (
-    <Card className="h-full overflow-hidden">
+    <Card className="overflow-hidden">
       <div className="h-48 bg-gray-200 animate-pulse" />
-      <CardHeader className="pb-2">
-        <div className="flex justify-between">
-          <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse" />
-          <div className="h-6 bg-gray-200 rounded w-1/6 animate-pulse" />
+      <CardContent className="pt-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="h-6 w-24 bg-gray-200 animate-pulse rounded" />
+            <div className="h-4 w-32 bg-gray-200 animate-pulse rounded mt-2" />
+          </div>
+          <div className="h-6 w-16 bg-gray-200 animate-pulse rounded" />
         </div>
-        <div className="h-4 bg-gray-200 rounded w-1/2 mt-2 animate-pulse" />
-      </CardHeader>
-      <CardContent className="pt-0 pb-2">
-        <div className="flex gap-1 mb-2">
-          <div className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
-          <div className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
-          <div className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
+        <div className="h-12 bg-gray-200 animate-pulse rounded mt-3" />
+        <div className="flex gap-1 mt-3">
+          <div className="h-5 w-16 bg-gray-200 animate-pulse rounded" />
+          <div className="h-5 w-16 bg-gray-200 animate-pulse rounded" />
+          <div className="h-5 w-16 bg-gray-200 animate-pulse rounded" />
         </div>
-        <div className="h-10 bg-gray-200 rounded w-full animate-pulse" />
       </CardContent>
-      <CardFooter className="pt-2 border-t">
-        <div className="w-full flex justify-between">
-          <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse" />
-          <div className="h-9 bg-gray-200 rounded w-1/4 animate-pulse" />
-        </div>
+      <CardFooter className="flex justify-between items-center border-t pt-4">
+        <div className="h-6 w-20 bg-gray-200 animate-pulse rounded" />
+        <div className="h-8 w-24 bg-gray-200 animate-pulse rounded" />
       </CardFooter>
     </Card>
   );
 }
+
+// For FaUser icon
+import { FaUser } from "react-icons/fa";
