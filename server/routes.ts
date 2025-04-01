@@ -1,6 +1,5 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
-import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { contactFormSchema, insertBookingSchema, insertUserSchema } from "@shared/schema";
 import { ZodError } from "zod";
@@ -281,56 +280,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-  
-  // 웹소켓 서버 설정 (Vite의 HMR 웹소켓과 충돌을 피하기 위해 경로 지정)
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  // 클라이언트 연결 처리
-  wss.on('connection', (ws) => {
-    console.log('WebSocket 클라이언트가 연결되었습니다.');
-    
-    // 클라이언트에게 연결 확인 메시지 전송
-    ws.send(JSON.stringify({ type: 'connection', message: '축고 웹소켓 서버에 연결되었습니다.' }));
-    
-    // 메시지 수신 처리
-    ws.on('message', (message) => {
-      try {
-        const data = JSON.parse(message.toString());
-        console.log('메시지 수신:', data);
-        
-        // 메시지 타입에 따른 처리
-        switch(data.type) {
-          case 'ping':
-            ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
-            break;
-          case 'chat':
-            // 다른 모든 클라이언트에게 메시지 브로드캐스트
-            wss.clients.forEach(client => {
-              if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ 
-                  type: 'chat', 
-                  userId: data.userId,
-                  username: data.username,
-                  message: data.message,
-                  timestamp: new Date().toISOString()
-                }));
-              }
-            });
-            break;
-          default:
-            ws.send(JSON.stringify({ type: 'error', message: '지원하지 않는 메시지 타입입니다.' }));
-        }
-      } catch (error) {
-        console.error('WebSocket 메시지 처리 오류:', error);
-        ws.send(JSON.stringify({ type: 'error', message: '메시지 형식이 올바르지 않습니다.' }));
-      }
-    });
-    
-    // 연결 종료 처리
-    ws.on('close', () => {
-      console.log('WebSocket 클라이언트 연결이 종료되었습니다.');
-    });
-  });
   
   return httpServer;
 }

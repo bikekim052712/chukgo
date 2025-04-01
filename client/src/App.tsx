@@ -46,7 +46,6 @@ function Router() {
       <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis/:id" component={InsuranceAnalysis} />
       <Route path="/insurance-analysis" component={InsuranceAnalysis} />
-      <Route path="/chat" component={ChatPage} />
       <Route path="/private-lesson" component={NotFound} />
       <Route path="/group-lesson" component={NotFound} />
       <Route path="/goalkeeper-lesson" component={NotFound} />
