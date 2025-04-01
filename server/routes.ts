@@ -8,7 +8,7 @@ import { setupAuth } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up auth with session and passport
-  setupAuth(app);
+  const { requireAuth, requireCoach } = setupAuth(app);
   // Get all lesson types
   app.get('/api/lesson-types', async (req: Request, res: Response) => {
     try {
@@ -128,8 +128,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Create a booking
-  app.post('/api/bookings', async (req: Request, res: Response) => {
+  // Create a booking (로그인 필요)
+  app.post('/api/bookings', requireAuth, async (req: Request, res: Response) => {
     try {
       const bookingData = insertBookingSchema.parse(req.body);
       const booking = await storage.createBooking(bookingData);
