@@ -119,10 +119,10 @@ export default function CoachFinder() {
     }
 
     // 지역 필터링
-    if (selectedProvince) {
+    if (selectedProvince && selectedProvince !== "all_regions") {
       result = result.filter(coach => {
         const location = coach.location || "";
-        return selectedDistrict
+        return selectedDistrict && selectedDistrict !== "all_districts"
           ? location.includes(selectedProvince) && location.includes(selectedDistrict)
           : location.includes(selectedProvince);
       });
@@ -259,7 +259,7 @@ export default function CoachFinder() {
                     <SelectValue placeholder="지역 선택" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="_all">전체 지역</SelectItem>
+                    <SelectItem value="all_regions">전체 지역</SelectItem>
                     {PROVINCES.map(province => (
                       <SelectItem key={province} value={province}>
                         {province}
@@ -278,7 +278,7 @@ export default function CoachFinder() {
                         <SelectValue placeholder="세부 지역 선택" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="_all">전체 {selectedProvince}</SelectItem>
+                        <SelectItem value="all_districts">전체 {selectedProvince}</SelectItem>
                         {districtsForProvince.map(district => (
                           <SelectItem key={district} value={district}>
                             {district}
