@@ -15,7 +15,8 @@ import Reviews from "./pages/Reviews";
 import CoachFinder from "./pages/CoachFinder";
 import Running from "./pages/Running";
 import InsuranceAnalysis from "@/pages/InsuranceAnalysis";
-import AuthPage from "@/pages/auth-page";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import Layout from "@/components/layout/Layout";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -31,13 +32,14 @@ function Router() {
       <Route path="/lessons/:id" component={LessonDetail} />
       
       {/* 인증이 필요한 경로 */}
-      <ProtectedRoute path="/lesson-request" component={LessonRequest} />
-      <ProtectedRoute path="/reviews" component={Reviews} />
+      <Route path="/lesson-request" component={LessonRequest} />
+      <Route path="/reviews" component={Reviews} />
       <ProtectedRoute path="/booking/:lessonId" component={Booking} />
-      <ProtectedRoute path="/coach-signup" component={CoachSignup} />
+      <Route path="/coach-signup" component={CoachSignup} />
       
       {/* 인증 페이지 */}
-      <Route path="/auth" component={AuthPage} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
       
       <Route path="/running" component={Running} />
       <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />

@@ -19,8 +19,8 @@ export default function Header() {
   // 네비게이션 아이템
   const navItems = [
     { name: "홈", href: "/" },
-    { name: "코치 찾기", href: "/coaches/search" },
-    { name: "레슨 신청", href: "/lesson-request" },
+    { name: "코치 찾기", href: "/coaches" },
+    { name: "레슨 신청", href: "/lessons" },
     { name: "레슨 후기", href: "/reviews" },
     { name: "보험보장분석", href: "/insurance-analysis" },
     { name: "커뮤니티", href: "https://cafe.naver.com/forland", external: true },
@@ -76,9 +76,9 @@ export default function Header() {
           {/* 데스크톱 로그인/회원가입/코치가입 버튼 */}
           <div className="hidden md:flex items-center space-x-3">
             <div className="text-sm font-medium">
-              <Link href="/auth" className="text-gray-700 hover:text-[#5D3FD3]">로그인</Link>
+              <Link href="/login" className="text-gray-700 hover:text-[#5D3FD3]">로그인</Link>
               <span className="mx-1 text-gray-400">/</span>
-              <Link href="/auth" className="text-gray-700 hover:text-[#5D3FD3]">회원가입</Link>
+              <Link href="/signup" className="text-gray-700 hover:text-[#5D3FD3]">회원가입</Link>
             </div>
             <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
               <Link href="/coach-signup">코치가입</Link>
@@ -133,7 +133,7 @@ export default function Header() {
               <div className="pt-3 border-t border-gray-100 mt-2 flex flex-col space-y-2">
                 <div className="py-2 text-sm font-medium text-gray-700">
                   <Link 
-                    href="/auth" 
+                    href="/login" 
                     className="text-gray-700 hover:text-[#5D3FD3]"
                     onClick={closeMobileMenu}
                   >
@@ -141,7 +141,7 @@ export default function Header() {
                   </Link>
                   <span className="mx-1 text-gray-400">/</span>
                   <Link 
-                    href="/auth" 
+                    href="/signup" 
                     className="text-gray-700 hover:text-[#5D3FD3]"
                     onClick={closeMobileMenu}
                   >
