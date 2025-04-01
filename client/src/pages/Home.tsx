@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-purple-50">
         <RegionalCoachFinder />
       </div>
       <Categories />
