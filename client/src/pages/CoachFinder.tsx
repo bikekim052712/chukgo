@@ -51,23 +51,21 @@ export default function CoachFinder() {
   // URL 쿼리 파라미터 파싱
   useEffect(() => {
     try {
-      const parts = location.split('?');
-      if (parts.length > 1) {
-        const params = new URLSearchParams(parts[1]);
-        const provinceParam = params.get('province');
-        const districtParam = params.get('district');
+      // URL에서 쿼리 파라미터 추출
+      const url = new URL(window.location.href);
+      const provinceParam = url.searchParams.get('province');
+      const districtParam = url.searchParams.get('district');
+      
+      if (provinceParam) {
+        setSelectedProvince(provinceParam);
         
-        if (provinceParam) {
-          setSelectedProvince(provinceParam);
+        // 해당 지역의 구/군 목록 설정
+        if (DISTRICTS[provinceParam]) {
+          setDistrictsForProvince(DISTRICTS[provinceParam]);
           
-          // 해당 지역의 구/군 목록 설정
-          if (DISTRICTS[provinceParam]) {
-            setDistrictsForProvince(DISTRICTS[provinceParam]);
-            
-            // 구/군 파라미터가 있으면 설정
-            if (districtParam && DISTRICTS[provinceParam].includes(districtParam)) {
-              setSelectedDistrict(districtParam);
-            }
+          // 구/군 파라미터가 있으면 설정
+          if (districtParam && DISTRICTS[provinceParam].includes(districtParam)) {
+            setSelectedDistrict(districtParam);
           }
         }
       }
@@ -261,7 +259,7 @@ export default function CoachFinder() {
                     <SelectValue placeholder="지역 선택" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">전체 지역</SelectItem>
+                    <SelectItem value="_all">전체 지역</SelectItem>
                     {PROVINCES.map(province => (
                       <SelectItem key={province} value={province}>
                         {province}
@@ -280,7 +278,7 @@ export default function CoachFinder() {
                         <SelectValue placeholder="세부 지역 선택" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">전체 {selectedProvince}</SelectItem>
+                        <SelectItem value="_all">전체 {selectedProvince}</SelectItem>
                         {districtsForProvince.map(district => (
                           <SelectItem key={district} value={district}>
                             {district}
