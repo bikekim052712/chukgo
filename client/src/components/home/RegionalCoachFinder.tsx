@@ -36,13 +36,8 @@ export default function RegionalCoachFinder() {
   return (
     <div className="relative w-full max-w-5xl mx-auto bg-[#5D3FD3] rounded-lg overflow-hidden">
       <Card className="bg-white w-full mx-auto overflow-hidden border-0">
-        <CardContent className="p-6">
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-1">전국 지역별 축구 코치 찾기</h2>
-            <p className="text-gray-600">광역시/도를 선택하고 해당 지역의 코치를 찾아보세요</p>
-          </div>
-
-          <div className="mb-4">
+        <CardContent className="p-4">
+          <div>
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="h-4 w-4 text-gray-500" />
               <span className="text-gray-700">지역을 선택해주세요</span>
