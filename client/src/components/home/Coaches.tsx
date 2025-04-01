@@ -22,7 +22,7 @@ export default function Coaches() {
               </p>
             </div>
             <Link 
-              href="/coaches" 
+              href="/coaches/search" 
               className="flex items-center text-[#5D3FD3] font-medium text-sm mt-4 md:mt-0"
             >
               모든 코치 보기
