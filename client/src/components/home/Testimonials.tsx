@@ -104,13 +104,6 @@ export default function Testimonials() {
                 </div>
               ))}
             </div>
-            <div className="auto-slide-content auto-slide-clone">
-              {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
-                <div key={`clone-${testimonial.id}-${index}`}>
-                  <TestimonialCard testimonial={testimonial} />
-                </div>
-              ))}
-            </div>
           </div>
           
           {/* 통계 지표 */}
