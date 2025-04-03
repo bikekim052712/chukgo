@@ -70,66 +70,95 @@ export default function Hero() {
           </div>
           
           {/* 지역 선택 영역 */}
-          <Card className="bg-white/95 backdrop-blur-sm w-full max-w-3xl mx-auto overflow-hidden border-0 shadow-lg mt-8 mb-6">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                <div className="flex-1">
-                  <div className="mb-1">
-                    <span className="text-gray-700 font-medium flex items-center text-sm">
-                      <MapPin className="h-4 w-4 mr-1 text-purple-600" />지역 선택
+          <Card className="bg-white/95 backdrop-blur-sm w-full max-w-4xl mx-auto overflow-hidden border-0 shadow-xl mt-8 mb-6 bg-gradient-to-br from-white to-purple-50">
+            <CardContent className="p-5 md:p-7">
+              <div className="mb-3 text-center">
+                <h3 className="text-lg md:text-xl font-bold text-[#5D3FD3]">지역별 축구 코치 찾기</h3>
+                <p className="text-sm text-gray-600">원하는 지역을 선택하고 가장 가까운 축구 코치를 찾아보세요</p>
+              </div>
+
+              <div className="relative p-4 bg-white rounded-lg shadow-inner border border-purple-100 mb-4">
+                <div className="mb-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700 font-medium flex items-center">
+                      <MapPin className="h-4 w-4 mr-1 text-purple-600" />광역시/도
                     </span>
+                    {selectedProvince && (
+                      <Button 
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800"
+                        onClick={() => setSelectedProvince(null)}
+                      >
+                        초기화
+                      </Button>
+                    )}
                   </div>
                   
-                  <div className="flex flex-wrap gap-1">
-                    <div className="relative flex-1 min-w-full md:min-w-0">
-                      <div className="flex flex-wrap gap-1 p-2 bg-gray-50 rounded-md h-16 md:h-10 overflow-y-auto">
-                        {PROVINCES.map((province) => (
-                          <Button
-                            key={province}
-                            variant={selectedProvince === province ? "default" : "outline"}
-                            className={`text-xs h-7 px-2 ${
-                              selectedProvince === province
-                              ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
-                              : "bg-white text-gray-700 hover:bg-gray-100"
-                            }`}
-                            onClick={() => setSelectedProvince(province)}
-                          >
-                            {province.length > 5 ? province.substring(0, 5) : province}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {showDistrictSelector && (
-                      <div className="relative flex-1 min-w-full md:min-w-0">
-                        <div className="flex flex-wrap gap-1 p-2 bg-gray-50 rounded-md h-16 md:h-10 overflow-y-auto">
-                          {districtList.map((district) => (
-                            <Button
-                              key={district}
-                              variant={selectedDistrict === district ? "default" : "outline"}
-                              className={`text-xs h-7 px-2 ${
-                                selectedDistrict === district
-                                ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
-                                : "bg-white text-gray-700 hover:bg-gray-100"
-                              }`}
-                              onClick={() => setSelectedDistrict(district)}
-                            >
-                              {district}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                  <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 mt-2">
+                    {PROVINCES.map((province) => (
+                      <Button
+                        key={province}
+                        variant={selectedProvince === province ? "default" : "outline"}
+                        className={`text-xs sm:text-sm h-9 px-1 ${
+                          selectedProvince === province
+                          ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
+                          : "bg-white text-gray-700 hover:bg-gray-100"
+                        } transition-all duration-200 shadow-sm hover:shadow`}
+                        onClick={() => setSelectedProvince(province)}
+                      >
+                        {province.length > 5 ? province.substring(0, 5) : province}
+                      </Button>
+                    ))}
                   </div>
                 </div>
                 
-                <Button 
-                  className="bg-[#5D3FD3] hover:bg-[#4A00E0] h-10 whitespace-nowrap"
-                  onClick={handleFindCoach}
-                >
-                  코치 찾기
-                </Button>
+                {showDistrictSelector && (
+                  <div className="mt-5 pt-4 border-t border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gray-700 font-medium flex items-center">
+                        <MapPin className="h-4 w-4 mr-1 text-purple-600" />{selectedProvince} 내 지역
+                      </span>
+                      {selectedDistrict && (
+                        <Button 
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800"
+                          onClick={() => setSelectedDistrict(null)}
+                        >
+                          초기화
+                        </Button>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
+                      {districtList.map((district) => (
+                        <Button
+                          key={district}
+                          variant={selectedDistrict === district ? "default" : "outline"}
+                          className={`text-xs sm:text-sm h-9 px-1 ${
+                            selectedDistrict === district
+                            ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-100"
+                          } transition-all duration-200 shadow-sm hover:shadow`}
+                          onClick={() => setSelectedDistrict(district)}
+                        >
+                          {district}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+
+              <Button 
+                className="w-full bg-[#5D3FD3] hover:bg-[#4A00E0] h-12 text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                onClick={handleFindCoach}
+              >
+                {selectedProvince 
+                  ? `${selectedProvince}${selectedDistrict ? ` ${selectedDistrict}` : ''}의 코치 찾기` 
+                  : '모든 지역 코치 찾기'}
+              </Button>
             </CardContent>
           </Card>
           
