@@ -147,15 +147,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     
     // Full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} className="h-3 w-3 fill-yellow-400 text-yellow-400" />);
+      stars.push(<StarIcon key={`full-${i}`} className="h-1.5 w-1.5 fill-yellow-400 text-yellow-400" />);
     }
     
     // Half star if needed
     if (hasHalfStar) {
       stars.push(
         <div key="half" className="relative">
-          <StarIcon className="h-3 w-3 text-yellow-400" />
-          <StarIcon className="absolute top-0 left-0 h-3 w-3 fill-yellow-400 text-yellow-400 w-1/2 overflow-hidden" />
+          <StarIcon className="h-1.5 w-1.5 text-yellow-400" />
+          <StarIcon className="absolute top-0 left-0 h-1.5 w-1.5 fill-yellow-400 text-yellow-400 w-1/2 overflow-hidden" />
         </div>
       );
     }
@@ -163,7 +163,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     // Empty stars to make 5 total
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarIcon key={`empty-${i}`} className="h-3 w-3 text-gray-300" />);
+      stars.push(<StarIcon key={`empty-${i}`} className="h-1.5 w-1.5 text-gray-300" />);
     }
     
     return stars;

@@ -523,7 +523,7 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
           )}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
             <div className="flex items-center space-x-1 text-white">
-              <FaStar className="text-yellow-400 w-2.5 h-2.5" />
+              <FaStar className="text-yellow-400 w-1.5 h-1.5" />
               <span className="font-medium">{coach.rating?.toFixed(1) || '신규'}</span>
               {coach.reviewCount && coach.reviewCount > 0 ? (
                 <span className="text-xs ml-1">({coach.reviewCount}개 리뷰)</span>
