@@ -48,22 +48,13 @@ export default function Lessons() {
                 ))}
               </div>
             ) : lessons && lessons.length > 0 ? (
-              <>
-                <div className="auto-slide-content">
-                  {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
-                    <div key={`${lesson.id}-${index}`}>
-                      <LessonCard lesson={lesson} />
-                    </div>
-                  ))}
-                </div>
-                <div className="auto-slide-content auto-slide-clone">
-                  {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
-                    <div key={`clone-${lesson.id}-${index}`}>
-                      <LessonCard lesson={lesson} />
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="auto-slide-content">
+                {[...lessons, ...lessons, ...lessons].map((lesson, index) => (
+                  <div key={`${lesson.id}-${index}`}>
+                    <LessonCard lesson={lesson} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="text-center py-8 w-full">
                 <p className="text-gray-500">등록된 레슨이 없습니다.</p>

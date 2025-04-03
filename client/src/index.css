@@ -93,14 +93,8 @@
     animation-play-state: paused;
   }
   
-  /* 클론 컨테이너 (무한 스크롤 효과) */
-  .auto-slide-clone {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  /* 클론 컨테이너 내부 요소도 동일하게 설정 */
-  .auto-slide-clone > * {
+  /* 무한 스크롤을 위한 복제 요소 여러개 사용 */
+  .auto-slide-content > * {
     flex: 0 0 auto;
     width: 320px;
     padding: 0 1rem;

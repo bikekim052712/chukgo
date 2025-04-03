@@ -40,22 +40,13 @@ export default function Coaches() {
                 ))}
               </div>
             ) : coaches && coaches.length > 0 ? (
-              <>
-                <div className="auto-slide-content">
-                  {[...coaches, ...coaches, ...coaches].map((coach, index) => (
-                    <div key={`${coach.id}-${index}`}>
-                      <CoachCard coach={coach} />
-                    </div>
-                  ))}
-                </div>
-                <div className="auto-slide-content auto-slide-clone">
-                  {[...coaches, ...coaches, ...coaches].map((coach, index) => (
-                    <div key={`clone-${coach.id}-${index}`}>
-                      <CoachCard coach={coach} />
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="auto-slide-content">
+                {[...coaches, ...coaches, ...coaches].map((coach, index) => (
+                  <div key={`${coach.id}-${index}`}>
+                    <CoachCard coach={coach} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="text-center py-8 w-full">
                 <p className="text-gray-500">등록된 코치가 없습니다.</p>
