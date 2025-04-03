@@ -44,8 +44,8 @@ export default function Hero() {
                backgroundImage: "url('https://images.pexels.com/photos/8985402/pexels-photo-8985402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750')" 
              }}>
       {/* 오버레이 */}
-      <div className="absolute inset-0 bg-black/50"></div>
-      <div className="absolute inset-0 bg-gradient-to-r from-[#5D3FD3]/90 to-[#7C66DC]/80"></div>
+      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#3B82F6]/80 to-[#60A5FA]/70"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
@@ -54,40 +54,40 @@ export default function Hero() {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight text-white drop-shadow-lg tracking-tight">
               <span className="relative inline-block">
                 <span className="relative z-10 text-white font-extrabold text-shadow-lg">축고</span>
-                <span className="absolute -inset-1 bg-[#5D3FD3] opacity-50 rounded blur-sm"></span>
+                <span className="absolute -inset-1 bg-[#2563EB] opacity-50 rounded blur-sm"></span>
               </span>에서 찾는 
               <span className="relative inline-block ml-1">
                 <span className="relative z-10 text-white font-extrabold text-shadow-lg">축구 레슨 코치</span>
-                <span className="absolute -inset-1 bg-[#7C66DC] opacity-50 rounded blur-sm"></span>
+                <span className="absolute -inset-1 bg-[#3B82F6] opacity-50 rounded blur-sm"></span>
               </span>
             </h1>
-            <h2 className="text-xl md:text-2xl font-semibold text-white mb-4 drop-shadow-lg tracking-wide inline-block bg-black/30 px-4 py-1 rounded">
+            <h2 className="text-xl md:text-2xl font-semibold text-white mb-4 drop-shadow-lg tracking-wide inline-block bg-black/20 px-4 py-1 rounded">
               한국 최대 유소년 축구 플랫폼
             </h2>
-            <p className="text-white text-lg max-w-3xl mx-auto drop-shadow-md bg-black/20 px-6 py-2 rounded-lg inline-block">
+            <p className="text-white text-lg max-w-3xl mx-auto drop-shadow-md bg-blue-900/30 px-6 py-2 rounded-lg inline-block">
               검증된 축구 코치와 함께 맞춤형 레슨으로 더 빠른 실력 향상을 경험하세요. 
             </p>
           </div>
           
           {/* 지역 선택 영역 */}
-          <Card className="bg-white/95 backdrop-blur-sm w-full max-w-4xl mx-auto overflow-hidden border-0 shadow-xl mt-8 mb-6 bg-gradient-to-br from-white to-purple-50">
+          <Card className="bg-white/95 backdrop-blur-sm w-full max-w-4xl mx-auto overflow-hidden border-0 shadow-xl mt-8 mb-6 bg-gradient-to-br from-white to-blue-50">
             <CardContent className="p-5 md:p-7">
               <div className="mb-3 text-center">
-                <h3 className="text-lg md:text-xl font-bold text-[#5D3FD3]">지역별 축구 코치 찾기</h3>
+                <h3 className="text-lg md:text-xl font-bold text-blue-600">지역별 축구 코치 찾기</h3>
                 <p className="text-sm text-gray-600">원하는 지역을 선택하고 가장 가까운 축구 코치를 찾아보세요</p>
               </div>
 
-              <div className="relative p-4 bg-white rounded-lg shadow-inner border border-purple-100 mb-4">
+              <div className="relative p-4 bg-white rounded-lg shadow-inner border border-blue-100 mb-4">
                 <div className="mb-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-700 font-medium flex items-center">
-                      <MapPin className="h-4 w-4 mr-1 text-purple-600" />광역시/도
+                      <MapPin className="h-4 w-4 mr-1 text-blue-600" />광역시/도
                     </span>
                     {selectedProvince && (
                       <Button 
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800"
+                        className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800"
                         onClick={() => setSelectedProvince(null)}
                       >
                         초기화
@@ -102,7 +102,7 @@ export default function Hero() {
                         variant={selectedProvince === province ? "default" : "outline"}
                         className={`text-xs sm:text-sm h-9 px-1 ${
                           selectedProvince === province
-                          ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
+                          ? "bg-blue-600 hover:bg-blue-700 text-white"
                           : "bg-white text-gray-700 hover:bg-gray-100"
                         } transition-all duration-200 shadow-sm hover:shadow`}
                         onClick={() => setSelectedProvince(province)}
@@ -117,13 +117,13 @@ export default function Hero() {
                   <div className="mt-5 pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-gray-700 font-medium flex items-center">
-                        <MapPin className="h-4 w-4 mr-1 text-purple-600" />{selectedProvince} 내 지역
+                        <MapPin className="h-4 w-4 mr-1 text-blue-600" />{selectedProvince} 내 지역
                       </span>
                       {selectedDistrict && (
                         <Button 
                           variant="ghost"
                           size="sm"
-                          className="h-6 px-2 text-xs text-purple-600 hover:text-purple-800"
+                          className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800"
                           onClick={() => setSelectedDistrict(null)}
                         >
                           초기화
@@ -138,7 +138,7 @@ export default function Hero() {
                           variant={selectedDistrict === district ? "default" : "outline"}
                           className={`text-xs sm:text-sm h-9 px-1 ${
                             selectedDistrict === district
-                            ? "bg-[#5D3FD3] hover:bg-[#4A00E0] text-white"
+                            ? "bg-blue-600 hover:bg-blue-700 text-white"
                             : "bg-white text-gray-700 hover:bg-gray-100"
                           } transition-all duration-200 shadow-sm hover:shadow`}
                           onClick={() => setSelectedDistrict(district)}
@@ -152,7 +152,7 @@ export default function Hero() {
               </div>
 
               <Button 
-                className="w-full bg-[#5D3FD3] hover:bg-[#4A00E0] h-12 text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg"
+                className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base font-medium transition-all duration-300 shadow-md hover:shadow-lg"
                 onClick={handleFindCoach}
               >
                 {selectedProvince 
@@ -166,7 +166,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
             <Button 
               size="lg" 
-              className="bg-white text-[#5D3FD3] hover:bg-gray-100 font-bold text-base shadow-lg px-8 py-6"
+              className="bg-white text-blue-600 hover:bg-gray-100 font-bold text-base shadow-lg px-8 py-6"
               asChild
             >
               <Link href="/coaches/search">
