@@ -318,7 +318,7 @@ export default function CoachFinder() {
                       className="flex items-center"
                       onClick={() => setMinRating(rating)}
                     >
-                      <FaStar className={minRating >= rating ? "text-yellow-300" : "text-gray-300"} />
+                      <FaStar className={minRating >= rating ? "text-yellow-300 w-2 h-2" : "text-gray-300 w-2 h-2"} />
                       <span className="ml-1">{rating}+</span>
                     </Button>
                   ))}
