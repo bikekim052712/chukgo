@@ -291,10 +291,10 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-bold">{coach.user.fullName} 코치</h3>
           <div className="flex items-center">
-            <div className="flex items-center bg-blue-50 px-2 py-1 rounded">
-              <span className="font-medium text-blue-700 text-xs">{rating}</span>
-              <div className="w-10 h-1 ml-1 rounded-full overflow-hidden bg-gray-200">
-                <div className="bg-blue-500 h-full" style={{width: `${(parseFloat(rating) / 5) * 100}%`}}></div>
+            <div className="flex items-center bg-blue-600 px-2 py-1 rounded">
+              <span className="font-medium text-white text-xs">{rating}</span>
+              <div className="w-10 h-1 ml-1 rounded-full overflow-hidden bg-blue-800">
+                <div className="bg-white h-full" style={{width: `${(parseFloat(rating) / 5) * 100}%`}}></div>
               </div>
             </div>
             <span className="text-neutral-500 text-xs ml-1">({coach.reviewCount || 0})</span>

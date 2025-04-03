@@ -315,15 +315,15 @@ export default function CoachFinder() {
                       key={rating}
                       className={`flex flex-col items-center p-1 rounded ${
                         minRating >= rating 
-                          ? "bg-blue-100 text-blue-700 border border-blue-300" 
-                          : "bg-gray-100 text-gray-600 border border-gray-200"
+                          ? "bg-blue-600 text-white border border-blue-700" 
+                          : "bg-gray-200 text-gray-600 border border-gray-300"
                       }`}
                       onClick={() => setMinRating(rating)}
                     >
                       <span className="text-xs font-bold">{rating}+</span>
                       <div className="w-full h-1 mt-1 rounded-full overflow-hidden bg-gray-200">
                         <div 
-                          className={minRating >= rating ? "bg-blue-500 h-full" : "bg-gray-300 h-full"} 
+                          className={minRating >= rating ? "bg-white h-full" : "bg-gray-300 h-full"} 
                           style={{width: `${rating * 20}%`}}
                         ></div>
                       </div>
@@ -530,11 +530,11 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
           )}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
             <div className="flex items-center space-x-1 text-white">
-              <div className="flex items-center bg-black bg-opacity-50 px-2 py-1 rounded">
-                <span className="font-medium text-xs">{coach.rating?.toFixed(1) || '신규'}</span>
+              <div className="flex items-center bg-blue-600 px-2 py-1 rounded">
+                <span className="font-medium text-xs text-white">{coach.rating?.toFixed(1) || '신규'}</span>
                 {coach.rating ? (
-                  <div className="w-10 h-1 ml-1 rounded-full overflow-hidden bg-gray-700">
-                    <div className="bg-blue-400 h-full" style={{width: `${(coach.rating / 5) * 100}%`}}></div>
+                  <div className="w-10 h-1 ml-1 rounded-full overflow-hidden bg-blue-800">
+                    <div className="bg-white h-full" style={{width: `${(coach.rating / 5) * 100}%`}}></div>
                   </div>
                 ) : null}
               </div>
