@@ -64,7 +64,7 @@ export default function CoachProfile() {
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">{coach.user.fullName} 코치</h1>
                 <div className="flex items-center text-[#F9A826]">
-                  <Star className="h-5 w-5 fill-current" />
+                  <Star className="h-3.5 w-3.5 fill-current" />
                   <span className="ml-1 font-medium">{rating}</span>
                   <span className="text-neutral-500 text-sm ml-1">({coach.reviewCount || 0})</span>
                 </div>

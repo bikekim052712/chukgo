@@ -291,7 +291,7 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-bold">{coach.user.fullName} 코치</h3>
           <div className="flex items-center text-[#F9A826]">
-            <Star className="h-4 w-4 fill-current" />
+            <Star className="h-3 w-3 fill-current" />
             <span className="ml-1 font-medium">{rating}</span>
             <span className="text-neutral-500 text-sm ml-1">({coach.reviewCount || 0})</span>
           </div>
