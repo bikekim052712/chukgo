@@ -83,7 +83,7 @@ export default function Categories() {
                 목표와 수준에 맞는 최적의 레슨 방식을 선택하세요
               </p>
             </div>
-            <Link href="/lessons" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
+            <Link href="/lesson-types" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
               모든 레슨 유형 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>
