@@ -20,7 +20,6 @@ export default function Header() {
   const navItems = [
     { name: "홈", href: "/" },
     { name: "코치 찾기", href: "/coaches/search" },
-    { name: "레슨 유형", href: "/lesson-types" },
     { name: "레슨 신청", href: "/lesson-request" },
     { name: "레슨 후기", href: "/reviews" },
     { name: "보험보장분석", href: "/insurance-analysis" },

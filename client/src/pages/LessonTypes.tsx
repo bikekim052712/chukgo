@@ -176,7 +176,7 @@ function LessonTypeCard({ lessonType }: { lessonType: LessonType }) {
               {getIcon(lessonType.name)}
             </div>
           </div>
-          <Link href={`/lessons/search?type=${lessonType.id}`}>
+          <Link href={`/lessons?lessonTypeId=${lessonType.id}`}>
             <Button className="bg-[#5D3FD3] hover:bg-[#4C2CB3]">
               레슨 보기
               <ChevronRight className="ml-1 h-4 w-4" />
