@@ -140,15 +140,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     
     // Full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} className="h-1.5 w-1.5 fill-yellow-400 text-yellow-400" />);
+      stars.push(<StarIcon key={`full-${i}`} className="h-2 w-2 fill-yellow-400 text-yellow-400" />);
     }
     
     // Half star if needed
     if (hasHalfStar) {
       stars.push(
         <div key="half" className="relative">
-          <StarIcon className="h-1.5 w-1.5 text-yellow-400" />
-          <StarIcon className="absolute top-0 left-0 h-1.5 w-1.5 fill-yellow-400 text-yellow-400 w-1/2 overflow-hidden" />
+          <StarIcon className="h-2 w-2 text-yellow-400" />
+          <StarIcon className="absolute top-0 left-0 h-2 w-2 fill-yellow-400 text-yellow-400 w-1/2 overflow-hidden" />
         </div>
       );
     }
@@ -156,36 +156,36 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
     // Empty stars to make 5 total
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarIcon key={`empty-${i}`} className="h-1.5 w-1.5 text-gray-300" />);
+      stars.push(<StarIcon key={`empty-${i}`} className="h-2 w-2 text-gray-300" />);
     }
     
     return stars;
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100 relative">
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 border border-gray-100 relative h-[280px] flex flex-col">
       {/* 인용부호 */}
-      <div className="absolute -top-3 -left-3 w-10 h-10 bg-[#5D3FD3] rounded-full flex items-center justify-center text-white shadow-md">
-        <Quote className="h-5 w-5" />
+      <div className="absolute -top-2 -left-2 w-8 h-8 bg-[#5D3FD3] rounded-full flex items-center justify-center text-white shadow-md">
+        <Quote className="h-4 w-4" />
       </div>
       
       {/* 평점 */}
-      <div className="flex mb-5 justify-end">
-        <div className="flex items-center gap-1">
+      <div className="flex mb-3 justify-end">
+        <div className="flex items-center gap-0.5">
           {renderStars(testimonial.rating)}
         </div>
       </div>
       
       {/* 후기 내용 */}
-      <p className="text-gray-700 mb-6 text-sm">
-        "{testimonial.comment.length > 160 
-          ? `${testimonial.comment.substring(0, 160)}...` 
+      <p className="text-gray-700 mb-3 text-xs line-clamp-6 flex-grow">
+        "{testimonial.comment.length > 140 
+          ? `${testimonial.comment.substring(0, 140)}...` 
           : testimonial.comment}"
       </p>
       
       {/* 프로필 */}
-      <div className="flex items-center border-t border-gray-100 pt-4">
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 mr-3">
+      <div className="flex items-center border-t border-gray-100 pt-3 mt-auto">
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
           {testimonial.avatar ? (
             <img 
               src={testimonial.avatar} 
@@ -193,15 +193,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
               className="w-full h-full object-cover" 
             />
           ) : (
-            <div className="w-full h-full bg-[#F0EBFF] flex items-center justify-center text-[#5D3FD3] font-bold">
+            <div className="w-full h-full bg-[#F0EBFF] flex items-center justify-center text-[#5D3FD3] font-bold text-xs">
               {testimonial.name.charAt(0)}
             </div>
           )}
         </div>
         <div>
-          <p className="font-medium text-sm">{testimonial.name}</p>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="bg-[#F0EBFF] text-[#5D3FD3] px-2 py-0.5 rounded-full text-xs">
+          <p className="font-medium text-xs">{testimonial.name}</p>
+          <div className="flex items-center gap-1 text-[10px] text-gray-500">
+            <span className="bg-[#F0EBFF] text-[#5D3FD3] px-1.5 py-0.5 rounded-full text-[10px]">
               {testimonial.age}
             </span>
             <span>{testimonial.relationship}</span>

@@ -84,19 +84,13 @@
   /* 요소들이 줄바꿈되지 않고 연속적으로 표시되도록 설정 */
   .auto-slide-content > * {
     flex: 0 0 auto;
-    width: 320px;
-    padding: 0 1rem;
+    width: 280px;
+    height: 100%;
+    padding: 0 0.75rem;
   }
   
   /* 호버 시 애니메이션 일시 정지 */
   .auto-slide-container:hover .auto-slide-content {
     animation-play-state: paused;
-  }
-  
-  /* 무한 스크롤을 위한 복제 요소 여러개 사용 */
-  .auto-slide-content > * {
-    flex: 0 0 auto;
-    width: 320px;
-    padding: 0 1rem;
   }
 }

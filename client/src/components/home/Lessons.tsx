@@ -143,9 +143,9 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 h-[430px] flex flex-col">
       {/* 레슨 이미지 */}
-      <div className="relative h-48 bg-gray-100 overflow-hidden">
+      <div className="relative h-36 bg-gray-100 overflow-hidden">
         {lesson.image ? (
           <img 
             src={lesson.image} 
@@ -154,32 +154,32 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-[#F5F3FF]">
-            <Calendar className="h-16 w-16 text-[#5D3FD3]" />
+            <Calendar className="h-12 w-12 text-[#5D3FD3]" />
           </div>
         )}
         
         {/* 연령대 배지 */}
         {getAgeGroup() !== "전 연령" && (
-          <div className="absolute top-3 right-3 bg-[#5D3FD3] text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm">
-            <Users className="w-3 h-3 mr-1" /> {getAgeGroup()}
+          <div className="absolute top-2 right-2 bg-[#5D3FD3] text-white text-[10px] py-0.5 px-2 rounded-full flex items-center shadow-sm">
+            <Users className="w-2.5 h-2.5 mr-1" /> {getAgeGroup()}
           </div>
         )}
         
         {/* 난이도 표시 */}
-        <div className="absolute left-3 top-3 flex items-center bg-white/80 backdrop-blur-sm text-xs py-0.5 px-2 rounded-full">
-          <span className="w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: getDifficultyColor() }}></span>
+        <div className="absolute left-2 top-2 flex items-center bg-white/80 backdrop-blur-sm text-[10px] py-0.5 px-2 rounded-full">
+          <span className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: getDifficultyColor() }}></span>
           <span className="font-medium">{lesson.skillLevel?.name || "모든 레벨"}</span>
         </div>
       </div>
       
       {/* 레슨 정보 */}
-      <div className="p-5">
+      <div className="p-4 flex-grow flex flex-col">
         {/* 제목 */}
-        <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">{lesson.title}</h3>
+        <h3 className="font-bold text-base text-gray-900 mb-2 line-clamp-1">{lesson.title}</h3>
         
         {/* 코치 정보 */}
-        <div className="flex items-center mb-3 pb-3 border-b border-gray-100">
-          <div className="w-7 h-7 rounded-full overflow-hidden bg-gray-200 mr-2">
+        <div className="flex items-center mb-2 pb-2 border-b border-gray-100">
+          <div className="w-6 h-6 rounded-full overflow-hidden bg-gray-200 mr-2">
             {lesson.coach.user.profileImage ? (
               <img 
                 src={lesson.coach.user.profileImage} 
@@ -187,68 +187,68 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
                 className="w-full h-full object-cover" 
               />
             ) : (
-              <div className="w-full h-full bg-[#5D3FD3] flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-full h-full bg-[#5D3FD3] flex items-center justify-center text-white text-[10px] font-bold">
                 {lesson.coach.user.fullName ? lesson.coach.user.fullName.charAt(0) : "C"}
               </div>
             )}
           </div>
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{lesson.coach.user.fullName} 코치</p>
+              <p className="text-xs font-medium">{lesson.coach.user.fullName} 코치</p>
               <div className="flex items-center">
-                <Star className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />
-                <span className="ml-1 text-xs font-medium">{rating}</span>
+                <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                <span className="ml-1 text-[10px] font-medium">{rating}</span>
               </div>
             </div>
           </div>
         </div>
         
         {/* 레슨 태그 */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        <div className="flex flex-wrap gap-1 mb-2">
           {getLessonTags().map((tag, index) => (
-            <span key={index} className="text-xs bg-[#F0EBFF] text-[#5D3FD3] px-2 py-0.5 rounded-full">
+            <span key={index} className="text-[10px] bg-[#F0EBFF] text-[#5D3FD3] px-1.5 py-0.5 rounded-full">
               {tag}
             </span>
           ))}
           {lesson.lessonType && (
-            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded-full">
               {lesson.lessonType.name}
             </span>
           )}
         </div>
         
         {/* 레슨 세부 정보 */}
-        <div className="grid grid-cols-2 gap-y-2 mb-4">
-          <div className="flex items-center text-gray-600 text-xs">
-            <MapPin className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+        <div className="grid grid-cols-2 gap-y-1 mb-3">
+          <div className="flex items-center text-gray-600 text-[10px]">
+            <MapPin className="h-3 w-3 mr-1 text-gray-400" />
             <span className="truncate">{lesson.location}</span>
           </div>
-          <div className="flex items-center text-gray-600 text-xs">
-            <Users className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+          <div className="flex items-center text-gray-600 text-[10px]">
+            <Users className="h-3 w-3 mr-1 text-gray-400" />
             <span>최대 {lesson.groupSize}명</span>
           </div>
-          <div className="flex items-center text-gray-600 text-xs">
-            <GraduationCap className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+          <div className="flex items-center text-gray-600 text-[10px]">
+            <GraduationCap className="h-3 w-3 mr-1 text-gray-400" />
             <span>{lesson.skillLevel?.name || "전체 레벨"}</span>
           </div>
-          <div className="flex items-center text-gray-600 text-xs">
-            <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+          <div className="flex items-center text-gray-600 text-[10px]">
+            <Clock className="h-3 w-3 mr-1 text-gray-400" />
             <span>{lesson.duration}분 수업</span>
           </div>
         </div>
         
         {/* 가격 및 버튼 */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-auto">
           <div>
             <p className="text-[#5D3FD3] font-bold">
-              <span className="text-lg">{getPriceDisplay().split(' ')[0]}</span>
-              <span className="text-xs text-gray-500 font-normal ml-1">
+              <span className="text-sm">{getPriceDisplay().split(' ')[0]}</span>
+              <span className="text-[10px] text-gray-500 font-normal ml-1">
                 {getPriceDisplay().split(' ').slice(1).join(' ')}
               </span>
             </p>
           </div>
           <Link href={`/lessons/${lesson.id}`}>
-            <Button className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white">
+            <Button size="sm" className="bg-[#5D3FD3] hover:bg-[#4C2CB3] text-white text-xs h-8">
               자세히 보기
             </Button>
           </Link>
@@ -260,40 +260,40 @@ function LessonCard({ lesson }: { lesson: LessonWithDetails }) {
 
 function LessonSkeleton() {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 h-[430px] flex flex-col">
       {/* 이미지 스켈레톤 */}
-      <Skeleton className="h-48 w-full" />
+      <Skeleton className="h-36 w-full" />
       
       {/* 내용 스켈레톤 */}
-      <div className="p-5">
-        <Skeleton className="h-6 w-3/4 mb-2" />
+      <div className="p-4 flex-grow flex flex-col">
+        <Skeleton className="h-5 w-3/4 mb-2" />
         
-        <div className="flex items-center mb-3 pb-3 border-b border-gray-100">
-          <Skeleton className="w-7 h-7 rounded-full mr-2" />
+        <div className="flex items-center mb-2 pb-2 border-b border-gray-100">
+          <Skeleton className="w-6 h-6 rounded-full mr-2" />
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-10" />
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-3 w-8" />
             </div>
           </div>
         </div>
         
-        <div className="flex gap-1.5 mb-3">
-          <Skeleton className="h-5 w-16 rounded-full" />
-          <Skeleton className="h-5 w-16 rounded-full" />
-          <Skeleton className="h-5 w-16 rounded-full" />
+        <div className="flex gap-1 mb-2">
+          <Skeleton className="h-4 w-14 rounded-full" />
+          <Skeleton className="h-4 w-14 rounded-full" />
+          <Skeleton className="h-4 w-14 rounded-full" />
         </div>
         
-        <div className="grid grid-cols-2 gap-y-2 mb-4">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-24" />
+        <div className="grid grid-cols-2 gap-y-1 mb-3">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-20" />
         </div>
         
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-10 w-28 rounded-md" />
+        <div className="flex justify-between items-center mt-auto">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-8 w-24 rounded-md" />
         </div>
       </div>
     </div>
