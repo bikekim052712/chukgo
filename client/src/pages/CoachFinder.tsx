@@ -309,18 +309,25 @@ export default function CoachFinder() {
               {/* 최소 평점 */}
               <div className="space-y-2">
                 <Label>최소 평점</Label>
-                <div className="flex items-center space-x-2">
+                <div className="grid grid-cols-5 gap-1">
                   {[1, 2, 3, 4, 5].map((rating) => (
-                    <Button
+                    <button
                       key={rating}
-                      variant={minRating >= rating ? "default" : "outline"}
-                      size="sm"
-                      className="flex items-center"
+                      className={`flex flex-col items-center p-1 rounded ${
+                        minRating >= rating 
+                          ? "bg-blue-100 text-blue-700 border border-blue-300" 
+                          : "bg-gray-100 text-gray-600 border border-gray-200"
+                      }`}
                       onClick={() => setMinRating(rating)}
                     >
-                      <FaStar className={minRating >= rating ? "text-yellow-300 w-2 h-2" : "text-gray-300 w-2 h-2"} />
-                      <span className="ml-1">{rating}+</span>
-                    </Button>
+                      <span className="text-xs font-bold">{rating}+</span>
+                      <div className="w-full h-1 mt-1 rounded-full overflow-hidden bg-gray-200">
+                        <div 
+                          className={minRating >= rating ? "bg-blue-500 h-full" : "bg-gray-300 h-full"} 
+                          style={{width: `${rating * 20}%`}}
+                        ></div>
+                      </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -523,12 +530,18 @@ function CoachCard({ coach }: { coach: CoachWithUser }) {
           )}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
             <div className="flex items-center space-x-1 text-white">
-              <FaStar className="text-yellow-400 w-1.5 h-1.5" />
-              <span className="font-medium">{coach.rating?.toFixed(1) || '신규'}</span>
+              <div className="flex items-center bg-black bg-opacity-50 px-2 py-1 rounded">
+                <span className="font-medium text-xs">{coach.rating?.toFixed(1) || '신규'}</span>
+                {coach.rating ? (
+                  <div className="w-10 h-1 ml-1 rounded-full overflow-hidden bg-gray-700">
+                    <div className="bg-blue-400 h-full" style={{width: `${(coach.rating / 5) * 100}%`}}></div>
+                  </div>
+                ) : null}
+              </div>
               {coach.reviewCount && coach.reviewCount > 0 ? (
-                <span className="text-xs ml-1">({coach.reviewCount}개 리뷰)</span>
+                <span className="text-xs ml-1 bg-black bg-opacity-50 px-2 py-1 rounded">{coach.reviewCount}개 리뷰</span>
               ) : (
-                <span className="text-xs ml-1">(리뷰 없음)</span>
+                <span className="text-xs ml-1 bg-black bg-opacity-50 px-2 py-1 rounded">리뷰 없음</span>
               )}
             </div>
           </div>

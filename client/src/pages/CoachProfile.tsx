@@ -63,10 +63,14 @@ export default function CoachProfile() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">{coach.user.fullName} 코치</h1>
-                <div className="flex items-center text-[#F9A826]">
-                  <Star className="h-1.5 w-1.5 fill-current" />
-                  <span className="ml-1 font-medium">{rating}</span>
-                  <span className="text-neutral-500 text-sm ml-1">({coach.reviewCount || 0})</span>
+                <div className="flex items-center">
+                  <div className="flex items-center bg-blue-50 px-2 py-1 rounded">
+                    <span className="font-medium text-blue-700 text-xs">{rating}</span>
+                    <div className="w-12 h-1 ml-1 rounded-full overflow-hidden bg-gray-200">
+                      <div className="bg-blue-500 h-full" style={{width: `${(parseFloat(rating) / 5) * 100}%`}}></div>
+                    </div>
+                  </div>
+                  <span className="text-neutral-500 text-xs ml-1">({coach.reviewCount || 0})</span>
                 </div>
               </div>
               
