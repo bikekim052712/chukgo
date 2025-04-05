@@ -3,6 +3,20 @@ import { useLocation, useRoute, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// 네이버 카페 스타일 상수
+const NAVER_COLORS = {
+  primary: "#03C75A", // 네이버 그린
+  secondary: "#00B843",
+  border: "#e6e6e6",
+  background: "#f9f9f9",
+  cardBg: "#ffffff",
+  text: "#333333",
+  lightText: "#666666",
+  veryLightText: "#999999",
+  accent: "#FF5C35", // 네이버 오렌지 (강조색)
+  navBg: "#f2f2f2",
+};
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -168,64 +182,123 @@ function InsuranceBoardList() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">보험보장분석</h1>
-          <p className="text-gray-600 mt-1">
-            축구 관련 보험 상품의 보장 내용을 분석하고 추천받는 커뮤니티입니다
-          </p>
+    <div className={`container mx-auto ${isMobile ? 'px-0' : 'px-4'} py-4`} style={{ backgroundColor: NAVER_COLORS.background }}>
+      {/* 네이버 카페 스타일 헤더 */}
+      <div className={`${isMobile ? 'px-4' : ''} mb-4`}>
+        <div className="flex items-center mb-2">
+          <h1 className="text-2xl font-bold" style={{ color: NAVER_COLORS.text }}>축고</h1>
+          <span className="text-sm ml-2 px-2 py-1 rounded-full" style={{ 
+            backgroundColor: NAVER_COLORS.primary, 
+            color: 'white' 
+          }}>
+            보험보장분석
+          </span>
         </div>
-        <div className="mt-4 md:mt-0">
-          <Button onClick={() => navigate("/insurance-analysis/write")}>
+        <p className="text-sm" style={{ color: NAVER_COLORS.lightText }}>
+          축구 관련 보험 상품의 보장 내용을 분석하고 추천받는 커뮤니티입니다
+        </p>
+      </div>
+
+      {/* 카테고리 탭 - 네이버 카페 스타일 */}
+      <div className={`flex overflow-x-auto whitespace-nowrap py-2 mb-3 ${isMobile ? 'px-2' : ''}`}
+        style={{ 
+          backgroundColor: 'white',
+          borderTop: `1px solid ${NAVER_COLORS.border}`,
+          borderBottom: `1px solid ${NAVER_COLORS.border}`,
+        }}
+      >
+        <button
+          className={`px-3 py-2 mr-1 rounded-md text-sm font-medium transition-colors ${category === 'all' ? 'bg-opacity-10' : ''}`}
+          style={{ 
+            backgroundColor: category === 'all' ? `${NAVER_COLORS.primary}20` : 'transparent',
+            color: category === 'all' ? NAVER_COLORS.primary : NAVER_COLORS.lightText
+          }}
+          onClick={() => setCategory('all')}
+        >
+          전체
+        </button>
+        <button
+          className={`px-3 py-2 mr-1 rounded-md text-sm font-medium transition-colors ${category === '상해보험' ? 'bg-opacity-10' : ''}`}
+          style={{ 
+            backgroundColor: category === '상해보험' ? `${NAVER_COLORS.primary}20` : 'transparent',
+            color: category === '상해보험' ? NAVER_COLORS.primary : NAVER_COLORS.lightText
+          }}
+          onClick={() => setCategory('상해보험')}
+        >
+          상해보험
+        </button>
+        <button
+          className={`px-3 py-2 mr-1 rounded-md text-sm font-medium transition-colors ${category === '책임보험' ? 'bg-opacity-10' : ''}`}
+          style={{ 
+            backgroundColor: category === '책임보험' ? `${NAVER_COLORS.primary}20` : 'transparent',
+            color: category === '책임보험' ? NAVER_COLORS.primary : NAVER_COLORS.lightText
+          }}
+          onClick={() => setCategory('책임보험')}
+        >
+          책임보험
+        </button>
+        <button
+          className={`px-3 py-2 mr-1 rounded-md text-sm font-medium transition-colors ${category === '의료보험' ? 'bg-opacity-10' : ''}`}
+          style={{ 
+            backgroundColor: category === '의료보험' ? `${NAVER_COLORS.primary}20` : 'transparent',
+            color: category === '의료보험' ? NAVER_COLORS.primary : NAVER_COLORS.lightText
+          }}
+          onClick={() => setCategory('의료보험')}
+        >
+          의료보험
+        </button>
+        <button
+          className={`px-3 py-2 mr-1 rounded-md text-sm font-medium transition-colors ${category === '종합보험' ? 'bg-opacity-10' : ''}`}
+          style={{ 
+            backgroundColor: category === '종합보험' ? `${NAVER_COLORS.primary}20` : 'transparent',
+            color: category === '종합보험' ? NAVER_COLORS.primary : NAVER_COLORS.lightText
+          }}
+          onClick={() => setCategory('종합보험')}
+        >
+          종합보험
+        </button>
+      </div>
+
+      {/* 상단 툴바 - 글쓰기 버튼 및 검색 */}
+      <div className={`flex justify-between items-center ${isMobile ? 'px-4' : ''} mb-4`}>
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => navigate("/insurance-analysis/write")}
+            style={{ 
+              backgroundColor: NAVER_COLORS.primary,
+              color: 'white',
+              border: 'none',
+            }}
+            className="rounded-md font-medium"
+          >
             글쓰기
           </Button>
         </div>
-      </div>
-
-      {/* 필터 및 검색 */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 bg-gray-50 p-4 rounded-lg mb-6">
-        <div className="flex items-center space-x-2">
-          <Filter className="h-5 w-5 text-gray-500" />
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="카테고리 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">전체 카테고리</SelectItem>
-              <SelectItem value="상해보험">상해보험</SelectItem>
-              <SelectItem value="책임보험">책임보험</SelectItem>
-              <SelectItem value="의료보험">의료보험</SelectItem>
-              <SelectItem value="종합보험">종합보험</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
         
-        <form onSubmit={handleSearch} className="flex w-full md:w-auto">
-          <div className="relative flex-1 md:flex-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <form onSubmit={handleSearch} className="flex w-auto">
+          <div className="relative flex-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" 
+              style={{ color: NAVER_COLORS.veryLightText }} />
             <Input
               type="text"
               placeholder="검색어를 입력하세요"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-16 w-full md:w-[300px]"
+              className="pl-10 pr-16 w-[180px] h-9 text-sm"
+              style={{
+                border: `1px solid ${NAVER_COLORS.border}`,
+                borderRadius: '4px',
+              }}
             />
-            {isSearching && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-14 top-1/2 transform -translate-y-1/2 h-7 text-xs px-2"
-                onClick={resetSearch}
-              >
-                초기화
-              </Button>
-            )}
             <Button
               type="submit"
               size="sm"
-              className="absolute right-0 top-0 h-full rounded-l-none"
+              style={{ 
+                backgroundColor: NAVER_COLORS.primary,
+                color: 'white',
+                border: 'none',
+              }}
+              className="absolute right-0 top-0 h-full rounded-l-none rounded-r-md"
             >
               검색
             </Button>
@@ -235,195 +308,454 @@ function InsuranceBoardList() {
 
       {/* 검색 결과 정보 */}
       {isSearching && (
-        <div className="mb-4 p-3 bg-blue-50 rounded-md">
-          <p className="text-blue-700">
+        <div className={`mb-4 p-3 rounded-md ${isMobile ? 'mx-4' : ''}`}
+          style={{ backgroundColor: `${NAVER_COLORS.primary}10` }}>
+          <p style={{ color: NAVER_COLORS.primary }}>
             <span className="font-semibold">'{searchTerm}'</span>에 대한 검색 결과:
             <span className="font-semibold ml-1">{searchedPosts.length}개</span>의 게시글을 찾았습니다
+            {isSearching && (
+              <button
+                type="button"
+                className="ml-2 text-xs underline"
+                onClick={resetSearch}
+                style={{ color: NAVER_COLORS.primary }}
+              >
+                초기화
+              </button>
+            )}
           </p>
         </div>
       )}
 
       {/* 게시글 목록 - 모바일은 카드형, 데스크탑은 테이블 */}
       {isMobile ? (
-        // 모바일용 카드 UI
-        <div className="space-y-4 mb-6">
+        // 모바일용 네이버 카페 스타일 UI
+        <div className={`${isMobile ? 'px-4' : ''}`}>
           {paginatedPosts.length > 0 ? (
-            paginatedPosts.map((post) => (
-              <Card 
-                key={post.id} 
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => navigate(`/insurance-analysis/${post.id}`)}
-              >
-                <CardHeader className="p-4 pb-2">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+            <>
+              {paginatedPosts.map((post, index) => (
+                <div 
+                  key={post.id}
+                  className="cursor-pointer border-b last:border-b-0"
+                  style={{ borderColor: NAVER_COLORS.border }}
+                  onClick={() => navigate(`/insurance-analysis/${post.id}`)}
+                >
+                  <div className="py-3">
+                    {/* 게시글 제목 */}
+                    <div className="mb-2">
+                      <div className="flex items-center mb-1">
+                        <span 
+                          className="text-xs mr-1 px-1.5 py-0.5 rounded-sm"
+                          style={{ 
+                            backgroundColor: `${NAVER_COLORS.primary}15`,
+                            color: NAVER_COLORS.primary,
+                          }}
+                        >
                           {post.category}
-                        </Badge>
-                        <span className="text-xs text-gray-500">#{post.id}</span>
+                        </span>
+                        {post.commentCount > 0 && (
+                          <span className="text-xs" style={{ color: NAVER_COLORS.primary }}>
+                            [{post.commentCount}]
+                          </span>
+                        )}
                       </div>
-                      <div className="font-medium text-base line-clamp-2">{post.title}</div>
+                      <h3 className="font-medium text-sm line-clamp-2" style={{ color: NAVER_COLORS.text }}>
+                        {post.title}
+                      </h3>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4 pt-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center">
-                      <Avatar className="h-6 w-6 mr-2">
-                        <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span>{post.author}</span>
-                    </div>
-                    <div className="text-gray-500 text-xs">
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="flex items-center mt-2 text-sm text-gray-500 justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center">
-                        <Eye className="h-4 w-4 mr-1" />
-                        <span>{post.views}</span>
+                    
+                    {/* 작성자 정보 및 메타데이터 */}
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                        <span className="font-medium mr-2" style={{ color: NAVER_COLORS.lightText }}>
+                          {post.author}
+                        </span>
+                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <div className="flex items-center">
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        <span>{post.likes}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <MessageSquare className="h-4 w-4 mr-1" />
-                        <span>{post.commentCount}</span>
+                      
+                      <div className="flex items-center space-x-2" style={{ color: NAVER_COLORS.veryLightText }}>
+                        <div className="flex items-center">
+                          <Eye className="h-3 w-3 mr-0.5" />
+                          <span>{post.views}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <ThumbsUp className="h-3 w-3 mr-0.5" />
+                          <span>{post.likes}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))
+                </div>
+              ))}
+              
+              {/* 주간 인기글 섹션 */}
+              {page === 1 && (
+                <div className="my-4 p-3 rounded-md" style={{ backgroundColor: '#f5f6fa' }}>
+                  <div className="flex items-center mb-2">
+                    <ThumbsUp className="h-4 w-4 mr-1" style={{ color: NAVER_COLORS.accent }} />
+                    <h3 className="font-medium text-sm" style={{ color: NAVER_COLORS.text }}>주간 인기글</h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {mockPosts.slice(0, 3).sort((a, b) => b.likes - a.likes).map(post => (
+                      <li 
+                        key={`popular-${post.id}`}
+                        className="text-sm cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/insurance-analysis/${post.id}`);
+                        }}
+                      >
+                        <div className="flex items-start">
+                          <span className="text-xs px-1 py-0.5 mr-1 rounded-sm" style={{ 
+                            backgroundColor: NAVER_COLORS.accent,
+                            color: 'white'
+                          }}>
+                            {post.likes}
+                          </span>
+                          <p className="line-clamp-1 flex-1" style={{ color: NAVER_COLORS.text }}>{post.title}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           ) : (
-            <Card className="p-8 text-center text-gray-500">
+            <div className="py-16 text-center" style={{ color: NAVER_COLORS.lightText }}>
               게시글이 없습니다
-            </Card>
+            </div>
           )}
         </div>
       ) : (
-        // 데스크탑용 테이블 UI
-        <Card className="mb-6 border shadow-sm">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[70px] text-center">번호</TableHead>
-                <TableHead className="w-[100px] text-center">카테고리</TableHead>
-                <TableHead>제목</TableHead>
-                <TableHead className="w-[120px] text-center">작성자</TableHead>
-                <TableHead className="w-[120px] text-center">작성일</TableHead>
-                <TableHead className="w-[80px] text-center">조회</TableHead>
-                <TableHead className="w-[80px] text-center">추천</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedPosts.length > 0 ? (
-                paginatedPosts.map((post) => (
-                  <TableRow key={post.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/insurance-analysis/${post.id}`)}>
-                    <TableCell className="text-center font-medium">{post.id}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                        {post.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <span className="font-medium">{post.title}</span>
-                        {post.commentCount > 0 && (
-                          <span className="ml-2 text-sm text-blue-600">[{post.commentCount}]</span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center">
-                        <Avatar className="h-6 w-6 mr-2">
-                          <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span>{post.author}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center text-gray-500">
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-center text-gray-500">{post.views}</TableCell>
-                    <TableCell className="text-center text-gray-500">{post.likes}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-32 text-center">
-                    게시글이 없습니다
-                  </TableCell>
-                </TableRow>
+        // 데스크탑용 네이버 카페 스타일 테이블 UI
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center">
+              <span className="text-sm font-medium mr-2" style={{ color: NAVER_COLORS.text }}>
+                총 {filteredPosts.length}개의 글
+              </span>
+              {isSearching && (
+                <span className="text-sm" style={{ color: NAVER_COLORS.primary }}>
+                  (검색결과: {searchedPosts.length}개)
+                </span>
               )}
-            </TableBody>
-          </Table>
-        </Card>
-      )}
-
-      {/* 페이지네이션 */}
-      <div className="flex justify-center items-center space-x-2 my-8">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        
-        <div className="flex items-center space-x-1">
-          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            // 페이지 범위 계산
-            let pageNum;
-            if (totalPages <= 5) {
-              pageNum = i + 1;
-            } else if (page <= 3) {
-              pageNum = i + 1;
-            } else if (page >= totalPages - 2) {
-              pageNum = totalPages - 4 + i;
-            } else {
-              pageNum = page - 2 + i;
-            }
-
-            return (
-              <Button
-                key={pageNum}
-                variant={page === pageNum ? "default" : "outline"}
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={() => setPage(pageNum)}
-              >
-                {pageNum}
-              </Button>
-            );
-          })}
-          
-          {totalPages > 5 && page < totalPages - 2 && (
-            <>
-              <span className="px-1">...</span>
+            </div>
+            
+            <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 w-8 p-0"
-                onClick={() => setPage(totalPages)}
+                className="text-xs h-8 px-2"
+                style={{ 
+                  borderColor: NAVER_COLORS.border,
+                  color: NAVER_COLORS.text
+                }}
               >
-                {totalPages}
+                <FileText className="h-3.5 w-3.5 mr-1" />
+                엑셀 다운로드
               </Button>
-            </>
+            </div>
+          </div>
+
+          <div style={{ 
+            border: `1px solid ${NAVER_COLORS.border}`,
+            borderRadius: '4px',
+            overflow: 'hidden'
+          }}>
+            <Table>
+              <TableHeader style={{ backgroundColor: '#f9f9f9' }}>
+                <TableRow style={{ borderBottom: `1px solid ${NAVER_COLORS.border}` }}>
+                  <TableHead className="w-[70px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>번호</TableHead>
+                  <TableHead className="w-[100px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>카테고리</TableHead>
+                  <TableHead className="text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>제목</TableHead>
+                  <TableHead className="w-[120px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>작성자</TableHead>
+                  <TableHead className="w-[120px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>작성일</TableHead>
+                  <TableHead className="w-[70px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>조회</TableHead>
+                  <TableHead className="w-[70px] text-center text-xs font-medium" 
+                    style={{ color: NAVER_COLORS.lightText }}>추천</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {/* 공지사항 상단 고정 */}
+                <TableRow 
+                  style={{ 
+                    backgroundColor: '#f9f9f9',
+                    borderBottom: `1px solid ${NAVER_COLORS.border}`
+                  }}
+                  className="cursor-pointer hover:bg-gray-50" 
+                  onClick={() => navigate('/insurance-analysis/notice')}
+                >
+                  <TableCell className="text-center font-bold" style={{ color: NAVER_COLORS.accent }}>
+                    공지
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className="text-xs px-1.5 py-0.5 rounded-sm"
+                      style={{ 
+                        backgroundColor: NAVER_COLORS.accent, 
+                        color: 'white'
+                      }}>
+                      공지사항
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-medium" style={{ color: NAVER_COLORS.text }}>
+                      [필독] 보험보장분석 게시판 이용 안내
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center" style={{ color: NAVER_COLORS.text }}>
+                    관리자
+                  </TableCell>
+                  <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                    2025-04-01
+                  </TableCell>
+                  <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                    342
+                  </TableCell>
+                  <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                    54
+                  </TableCell>
+                </TableRow>
+
+                {/* 일반 게시글 목록 */}
+                {paginatedPosts.length > 0 ? (
+                  paginatedPosts.map((post) => (
+                    <TableRow 
+                      key={post.id} 
+                      style={{ borderBottom: `1px solid ${NAVER_COLORS.border}` }}
+                      className="cursor-pointer hover:bg-gray-50" 
+                      onClick={() => navigate(`/insurance-analysis/${post.id}`)}
+                    >
+                      <TableCell className="text-center" style={{ color: NAVER_COLORS.text }}>
+                        {post.id}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="text-xs px-1.5 py-0.5 rounded-sm"
+                          style={{ 
+                            backgroundColor: `${NAVER_COLORS.primary}15`,
+                            color: NAVER_COLORS.primary
+                          }}>
+                          {post.category}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <span style={{ color: NAVER_COLORS.text }}>{post.title}</span>
+                          {post.commentCount > 0 && (
+                            <span className="ml-2 text-sm" style={{ color: NAVER_COLORS.primary }}>
+                              [{post.commentCount}]
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center" style={{ color: NAVER_COLORS.lightText }}>
+                        {post.author}
+                      </TableCell>
+                      <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                        {new Date(post.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                        {post.views}
+                      </TableCell>
+                      <TableCell className="text-center" style={{ color: NAVER_COLORS.veryLightText }}>
+                        {post.likes}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-32 text-center" style={{ color: NAVER_COLORS.lightText }}>
+                      게시글이 없습니다
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* 주간 인기글 섹션 (데스크탑) */}
+          {page === 1 && (
+            <div className="mt-6 p-4 rounded-md" style={{ backgroundColor: '#f5f6fa' }}>
+              <div className="flex items-center mb-3">
+                <ThumbsUp className="h-4 w-4 mr-2" style={{ color: NAVER_COLORS.accent }} />
+                <h3 className="font-medium" style={{ color: NAVER_COLORS.text }}>주간 인기글</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {mockPosts.slice(0, 6).sort((a, b) => b.likes - a.likes).map(post => (
+                  <div 
+                    key={`popular-${post.id}`}
+                    className="flex items-start cursor-pointer p-2 rounded hover:bg-white"
+                    style={{ transition: 'background-color 0.2s' }}
+                    onClick={() => navigate(`/insurance-analysis/${post.id}`)}
+                  >
+                    <span className="flex-shrink-0 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full mr-2"
+                      style={{ 
+                        backgroundColor: post.id <= 3 ? NAVER_COLORS.accent : '#e9e9e9',
+                        color: post.id <= 3 ? 'white' : NAVER_COLORS.lightText
+                      }}>
+                      {post.id}
+                    </span>
+                    <div className="flex-1">
+                      <p className="line-clamp-1 text-sm mb-1" style={{ color: NAVER_COLORS.text }}>
+                        {post.title}
+                      </p>
+                      <div className="flex items-center text-xs space-x-2" style={{ color: NAVER_COLORS.veryLightText }}>
+                        <span>{post.author}</span>
+                        <span>·</span>
+                        <div className="flex items-center">
+                          <ThumbsUp className="h-3 w-3 mr-0.5" />
+                          <span>{post.likes}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-        
+      )}
+
+      {/* 네이버 카페 스타일 페이지네이션 */}
+      <div className={`flex justify-center items-center ${isMobile ? 'mx-4' : ''}`}>
+        <div className="flex items-center border rounded-md overflow-hidden" 
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <button
+            className="flex items-center justify-center w-8 h-8 border-r"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: page === 1 ? NAVER_COLORS.veryLightText : NAVER_COLORS.primary
+            }}
+            onClick={() => setPage(1)}
+            disabled={page === 1}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="11 17 6 12 11 7"></polyline>
+              <polyline points="18 17 13 12 18 7"></polyline>
+            </svg>
+          </button>
+          
+          <button
+            className="flex items-center justify-center w-8 h-8 border-r"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: page === 1 ? NAVER_COLORS.veryLightText : NAVER_COLORS.primary
+            }}
+            onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          
+          <div className="flex items-center">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              // 페이지 범위 계산
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (page <= 3) {
+                pageNum = i + 1;
+              } else if (page >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = page - 2 + i;
+              }
+
+              return (
+                <button
+                  key={pageNum}
+                  className="w-8 h-8 flex items-center justify-center text-sm"
+                  style={{ 
+                    backgroundColor: page === pageNum ? NAVER_COLORS.primary : 'transparent',
+                    color: page === pageNum ? 'white' : NAVER_COLORS.text,
+                    fontWeight: page === pageNum ? 'bold' : 'normal',
+                  }}
+                  onClick={() => setPage(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+            
+            {totalPages > 5 && page < totalPages - 2 && (
+              <>
+                <span className="w-8 h-8 flex items-center justify-center text-sm"
+                  style={{ color: NAVER_COLORS.veryLightText }}>
+                  ...
+                </span>
+                <button
+                  className="w-8 h-8 flex items-center justify-center text-sm"
+                  style={{ color: NAVER_COLORS.text }}
+                  onClick={() => setPage(totalPages)}
+                >
+                  {totalPages}
+                </button>
+              </>
+            )}
+          </div>
+          
+          <button
+            className="flex items-center justify-center w-8 h-8 border-l"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: page === totalPages ? NAVER_COLORS.veryLightText : NAVER_COLORS.primary
+            }}
+            onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={page === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+          
+          <button
+            className="flex items-center justify-center w-8 h-8 border-l"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: page === totalPages ? NAVER_COLORS.veryLightText : NAVER_COLORS.primary
+            }}
+            onClick={() => setPage(totalPages)}
+            disabled={page === totalPages}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="13 17 18 12 13 7"></polyline>
+              <polyline points="6 17 11 12 6 7"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      {/* 하단 툴바 */}
+      <div className={`flex justify-between mt-4 mb-8 ${isMobile ? 'px-4' : ''}`}>
         <Button
           variant="outline"
-          size="icon"
-          onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
+          size="sm"
+          onClick={() => navigate('/insurance-analysis')}
+          className="h-9 text-sm"
+          style={{ 
+            borderColor: NAVER_COLORS.border,
+            color: NAVER_COLORS.text
+          }}
         >
-          <ChevronRight className="h-4 w-4" />
+          <FileText className="h-4 w-4 mr-1" />
+          목록
+        </Button>
+        
+        <Button
+          onClick={() => navigate('/insurance-analysis/write')}
+          size="sm"
+          className="h-9 text-sm"
+          style={{ 
+            backgroundColor: NAVER_COLORS.primary,
+            color: 'white',
+          }}
+        >
+          글쓰기
         </Button>
       </div>
     </div>
@@ -725,77 +1057,92 @@ function InsurancePostDetail() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-6">
-        <Button variant="ghost" onClick={() => navigate("/insurance-analysis")}>
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          목록으로
-        </Button>
+    <div className={`container mx-auto ${isMobile ? 'px-0' : 'px-4'} py-4 max-w-5xl`} 
+      style={{ backgroundColor: NAVER_COLORS.background }}>
+      {/* 네이버 카페 스타일 헤더 */}
+      <div className={`${isMobile ? 'px-4' : ''} mb-2`}>
+        <div className="flex items-center mb-2">
+          <h1 className="text-2xl font-bold" style={{ color: NAVER_COLORS.text }}>축고</h1>
+          <span className="text-sm ml-2 px-2 py-1 rounded-full" style={{ 
+            backgroundColor: NAVER_COLORS.primary, 
+            color: 'white' 
+          }}>
+            보험보장분석
+          </span>
+        </div>
       </div>
 
-      <Card className="mb-8 overflow-hidden">
-        <CardHeader className={`pb-4 ${isMobile ? 'px-4' : ''}`}>
-          <div className={`${isMobile ? 'flex flex-col items-start' : 'flex items-center'} mb-1`}>
-            <Badge variant="outline" className={`bg-blue-50 text-blue-700 ${isMobile ? 'mb-2' : 'mr-3'}`}>
+      {/* 네이버 카페 스타일 게시글 상세 */}
+      <div className={`${isMobile ? '' : 'bg-white rounded-md shadow-sm border'} mb-4`}
+        style={{ borderColor: NAVER_COLORS.border }}>
+        {/* 게시글 제목 및 정보 헤더 */}
+        <div className={`${isMobile ? 'px-4 py-3 bg-white' : 'px-6 py-4'} border-b`} 
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <div className="mb-1 flex items-start gap-2">
+            <span className="text-xs px-1.5 py-0.5 rounded-sm mt-1"
+              style={{ 
+                backgroundColor: `${NAVER_COLORS.primary}15`,
+                color: NAVER_COLORS.primary
+              }}>
               {post.category}
-            </Badge>
-            <CardTitle className={`${isMobile ? 'text-xl' : 'text-2xl'}`}>{post.title}</CardTitle>
+            </span>
+            <h1 className="text-xl font-bold flex-1" style={{ color: NAVER_COLORS.text }}>
+              {post.title}
+            </h1>
           </div>
           
-          <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'} mt-2`}>
+          <div className="flex flex-wrap items-center justify-between mt-3 text-sm">
             <div className="flex items-center">
-              <Avatar className="h-8 w-8 mr-2">
-                <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <span className="font-medium">{post.author}</span>
-                <div className="flex items-center text-sm text-gray-500">
-                  <CalendarDays className="mr-1 h-3 w-3" />
-                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
+              <span className="font-medium mr-2" style={{ color: NAVER_COLORS.text }}>
+                {post.author}
+              </span>
+              <span style={{ color: NAVER_COLORS.veryLightText }}>
+                {new Date(post.createdAt).toLocaleDateString()}
+              </span>
             </div>
             
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <div className="flex items-center">
-                <Eye className="mr-1 h-4 w-4" />
+            <div className="flex items-center space-x-3" style={{ color: NAVER_COLORS.veryLightText }}>
+              <div className="flex items-center text-xs">
+                <Eye className="mr-1 h-3.5 w-3.5" />
                 <span>{post.views}</span>
               </div>
-              <div className="flex items-center">
-                <MessageSquare className="mr-1 h-4 w-4" />
+              <div className="flex items-center text-xs">
+                <MessageSquare className="mr-1 h-3.5 w-3.5" />
                 <span>{post.commentCount}</span>
-              </div>
-              <div className="flex items-center">
-                <ThumbsUp className="mr-1 h-4 w-4" />
-                <span>{post.likes}</span>
               </div>
             </div>
           </div>
-        </CardHeader>
+        </div>
         
-        <Separator />
-        
-        <CardContent className="py-6">
-          <div className="prose max-w-none">
+        {/* 게시글 내용 */}
+        <div className={`${isMobile ? 'px-4 py-5 bg-white mt-2' : 'px-6 py-5'} prose max-w-none`}>
+          <div className="text-base whitespace-pre-wrap break-words" style={{ color: NAVER_COLORS.text }}>
             {post.content.split('\n').map((paragraph, idx) => {
               if (paragraph.startsWith('# ')) {
-                return <h1 key={idx} className="text-2xl font-bold mt-6 mb-4">{paragraph.substring(2)}</h1>;
+                return <h1 key={idx} className="text-2xl font-bold mt-6 mb-4" style={{ color: NAVER_COLORS.text }}>
+                  {paragraph.substring(2)}
+                </h1>;
               } else if (paragraph.startsWith('## ')) {
-                return <h2 key={idx} className="text-xl font-bold mt-5 mb-3">{paragraph.substring(3)}</h2>;
+                return <h2 key={idx} className="text-xl font-bold mt-5 mb-3" style={{ color: NAVER_COLORS.text }}>
+                  {paragraph.substring(3)}
+                </h2>;
               } else if (paragraph.startsWith('### ')) {
-                return <h3 key={idx} className="text-lg font-bold mt-4 mb-2">{paragraph.substring(4)}</h3>;
+                return <h3 key={idx} className="text-lg font-bold mt-4 mb-2" style={{ color: NAVER_COLORS.text }}>
+                  {paragraph.substring(4)}
+                </h3>;
               } else if (paragraph.startsWith('- ')) {
-                return <li key={idx} className="ml-4">{paragraph.substring(2)}</li>;
-              } else if (paragraph.startsWith('1. ')) {
-                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
-              } else if (paragraph.startsWith('2. ')) {
-                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
-              } else if (paragraph.startsWith('3. ')) {
-                return <div key={idx} className="ml-4 mb-2 flex"><span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span><span>{paragraph.substring(3)}</span></div>;
+                return <li key={idx} className="ml-4 mb-2" style={{ color: NAVER_COLORS.text }}>
+                  {paragraph.substring(2)}
+                </li>;
+              } else if (paragraph.startsWith('1. ') || paragraph.startsWith('2. ') || paragraph.startsWith('3. ')) {
+                return <div key={idx} className="ml-4 mb-2 flex" style={{ color: NAVER_COLORS.text }}>
+                  <span className="mr-2 font-semibold">{paragraph.substring(0, 2)}</span>
+                  <span>{paragraph.substring(3)}</span>
+                </div>;
               } else if (paragraph.trim() === '') {
                 return <div key={idx} className="h-4"></div>;
               } else {
-                return <p key={idx} className="mb-4">{paragraph}</p>;
+                return <p key={idx} className="mb-4" style={{ color: NAVER_COLORS.text }}>{paragraph}</p>;
               }
             })}
           </div>
@@ -805,186 +1152,337 @@ function InsurancePostDetail() {
               <img
                 src={post.imageUrl}
                 alt="게시글 이미지"
-                className="rounded-md max-h-96 object-contain"
+                className="rounded-md max-w-full object-contain"
               />
             </div>
           )}
-        </CardContent>
+        </div>
         
-        <Separator />
+        {/* 추천 버튼 영역 */}
+        <div className={`${isMobile ? 'px-4 py-4 bg-white mt-2' : 'px-6 py-4'} flex justify-center border-t border-b`}
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <button
+            className={`flex items-center justify-center rounded-full px-4 py-2.5 ${liked ? 'opacity-70' : ''}`}
+            style={{ 
+              backgroundColor: liked ? `${NAVER_COLORS.primary}30` : `${NAVER_COLORS.primary}15`,
+              color: NAVER_COLORS.primary,
+              transition: 'all 0.2s'
+            }}
+            onClick={handleLike}
+            disabled={liked}
+          >
+            <ThumbsUp className="mr-1.5 h-5 w-5" />
+            <span className="font-medium">{liked ? '추천완료' : '추천하기'}</span>
+            <span className="ml-1.5 font-bold">{post.likes}</span>
+          </button>
+        </div>
         
-        <CardFooter className="py-4 flex justify-between">
-          <div className="flex space-x-2">
-            <Button
-              variant={liked ? "default" : "outline"}
-              size="sm"
-              onClick={handleLike}
-              disabled={liked}
-              className={liked ? "bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800" : ""}
+        {/* 작성자 프로필 및 관련 글 */}
+        <div className={`${isMobile ? 'px-4 py-4 bg-white mt-2' : 'px-6 py-4'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Avatar className="h-10 w-10 mr-3 border" style={{ borderColor: NAVER_COLORS.border }}>
+                <AvatarFallback style={{ backgroundColor: '#f0f0f0', color: NAVER_COLORS.lightText }}>
+                  {post.author.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-medium" style={{ color: NAVER_COLORS.text }}>{post.author}</div>
+                <div className="text-xs" style={{ color: NAVER_COLORS.veryLightText }}>
+                  게시글 {post.id * 3} · 댓글 {post.id * 5}
+                </div>
+              </div>
+            </div>
+            
+            <Button variant="outline" size="sm" className="text-xs h-8 px-3"
+              style={{ 
+                borderColor: NAVER_COLORS.border,
+                color: NAVER_COLORS.text
+              }}
+              onClick={() => window.open(`/authors/${post.authorId}`, '_blank')}
             >
-              <ThumbsUp className="mr-1 h-4 w-4" />
-              추천
-              <span className="ml-1 font-semibold">{post.likes}</span>
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-1 h-4 w-4" />
-              공유
+              <User className="h-3.5 w-3.5 mr-1.5" />
+              작성자 글 보기
             </Button>
           </div>
           
+          {/* 작성자의 다른 글 목록 */}
+          <div className="mt-4 pt-4 border-t" style={{ borderColor: NAVER_COLORS.border }}>
+            <h3 className="text-sm font-medium mb-2" style={{ color: NAVER_COLORS.text }}>
+              {post.author}님의 다른 글
+            </h3>
+            <ul className="space-y-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <li key={i} className="text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                  <Link to={`/insurance-analysis/${post.id + i + 1}`} 
+                    style={{ color: NAVER_COLORS.text }}
+                    className="hover:underline">
+                    {i === 0 ? '[책임보험] 코치를 위한 필수 보험 안내' : 
+                     i === 1 ? '[의료보험] 축구 부상 후 효과적인 보험 청구 방법' : 
+                     '[종합보험] 유소년 축구 선수 맞춤형 보험 상품 비교'}
+                  </Link>
+                  <span className="ml-2 text-xs" style={{ color: NAVER_COLORS.veryLightText }}>
+                    {new Date(Date.now() - (i + 1) * 86400000 * 3).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      {/* 게시글 하단 도구 영역 */}
+      <div className={`flex justify-between ${isMobile ? 'px-4' : ''} mb-4`}>
+        <div className="flex space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="h-9 text-sm"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: NAVER_COLORS.text
+            }}
+            onClick={() => navigate("/insurance-analysis")}
+          >
+            <FileText className="mr-1.5 h-4 w-4" />
+            목록
+          </Button>
+        </div>
+        <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 text-sm"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: NAVER_COLORS.text
+            }}
+            onClick={() => window.navigator.clipboard.writeText(window.location.href)}
+          >
+            <Share2 className="mr-1.5 h-4 w-4" />
+            공유
+          </Button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-9"
+                style={{ 
+                  borderColor: NAVER_COLORS.border,
+                  color: NAVER_COLORS.text
+                }}
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/insurance-analysis/edit/${post.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 <span>수정하기</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
+              <DropdownMenuItem 
+                className="text-red-600"
+                onClick={() => {
+                  if (confirm('정말 삭제하시겠습니까?')) {
+                    navigate("/insurance-analysis");
+                  }
+                }}
+              >
                 <Trash className="mr-2 h-4 w-4" />
                 <span>삭제하기</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <FileText className="mr-2 h-4 w-4" />
-                <span>신고하기</span>
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
 
-      {/* 댓글 섹션 */}
-      <Card className="mb-8">
-        <CardHeader className={`pb-3 ${isMobile ? 'px-4' : ''}`}>
-          <CardTitle className="text-lg flex items-center">
-            <MessageSquare className="mr-2 h-5 w-5" />
-            댓글 {post.commentCount}개
-          </CardTitle>
-        </CardHeader>
+      {/* 댓글 섹션 - 네이버 카페 스타일 */}
+      <div className={`${isMobile ? '' : 'bg-white rounded-md shadow-sm border'} mb-4`}
+        style={{ borderColor: NAVER_COLORS.border }}>
+        {/* 댓글 헤더 */}
+        <div className={`${isMobile ? 'px-4 py-3 bg-white' : 'px-6 py-3'} border-b flex items-center`}
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <MessageSquare className="mr-2 h-4 w-4" style={{ color: NAVER_COLORS.primary }} />
+          <h3 className="font-medium text-sm" style={{ color: NAVER_COLORS.text }}>
+            댓글 <span style={{ color: NAVER_COLORS.primary }}>{post.commentCount}</span>개
+          </h3>
+        </div>
         
-        <Separator />
-        
-        <CardContent className={`pt-4 ${isMobile ? 'px-4' : ''}`}>
+        {/* 댓글 목록 */}
+        <div className={`${isMobile ? 'px-0 mt-2 bg-white' : 'px-6 py-2'}`}>
           {post.comments.length > 0 ? (
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="space-y-4">
-                {post.comments.map((comment) => (
-                  <div key={comment.id} className="py-3">
-                    <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex justify-between'} items-start`}>
-                      <div className="flex items-start">
-                        <Avatar className="h-8 w-8 mr-2">
-                          <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className={isMobile ? 'w-full pr-2' : ''}>
-                          <div className={`${isMobile ? 'flex flex-col' : 'flex items-center'}`}>
-                            <span className="font-medium">{comment.author}</span>
-                            <span className={`text-xs text-gray-500 ${isMobile ? 'mt-1' : 'ml-2'}`}>
-                              {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-gray-800">{comment.content}</p>
+            <div className="max-h-[500px] overflow-y-auto pr-1">
+              {post.comments.map((comment, index) => (
+                <div key={comment.id} 
+                  className={`py-4 ${index !== 0 ? 'border-t' : ''} ${isMobile ? 'px-4' : ''}`}
+                  style={{ borderColor: NAVER_COLORS.border }}>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-start">
+                      <Avatar className="h-8 w-8 mr-2 border" style={{ borderColor: NAVER_COLORS.border }}>
+                        <AvatarFallback style={{ backgroundColor: '#f0f0f0', color: NAVER_COLORS.lightText }}>
+                          {comment.author.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center flex-wrap">
+                          <span className="font-medium text-sm mr-2" style={{ color: NAVER_COLORS.text }}>
+                            {comment.author}
+                          </span>
+                          <span className="text-xs" style={{ color: NAVER_COLORS.veryLightText }}>
+                            {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                         </div>
-                      </div>
-                      
-                      <div className={`flex items-center space-x-2 ${isMobile ? 'self-end' : ''}`}>
-                        <Button variant="ghost" size="sm" className="h-7 px-2">
-                          <ThumbsUp className="h-3 w-3 mr-1" />
-                          <span className="text-xs">{comment.likes}</span>
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-7 px-2">
-                          <MoreVertical className="h-3 w-3" />
-                        </Button>
+                        <p className="mt-1 text-sm whitespace-pre-wrap" style={{ color: NAVER_COLORS.text }}>
+                          {comment.content}
+                        </p>
                       </div>
                     </div>
                     
-                    {comment.id !== post.comments.length && (
-                      <Separator className="mt-3" />
-                    )}
+                    <div className="flex items-center ml-2">
+                      <button className="p-1.5 text-xs flex items-center rounded-md"
+                        style={{ color: NAVER_COLORS.veryLightText }}
+                      >
+                        <ThumbsUp className="h-3 w-3 mr-1" />
+                        <span>{comment.likes}</span>
+                      </button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-1.5 rounded-md"
+                            style={{ color: NAVER_COLORS.veryLightText }}
+                          >
+                            <MoreVertical className="h-3 w-3" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <span className="text-xs">신고하기</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </ScrollArea>
+                </div>
+              ))}
+            </div>
           ) : (
-            <div className="py-8 text-center text-gray-500">
-              <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
-              <p>첫 번째 댓글을 남겨보세요</p>
+            <div className="py-8 text-center" style={{ color: NAVER_COLORS.lightText }}>
+              <MessageSquare className="mx-auto h-10 w-10 mb-2 opacity-30" style={{ color: NAVER_COLORS.lightText }} />
+              <p className="text-sm">아직 댓글이 없습니다. 첫 댓글을 작성해 보세요.</p>
             </div>
           )}
-        </CardContent>
+        </div>
         
-        <Separator />
-        
-        <CardFooter className={`py-4 ${isMobile ? 'px-4' : ''}`}>
+        {/* 댓글 작성 폼 */}
+        <div className={`${isMobile ? 'px-4 py-4 bg-white mt-2' : 'px-6 py-4'} border-t`}
+          style={{ borderColor: NAVER_COLORS.border }}>
           <form onSubmit={commentForm.handleSubmit(handleSubmitComment)} className="w-full">
-            <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex space-x-3'} w-full`}>
-              {!isMobile && (
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>
-                    <User className="h-5 w-5" />
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              <div className="flex-1 relative">
-                {isMobile && (
-                  <div className="mb-2 flex items-center">
-                    <Avatar className="h-6 w-6 mr-2">
-                      <AvatarFallback>
-                        <User className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-gray-600">댓글 작성하기</span>
-                  </div>
-                )}
-                <Textarea
-                  placeholder="댓글을 입력하세요"
-                  className={`resize-none ${isMobile ? 'min-h-[100px]' : 'min-h-[80px]'} pr-12`}
-                  {...commentForm.register('content')}
-                />
+            <div className="relative">
+              <Textarea
+                placeholder="댓글을 남겨보세요"
+                className={`resize-none min-h-[80px] pr-[4.5rem] text-sm`}
+                style={{ 
+                  borderColor: NAVER_COLORS.border,
+                  color: NAVER_COLORS.text
+                }}
+                {...commentForm.register('content')}
+              />
+              <div className="absolute bottom-2 right-2 flex items-center space-x-1">
+                <div className="text-xs mr-1.5" style={{ color: NAVER_COLORS.veryLightText }}>
+                  {commentForm.watch('content')?.length || 0}/1000
+                </div>
                 <Button 
                   size="sm" 
-                  className="absolute bottom-2 right-2"
                   type="submit"
                   disabled={!commentForm.watch('content')}
+                  className="h-8 px-3"
+                  style={{ 
+                    backgroundColor: NAVER_COLORS.primary,
+                    color: 'white'
+                  }}
                 >
-                  <Send className="h-4 w-4" />
+                  등록
                 </Button>
               </div>
             </div>
             {commentForm.formState.errors.content && (
-              <p className="text-sm text-red-500 mt-1 ml-11">
+              <p className="text-sm mt-1" style={{ color: NAVER_COLORS.accent }}>
                 {commentForm.formState.errors.content.message}
               </p>
             )}
           </form>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
 
-      {/* 관련 게시글 */}
-      <Card>
-        <CardHeader className={`pb-3 ${isMobile ? 'px-4' : ''}`}>
-          <CardTitle className="text-lg">관련 게시글</CardTitle>
-        </CardHeader>
-        <CardContent className={isMobile ? 'px-4' : ''}>
+      {/* 관련 게시글 - 네이버 카페 스타일 */}
+      <div className={`${isMobile ? '' : 'bg-white rounded-md shadow-sm border'} mb-4`}
+        style={{ borderColor: NAVER_COLORS.border }}>
+        {/* 관련 게시글 헤더 */}
+        <div className={`${isMobile ? 'px-4 py-3 bg-white' : 'px-6 py-3'} border-b flex items-center`}
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <FileText className="mr-2 h-4 w-4" style={{ color: NAVER_COLORS.accent }} />
+          <h3 className="font-medium text-sm" style={{ color: NAVER_COLORS.text }}>
+            관련 게시글
+          </h3>
+        </div>
+        
+        {/* 관련 게시글 목록 */}
+        <div className={`${isMobile ? 'px-4 py-3 bg-white mt-2' : 'px-6 py-3'}`}>
           <ul className="space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <li key={i}>
-                <Link 
-                  href={`/insurance-analysis/${postId + i + 1}`} 
-                  className={`flex items-center py-1 hover:text-blue-600 ${isMobile ? 'text-sm' : ''}`}
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i} className="text-sm">
+                <Link to={`/insurance-analysis/${postId + i + 1}`}
+                  className="flex items-center hover:underline" 
+                  style={{ color: NAVER_COLORS.text }}
                 >
-                  <ChevronRight className="h-4 w-4 mr-1 text-gray-400 flex-shrink-0" />
-                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} line-clamp-1`}>
-                    [{post.category}] {i % 2 === 0 ? '선수 부상 관련 보험금 청구 방법' : '코치를 위한 맞춤형 보험 상품 비교'}
+                  <span className="text-xs px-1.5 py-0.5 rounded-sm mr-1.5 flex-shrink-0"
+                    style={{ 
+                      backgroundColor: `${NAVER_COLORS.primary}15`,
+                      color: NAVER_COLORS.primary
+                    }}>
+                    {post.category}
+                  </span>
+                  <span className="line-clamp-1">
+                    {i % 2 === 0 ? '선수 부상 관련 보험금 청구 방법' : '코치를 위한 맞춤형 보험 상품 비교'}
                   </span>
                 </Link>
+                <div className="flex items-center mt-1 pl-1.5" style={{ color: NAVER_COLORS.veryLightText }}>
+                  <span className="text-xs flex-shrink-0">
+                    {post.author === '축구보험전문가1' ? '축구보험전문가2' : '축구보험전문가1'}
+                  </span>
+                  <span className="mx-1 text-xs">·</span>
+                  <span className="text-xs">
+                    {new Date(Date.now() - (i + 1) * 86400000).toLocaleDateString()}
+                  </span>
+                  <span className="mx-1 text-xs">·</span>
+                  <div className="flex items-center text-xs">
+                    <Eye className="h-3 w-3 mr-0.5" />
+                    <span>{Math.floor(Math.random() * 50) + 20}</span>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
-        </CardContent>
-      </Card>
+        </div>
+        
+        {/* 더보기 버튼 */}
+        <div className={`${isMobile ? 'px-4 py-2 bg-white' : 'px-6 py-2'} border-t text-center`}
+          style={{ borderColor: NAVER_COLORS.border }}>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="text-xs h-8 w-full"
+            style={{ 
+              borderColor: NAVER_COLORS.border,
+              color: NAVER_COLORS.text
+            }}
+            onClick={() => navigate("/insurance-analysis")}
+          >
+            {post.category} 관련 글 더보기
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
