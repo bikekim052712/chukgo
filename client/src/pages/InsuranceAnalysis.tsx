@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useRoute, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -120,6 +121,7 @@ function InsuranceBoardList() {
   const [category, setCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const isMobile = useIsMobile();
 
   // 가상의 게시글 데이터 (실제로는 API로 가져올 것)
   const mockPosts: InsurancePost[] = Array.from({ length: 20 }).map((_, i) => ({
@@ -241,63 +243,126 @@ function InsuranceBoardList() {
         </div>
       )}
 
-      {/* 게시글 목록 테이블 */}
-      <Card className="mb-6 border shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[70px] text-center">번호</TableHead>
-              <TableHead className="w-[100px] text-center">카테고리</TableHead>
-              <TableHead>제목</TableHead>
-              <TableHead className="w-[120px] text-center">작성자</TableHead>
-              <TableHead className="w-[120px] text-center">작성일</TableHead>
-              <TableHead className="w-[80px] text-center">조회</TableHead>
-              <TableHead className="w-[80px] text-center">추천</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedPosts.length > 0 ? (
-              paginatedPosts.map((post) => (
-                <TableRow key={post.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/insurance-analysis/${post.id}`)}>
-                  <TableCell className="text-center font-medium">{post.id}</TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                      {post.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="font-medium">{post.title}</span>
-                      {post.commentCount > 0 && (
-                        <span className="ml-2 text-sm text-blue-600">[{post.commentCount}]</span>
-                      )}
+      {/* 게시글 목록 - 모바일은 카드형, 데스크탑은 테이블 */}
+      {isMobile ? (
+        // 모바일용 카드 UI
+        <div className="space-y-4 mb-6">
+          {paginatedPosts.length > 0 ? (
+            paginatedPosts.map((post) => (
+              <Card 
+                key={post.id} 
+                className="cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => navigate(`/insurance-analysis/${post.id}`)}
+              >
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                          {post.category}
+                        </Badge>
+                        <span className="text-xs text-gray-500">#{post.id}</span>
+                      </div>
+                      <div className="font-medium text-base line-clamp-2">{post.title}</div>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center">
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4 pt-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
                       <Avatar className="h-6 w-6 mr-2">
                         <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <span>{post.author}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-center text-gray-500">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-center text-gray-500">{post.views}</TableCell>
-                  <TableCell className="text-center text-gray-500">{post.likes}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+                    <div className="text-gray-500 text-xs">
+                      {new Date(post.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="flex items-center mt-2 text-sm text-gray-500 justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center">
+                        <Eye className="h-4 w-4 mr-1" />
+                        <span>{post.views}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <ThumbsUp className="h-4 w-4 mr-1" />
+                        <span>{post.likes}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        <span>{post.commentCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card className="p-8 text-center text-gray-500">
+              게시글이 없습니다
+            </Card>
+          )}
+        </div>
+      ) : (
+        // 데스크탑용 테이블 UI
+        <Card className="mb-6 border shadow-sm">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={7} className="h-32 text-center">
-                  게시글이 없습니다
-                </TableCell>
+                <TableHead className="w-[70px] text-center">번호</TableHead>
+                <TableHead className="w-[100px] text-center">카테고리</TableHead>
+                <TableHead>제목</TableHead>
+                <TableHead className="w-[120px] text-center">작성자</TableHead>
+                <TableHead className="w-[120px] text-center">작성일</TableHead>
+                <TableHead className="w-[80px] text-center">조회</TableHead>
+                <TableHead className="w-[80px] text-center">추천</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {paginatedPosts.length > 0 ? (
+                paginatedPosts.map((post) => (
+                  <TableRow key={post.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => navigate(`/insurance-analysis/${post.id}`)}>
+                    <TableCell className="text-center font-medium">{post.id}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                        {post.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="font-medium">{post.title}</span>
+                        {post.commentCount > 0 && (
+                          <span className="ml-2 text-sm text-blue-600">[{post.commentCount}]</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center">
+                        <Avatar className="h-6 w-6 mr-2">
+                          <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <span>{post.author}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center text-gray-500">
+                      {new Date(post.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-center text-gray-500">{post.views}</TableCell>
+                    <TableCell className="text-center text-gray-500">{post.likes}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-32 text-center">
+                    게시글이 없습니다
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
 
       {/* 페이지네이션 */}
       <div className="flex justify-center items-center space-x-2 my-8">
@@ -497,6 +562,7 @@ function InsurancePostDetail() {
   const [, params] = useRoute("/insurance-analysis/:id");
   const postId = params?.id ? parseInt(params.id) : 0;
   const [liked, setLiked] = useState(false);
+  const isMobile = useIsMobile();
   
   // 댓글 폼
   const commentForm = useForm<CommentFormValues>({
@@ -668,15 +734,15 @@ function InsurancePostDetail() {
       </div>
 
       <Card className="mb-8 overflow-hidden">
-        <CardHeader className="pb-4">
-          <div className="flex items-center mb-1">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 mr-3">
+        <CardHeader className={`pb-4 ${isMobile ? 'px-4' : ''}`}>
+          <div className={`${isMobile ? 'flex flex-col items-start' : 'flex items-center'} mb-1`}>
+            <Badge variant="outline" className={`bg-blue-50 text-blue-700 ${isMobile ? 'mb-2' : 'mr-3'}`}>
               {post.category}
             </Badge>
-            <CardTitle className="text-2xl">{post.title}</CardTitle>
+            <CardTitle className={`${isMobile ? 'text-xl' : 'text-2xl'}`}>{post.title}</CardTitle>
           </div>
           
-          <div className="flex items-center justify-between mt-2">
+          <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'} mt-2`}>
             <div className="flex items-center">
               <Avatar className="h-8 w-8 mr-2">
                 <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
@@ -792,7 +858,7 @@ function InsurancePostDetail() {
 
       {/* 댓글 섹션 */}
       <Card className="mb-8">
-        <CardHeader className="pb-3">
+        <CardHeader className={`pb-3 ${isMobile ? 'px-4' : ''}`}>
           <CardTitle className="text-lg flex items-center">
             <MessageSquare className="mr-2 h-5 w-5" />
             댓글 {post.commentCount}개
@@ -801,21 +867,21 @@ function InsurancePostDetail() {
         
         <Separator />
         
-        <CardContent className="pt-4">
+        <CardContent className={`pt-4 ${isMobile ? 'px-4' : ''}`}>
           {post.comments.length > 0 ? (
             <ScrollArea className="h-[400px] pr-4">
               <div className="space-y-4">
                 {post.comments.map((comment) => (
                   <div key={comment.id} className="py-3">
-                    <div className="flex justify-between items-start">
+                    <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex justify-between'} items-start`}>
                       <div className="flex items-start">
                         <Avatar className="h-8 w-8 mr-2">
                           <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <div>
-                          <div className="flex items-center">
+                        <div className={isMobile ? 'w-full pr-2' : ''}>
+                          <div className={`${isMobile ? 'flex flex-col' : 'flex items-center'}`}>
                             <span className="font-medium">{comment.author}</span>
-                            <span className="text-xs text-gray-500 ml-2">
+                            <span className={`text-xs text-gray-500 ${isMobile ? 'mt-1' : 'ml-2'}`}>
                               {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
@@ -823,7 +889,7 @@ function InsurancePostDetail() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2">
+                      <div className={`flex items-center space-x-2 ${isMobile ? 'self-end' : ''}`}>
                         <Button variant="ghost" size="sm" className="h-7 px-2">
                           <ThumbsUp className="h-3 w-3 mr-1" />
                           <span className="text-xs">{comment.likes}</span>
@@ -851,18 +917,30 @@ function InsurancePostDetail() {
         
         <Separator />
         
-        <CardFooter className="py-4">
+        <CardFooter className={`py-4 ${isMobile ? 'px-4' : ''}`}>
           <form onSubmit={commentForm.handleSubmit(handleSubmitComment)} className="w-full">
-            <div className="flex space-x-3 w-full">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>
-                  <User className="h-5 w-5" />
-                </AvatarFallback>
-              </Avatar>
+            <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex space-x-3'} w-full`}>
+              {!isMobile && (
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
               <div className="flex-1 relative">
+                {isMobile && (
+                  <div className="mb-2 flex items-center">
+                    <Avatar className="h-6 w-6 mr-2">
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm text-gray-600">댓글 작성하기</span>
+                  </div>
+                )}
                 <Textarea
                   placeholder="댓글을 입력하세요"
-                  className="resize-none min-h-[80px] pr-12"
+                  className={`resize-none ${isMobile ? 'min-h-[100px]' : 'min-h-[80px]'} pr-12`}
                   {...commentForm.register('content')}
                 />
                 <Button 
@@ -886,19 +964,19 @@ function InsurancePostDetail() {
 
       {/* 관련 게시글 */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className={`pb-3 ${isMobile ? 'px-4' : ''}`}>
           <CardTitle className="text-lg">관련 게시글</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className={isMobile ? 'px-4' : ''}>
           <ul className="space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <li key={i}>
                 <Link 
                   href={`/insurance-analysis/${postId + i + 1}`} 
-                  className="flex items-center py-1 hover:text-blue-600"
+                  className={`flex items-center py-1 hover:text-blue-600 ${isMobile ? 'text-sm' : ''}`}
                 >
-                  <ChevronRight className="h-4 w-4 mr-1 text-gray-400" />
-                  <span className="text-sm">
+                  <ChevronRight className="h-4 w-4 mr-1 text-gray-400 flex-shrink-0" />
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} line-clamp-1`}>
                     [{post.category}] {i % 2 === 0 ? '선수 부상 관련 보험금 청구 방법' : '코치를 위한 맞춤형 보험 상품 비교'}
                   </span>
                 </Link>
