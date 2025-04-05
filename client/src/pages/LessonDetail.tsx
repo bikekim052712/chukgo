@@ -227,7 +227,7 @@ export default function LessonDetail() {
                     <CardDescription>실제 수강생들의 후기를 확인해보세요</CardDescription>
                   </div>
                   <Button asChild size="sm" className="ml-auto">
-                    <Link href={`/reviews/write/${lesson.id}`}>
+                    <Link to={`/reviews/write/${lesson.id}`}>
                       후기 작성하기
                     </Link>
                   </Button>
@@ -260,7 +260,7 @@ export default function LessonDetail() {
               </div>
               
               <Button asChild className="w-full mb-4">
-                <Link href={`/booking/${lesson.id}`}>
+                <Link to={`/booking/${lesson.id}`}>
                   <Calendar className="mr-2 h-4 w-4" /> 레슨 예약하기
                 </Link>
               </Button>
@@ -303,7 +303,7 @@ export default function LessonDetail() {
               </p>
               
               <Button variant="outline" asChild className="w-full">
-                <Link href={`/coaches/${lesson.coach.id}`}>코치 프로필 보기</Link>
+                <Link to={`/coaches/${lesson.coach.id}`}>코치 프로필 보기</Link>
               </Button>
             </CardContent>
           </Card>
@@ -314,7 +314,7 @@ export default function LessonDetail() {
               레슨에 대해 궁금한 점이 있으시면 문의해주세요.
             </p>
             <Button variant="outline" asChild className="w-full">
-              <Link href="#contact">문의하기</Link>
+              <Link to="#contact">문의하기</Link>
             </Button>
           </div>
         </div>

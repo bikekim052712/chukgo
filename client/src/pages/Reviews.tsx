@@ -183,8 +183,10 @@ export default function Reviews() {
           user: {
             id: 1,
             username: "coach_kim",
+            password: "hashedpassword",
             email: "coach_kim@example.com",
             fullName: "김축구",
+            phone: "010-1234-5678",
             profileImage: "https://randomuser.me/api/portraits/men/45.jpg",
             bio: "프로 경력 10년, 유소년 코칭 7년 경력",
             isCoach: true,
@@ -239,8 +241,10 @@ export default function Reviews() {
           user: {
             id: 3,
             username: "coach_park",
+            password: "hashedpassword",
             email: "coach_park@example.com",
             fullName: "박코치",
+            phone: "010-9876-5432",
             profileImage: "https://randomuser.me/api/portraits/women/36.jpg",
             bio: "유소년 전문 코치, 아이들의 잠재력을 이끌어냅니다",
             isCoach: true,
@@ -295,8 +299,10 @@ export default function Reviews() {
           user: {
             id: 5,
             username: "coach_lee",
+            password: "hashedpassword",
             email: "coach_lee@example.com",
             fullName: "이골키퍼",
+            phone: "010-5555-4444",
             profileImage: "https://randomuser.me/api/portraits/men/15.jpg",
             bio: "프로팀 골키퍼 출신, 골키퍼 전문 코치",
             isCoach: true,
@@ -406,7 +412,7 @@ export default function Reviews() {
           </p>
         </div>
         <Button asChild className="px-6">
-          <Link href="/reviews/write">
+          <Link to="/reviews/write">
             후기 작성하기
           </Link>
         </Button>
@@ -611,7 +617,7 @@ export default function Reviews() {
           여러분의 소중한 의견이 더 나은 축구 교육 환경을 만듭니다.
         </p>
         <Button asChild className="bg-purple-700 hover:bg-purple-800">
-          <Link href="/reviews/write">
+          <Link to="/reviews/write">
             레슨 후기 작성하기
           </Link>
         </Button>
@@ -651,7 +657,7 @@ export default function Reviews() {
                 </p>
               </CardContent>
               <CardFooter className="pt-0">
-                <Link href={`/lessons/${review.lesson.id}`}>
+                <Link to={`/lessons/${review.lesson.id}`}>
                   <Button variant="outline" size="sm">자세히 보기</Button>
                 </Link>
               </CardFooter>
