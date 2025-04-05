@@ -71,7 +71,6 @@ export default function Footer() {
               <li><Link to="/lesson-request?age=middle-school" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
               <li><Link to="/lesson-request?age=high-school" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
               <li><Link to="/lesson-request?age=adult" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
-              <li><Link to="/lesson-request?level=elite" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
             </ul>
           </div>
           
