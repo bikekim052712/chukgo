@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
-import { SPECIALIZATIONS } from "@/lib/constants";
+import { SPECIALIZATIONS, PROVINCES, DISTRICTS } from "@/lib/constants";
 
 // 소셜 아이콘 불러오기
 import { RiKakaoTalkFill } from "react-icons/ri";
@@ -28,6 +28,8 @@ const coachSignupSchema = z.object({
   phoneNumber: z
     .string()
     .regex(/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/, "올바른 휴대폰 번호를 입력해 주세요."),
+  province: z.string().min(1, "지역을 선택해 주세요."),
+  district: z.string().min(1, "상세 지역을 선택해 주세요."),
   specializations: z.array(z.string()).min(1, "최소 1개 이상의 전문 분야를 선택해 주세요."),
   experience: z.enum(["1년 미만", "1-3년", "3-5년", "5-10년", "10년 이상"]),
   introduction: z.string().min(30, "자기소개는 최소 30자 이상 작성해 주세요."),
@@ -52,11 +54,14 @@ export default function CoachSignup() {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [specializations, setSpecializations] = useState<string[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
   
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<CoachSignupFormValues>({
     resolver: zodResolver(coachSignupSchema),
@@ -66,6 +71,8 @@ export default function CoachSignup() {
       confirmPassword: "",
       fullName: "",
       phoneNumber: "",
+      province: "",
+      district: "",
       specializations: [],
       experience: "1년 미만",
       introduction: "",
@@ -76,6 +83,21 @@ export default function CoachSignup() {
     },
   });
 
+  // 지역 변경 시 처리
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const province = e.target.value;
+    setSelectedProvince(province);
+    setValue("province", province);
+    setValue("district", ""); // 상세 지역 초기화
+    
+    // 선택된 광역시/도에 해당하는 시군구 목록 업데이트
+    if (province && DISTRICTS[province]) {
+      setAvailableDistricts(DISTRICTS[province]);
+    } else {
+      setAvailableDistricts([]);
+    }
+  };
+  
   // 전문 분야 토글
   const toggleSpecialization = (specialization: string) => {
     setSpecializations(prev => {
@@ -297,6 +319,63 @@ export default function CoachSignup() {
               {/* 코치 정보 */}
               <div className="pt-6 border-t border-gray-200 space-y-4">
                 <h3 className="text-lg font-medium text-gray-900">코치 정보</h3>
+                
+                {/* 활동 지역 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* 광역시/도 */}
+                  <div>
+                    <label htmlFor="province" className="block text-sm font-medium text-gray-700">
+                      광역시/도 <span className="text-red-500">*</span>
+                    </label>
+                    <div className="mt-1">
+                      <select
+                        id="province"
+                        className={`block w-full px-3 py-2 border ${
+                          errors.province ? "border-red-300" : "border-gray-300"
+                        } rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                        {...register("province")}
+                        onChange={handleProvinceChange}
+                      >
+                        <option value="">광역시/도 선택</option>
+                        {PROVINCES.map((province) => (
+                          <option key={province} value={province}>
+                            {province}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.province && (
+                        <p className="mt-1 text-sm text-red-600">{errors.province.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* 시군구 */}
+                  <div>
+                    <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+                      시/군/구 <span className="text-red-500">*</span>
+                    </label>
+                    <div className="mt-1">
+                      <select
+                        id="district"
+                        className={`block w-full px-3 py-2 border ${
+                          errors.district ? "border-red-300" : "border-gray-300"
+                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                        disabled={!selectedProvince}
+                        {...register("district")}
+                      >
+                        <option value="">시/군/구 선택</option>
+                        {availableDistricts.map((district) => (
+                          <option key={district} value={district}>
+                            {district}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.district && (
+                        <p className="mt-1 text-sm text-red-600">{errors.district.message}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 
                 {/* 전문 분야 */}
                 <div>
