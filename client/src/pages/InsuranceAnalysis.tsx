@@ -281,7 +281,7 @@ function InsuranceBoardList() {
               style={{ color: NAVER_COLORS.veryLightText }} />
             <Input
               type="text"
-              placeholder="검색어를 입력하세요"
+              placeholder=""
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-16 w-[180px] h-9 text-sm"
