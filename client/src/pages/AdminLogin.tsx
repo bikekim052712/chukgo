@@ -3,12 +3,14 @@ import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { LockKeyhole, User, Key, LogIn, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { User as SelectUser } from "@shared/schema";
 
 const loginSchema = z.object({
   username: z.string().min(3, "아이디는 3글자 이상이어야 합니다"),
@@ -37,22 +39,24 @@ export default function AdminLogin() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      // 로그인 API 호출
-      const res = await apiRequest("POST", "/api/login", data);
-      const user = await res.json();
-
-      // 쿼리 캐시 갱신
-      queryClient.setQueryData(["/api/user"], user);
+      // useAuth 훅의 로그인 뮤테이션 활용
+      const { loginMutation } = useAuth();
       
-      toast({
-        title: "로그인 성공",
-        description: `${user.fullName}님, 환영합니다!`,
-      });
+      // 로그인 요청
+      await loginMutation.mutateAsync(data);
       
-      // 관리자인 경우 관리자 페이지로 이동, 아닌 경우 홈으로 이동
-      if (user.isAdmin) {
+      // 사용자 정보 가져오기 (loginMutation이 성공하면 이미 queryClient에 저장됨)
+      const user = queryClient.getQueryData<SelectUser>(["/api/user"]);
+      
+      if (user?.isAdmin) {
+        // 관리자 페이지로 이동
+        toast({
+          title: "관리자 로그인 성공",
+          description: `${user.fullName}님, 환영합니다!`,
+        });
         setLocation("/admin");
       } else {
+        // 관리자 권한이 없으면 홈으로 이동
         setLocation("/");
         toast({
           title: "접근 권한 없음",
