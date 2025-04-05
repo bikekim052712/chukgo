@@ -7,20 +7,48 @@ export default function Footer() {
     <footer className="bg-white border-t border-gray-200 pt-6 pb-6">
       <div className="container mx-auto px-4">
         {/* 앱 다운로드 */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 p-6 mb-6 bg-gray-50 rounded-lg">
-          <div className="text-center md:text-left">
-            <h3 className="text-base font-bold text-gray-800">축고 앱 다운로드</h3>
-            <p className="text-sm text-gray-600 mt-1">언제 어디서나 쉽고 빠르게 유소년 축구 레슨을 찾아보세요</p>
+        <div className="relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 p-8 mb-8 bg-gradient-to-tr from-purple-800 via-indigo-700 to-blue-600 rounded-xl shadow-lg">
+          {/* 배경 애니메이션 요소 */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-10">
+            <div className="absolute top-10 left-10 w-20 h-20 rounded-full bg-white animate-pulse"></div>
+            <div className="absolute bottom-10 right-10 w-32 h-32 rounded-full bg-white animate-pulse" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full bg-white animate-pulse" style={{ animationDelay: '0.5s' }}></div>
           </div>
-          <div className="flex gap-3">
-            <button className="flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md">
-              <FaApple className="h-5 w-5" />
-              <span className="text-sm">App Store</span>
-            </button>
-            <button className="flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md">
-              <FaAndroid className="h-5 w-5" />
-              <span className="text-sm">Google Play</span>
-            </button>
+          
+          {/* 텍스트 영역 */}
+          <div className="relative text-center md:text-left z-10 max-w-md">
+            <h3 className="text-2xl font-bold text-white mb-2">축고 앱 다운로드</h3>
+            <p className="text-white/90 text-base mt-2 mb-4">언제 어디서나 쉽고 빠르게 유소년 축구 레슨을 찾아보세요</p>
+            
+            {/* QR 코드 블럭 (선택적) */}
+            <div className="hidden md:flex items-center mt-4 space-x-2 bg-white/20 backdrop-blur-sm py-2 px-3 rounded-lg w-fit">
+              <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center">
+                <span className="text-purple-800 text-xs font-bold">QR</span>
+              </div>
+              <span className="text-white text-sm">앱 다운로드 QR코드 스캔</span>
+            </div>
+          </div>
+          
+          {/* 앱 다운로드 버튼 */}
+          <div className="relative z-10 flex flex-col sm:flex-row gap-4">
+            <a href="#" className="group hover:scale-105 transition-all duration-300 flex items-center gap-3 bg-black/90 backdrop-blur-md text-white py-3 px-6 rounded-xl border border-white/20 shadow-lg">
+              <div className="bg-white rounded-full p-1.5">
+                <FaApple className="h-6 w-6 text-black" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-light">다운로드하기</span>
+                <span className="text-base font-semibold">App Store</span>
+              </div>
+            </a>
+            <a href="#" className="group hover:scale-105 transition-all duration-300 flex items-center gap-3 bg-black/90 backdrop-blur-md text-white py-3 px-6 rounded-xl border border-white/20 shadow-lg">
+              <div className="bg-white rounded-full p-1.5">
+                <FaAndroid className="h-6 w-6 text-black" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-light">다운로드하기</span>
+                <span className="text-base font-semibold">Google Play</span>
+              </div>
+            </a>
           </div>
         </div>
         
