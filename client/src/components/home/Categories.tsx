@@ -116,7 +116,7 @@ export default function Categories() {
                 각 연령에 최적화된 체계적인 축구 교육 프로그램
               </p>
             </div>
-            <Link href="/ages" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
+            <Link href="/lesson-request" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
               모든 연령대별 레슨 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>

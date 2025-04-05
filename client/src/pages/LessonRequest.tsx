@@ -33,21 +33,24 @@ export default function LessonRequest() {
 
   // URL에서 age 파라미터 처리
   useEffect(() => {
-    const params = new URLSearchParams(location.split('?')[1]);
-    const ageParam = params.get('age');
-    
-    if (ageParam) {
-      setSelectedAge(ageParam);
-      // 적절한 검색어 설정 (예: "초등학생", "중학생" 등)
-      const ageLabels: Record<string, string> = {
-        'elementary': '초등학생',
-        'middle-school': '중학생',
-        'high-school': '고등학생',
-        'adult': '성인'
-      };
+    // location이 query string을 포함하는지 확인
+    if (location.includes('?')) {
+      const params = new URLSearchParams(location.split('?')[1]);
+      const ageParam = params.get('age');
       
-      if (ageParam in ageLabels) {
-        setSearchQuery(ageLabels[ageParam]);
+      if (ageParam) {
+        setSelectedAge(ageParam);
+        // 적절한 검색어 설정 (예: "초등학생", "중학생" 등)
+        const ageLabels: Record<string, string> = {
+          'elementary': '초등학생',
+          'middle-school': '중학생',
+          'high-school': '고등학생',
+          'adult': '성인'
+        };
+        
+        if (ageParam in ageLabels && searchQuery !== ageLabels[ageParam]) {
+          setSearchQuery(ageLabels[ageParam]);
+        }
       }
     }
   }, [location]);
