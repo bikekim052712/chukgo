@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { contactFormSchema, insertBookingSchema, insertReviewSchema, insertUserSchema } from "@shared/schema";
+import { contactFormSchema, insertBookingSchema, insertReviewSchema, insertUserSchema, insertCompanyInfoSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { z } from "zod";
 import { setupAuth } from "./auth";
@@ -393,6 +393,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error('Coach register error:', error);
       res.status(500).json({ message: '코치 가입 처리 중 오류가 발생했습니다.' });
+    }
+  });
+
+  // Admin middleware
+  function requireAdmin(req: Request, res: Response, next: NextFunction) {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "로그인이 필요합니다." });
+    }
+    
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: "관리자 권한이 필요합니다." });
+    }
+    
+    next();
+  }
+  
+  // Company info routes
+  // Get all company info
+  app.get('/api/company-info', async (req: Request, res: Response) => {
+    try {
+      const companyInfos = await storage.getCompanyInfos();
+      res.json(companyInfos);
+    } catch (error) {
+      res.status(500).json({ message: '회사 정보를 가져오는 중 오류가 발생했습니다.' });
+    }
+  });
+  
+  // Get company info by ID
+  app.get('/api/company-info/:id', async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const companyInfo = await storage.getCompanyInfo(id);
+      
+      if (!companyInfo) {
+        return res.status(404).json({ message: '회사 정보를 찾을 수 없습니다.' });
+      }
+      
+      res.json(companyInfo);
+    } catch (error) {
+      res.status(500).json({ message: '회사 정보를 가져오는 중 오류가 발생했습니다.' });
+    }
+  });
+  
+  // Create company info (Admin only)
+  app.post('/api/company-info', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const infoData = insertCompanyInfoSchema.parse(req.body);
+      const companyInfo = await storage.createCompanyInfo(infoData);
+      res.status(201).json(companyInfo);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: '유효하지 않은 회사 정보', errors: error.errors });
+      }
+      res.status(500).json({ message: '회사 정보를 생성하는 중 오류가 발생했습니다.' });
+    }
+  });
+  
+  // Update company info (Admin only)
+  app.put('/api/company-info/:id', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const infoData = insertCompanyInfoSchema.parse(req.body);
+      
+      const updatedInfo = await storage.updateCompanyInfo(id, infoData);
+      
+      if (!updatedInfo) {
+        return res.status(404).json({ message: '회사 정보를 찾을 수 없습니다.' });
+      }
+      
+      res.json(updatedInfo);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: '유효하지 않은 회사 정보', errors: error.errors });
+      }
+      res.status(500).json({ message: '회사 정보를 업데이트하는 중 오류가 발생했습니다.' });
+    }
+  });
+  
+  // Delete company info (Admin only)
+  app.delete('/api/company-info/:id', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteCompanyInfo(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: '회사 정보를 찾을 수 없습니다.' });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: '회사 정보를 삭제하는 중 오류가 발생했습니다.' });
     }
   });
 

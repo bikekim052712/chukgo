@@ -23,6 +23,9 @@ import Signup from "@/pages/Signup";
 import Layout from "@/components/layout/Layout";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import AboutUs from "@/pages/AboutUs";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import CompanyInfoEdit from "@/pages/admin/CompanyInfoEdit";
 
 function Router() {
   return (
@@ -54,6 +57,15 @@ function Router() {
       <Route path="/private-lesson" component={NotFound} />
       <Route path="/group-lesson" component={NotFound} />
       <Route path="/goalkeeper-lesson" component={NotFound} />
+      
+      {/* 회사 정보 */}
+      <Route path="/about-us" component={AboutUs} />
+      
+      {/* 관리자 페이지 */}
+      <ProtectedRoute path="/admin/company-info/new" component={CompanyInfoEdit} />
+      <ProtectedRoute path="/admin/company-info/:id" component={CompanyInfoEdit} />
+      <ProtectedRoute path="/admin" component={AdminDashboard} />
+      
       <Route component={NotFound} />
     </Switch>
   );

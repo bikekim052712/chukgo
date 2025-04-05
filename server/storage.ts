@@ -60,6 +60,13 @@ export interface IStorage {
   // Inquiries
   createInquiry(inquiry: InsertInquiry): Promise<Inquiry>;
   
+  // Company Info
+  getCompanyInfos(): Promise<any[]>;
+  getCompanyInfo(id: number): Promise<any | undefined>;
+  createCompanyInfo(info: any): Promise<any>;
+  updateCompanyInfo(id: number, info: any): Promise<any | undefined>;
+  deleteCompanyInfo(id: number): Promise<boolean>;
+  
   // Session store
   sessionStore: any; // Memorystore/SessionStore
 }
@@ -74,6 +81,7 @@ export class MemStorage implements IStorage {
   private reviews: Map<number, Review>;
   private schedules: Map<number, Schedule>;
   private inquiries: Map<number, Inquiry>;
+  private companyInfos: Map<number, any>;
   
   readonly sessionStore: any; // Memorystore SessionStore
   
@@ -86,6 +94,7 @@ export class MemStorage implements IStorage {
   private reviewId: number = 1;
   private scheduleId: number = 1;
   private inquiryId: number = 1;
+  private companyInfoId: number = 1;
   
   constructor() {
     this.users = new Map();
@@ -97,6 +106,7 @@ export class MemStorage implements IStorage {
     this.reviews = new Map();
     this.schedules = new Map();
     this.inquiries = new Map();
+    this.companyInfos = new Map();
     
     const MemoryStore = createMemoryStore(session);
     this.sessionStore = new MemoryStore({
@@ -585,6 +595,47 @@ export class MemStorage implements IStorage {
     };
     this.inquiries.set(id, inquiry);
     return inquiry;
+  }
+  
+  // Company Info methods
+  async getCompanyInfos(): Promise<any[]> {
+    return Array.from(this.companyInfos.values());
+  }
+  
+  async getCompanyInfo(id: number): Promise<any | undefined> {
+    return this.companyInfos.get(id);
+  }
+  
+  async createCompanyInfo(infoData: any): Promise<any> {
+    const id = this.companyInfoId++;
+    const info = {
+      ...infoData,
+      id,
+      updatedAt: new Date()
+    };
+    this.companyInfos.set(id, info);
+    return info;
+  }
+  
+  async updateCompanyInfo(id: number, infoData: any): Promise<any | undefined> {
+    const info = await this.getCompanyInfo(id);
+    if (!info) return undefined;
+    
+    const updatedInfo = {
+      ...info,
+      ...infoData,
+      updatedAt: new Date()
+    };
+    
+    this.companyInfos.set(id, updatedInfo);
+    return updatedInfo;
+  }
+  
+  async deleteCompanyInfo(id: number): Promise<boolean> {
+    const info = await this.getCompanyInfo(id);
+    if (!info) return false;
+    
+    return this.companyInfos.delete(id);
   }
 }
 

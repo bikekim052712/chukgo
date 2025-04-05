@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   profileImage: text("profile_image"),
   bio: text("bio"),
   isCoach: boolean("is_coach").default(false).notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
 });
 
 // Coach specific details
@@ -101,6 +102,15 @@ export const inquiries = pgTable("inquiries", {
   resolved: boolean("resolved").default(false).notNull(),
 });
 
+// Company information for about page
+export const companyInfo = pgTable("company_info", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  section: text("section").notNull(), // vision, history, values, team, etc.
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCoachSchema = createInsertSchema(coaches).omit({ id: true });
@@ -111,6 +121,7 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({ id: true,
 export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, createdAt: true });
 export const insertScheduleSchema = createInsertSchema(schedules).omit({ id: true });
 export const insertInquirySchema = createInsertSchema(inquiries).omit({ id: true, createdAt: true, resolved: true });
+export const insertCompanyInfoSchema = createInsertSchema(companyInfo).omit({ id: true, updatedAt: true });
 
 // Additional validation for inquiry form
 export const contactFormSchema = insertInquirySchema.extend({
@@ -149,6 +160,9 @@ export type InsertSchedule = z.infer<typeof insertScheduleSchema>;
 export type Inquiry = typeof inquiries.$inferSelect;
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 export type ContactFormData = z.infer<typeof contactFormSchema>;
+
+export type CompanyInfo = typeof companyInfo.$inferSelect;
+export type InsertCompanyInfo = z.infer<typeof insertCompanyInfoSchema>;
 
 // Extended types
 export type CoachWithUser = Coach & { user: User };
