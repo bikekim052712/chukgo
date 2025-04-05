@@ -7,7 +7,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { LockKeyhole, User, Key, LogIn, Shield } from "lucide-react";
 
 const loginSchema = z.object({
   username: z.string().min(3, "아이디는 3글자 이상이어야 합니다"),
@@ -72,9 +73,33 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="md:w-1/2 max-w-md px-8 flex flex-col items-center mb-10 md:mb-0">
+        <div className="bg-primary/10 p-3 rounded-full mb-6">
+          <Shield className="h-16 w-16 text-primary" />
+        </div>
+        <h1 className="text-3xl font-bold text-center mb-2">축고 관리자 시스템</h1>
+        <p className="text-center text-gray-600 mb-8">
+          관리자 전용 페이지입니다. 회사 정보 관리, 리뷰 관리, 사용자 관리 등의 작업을 수행할 수 있습니다.
+        </p>
+        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-6 w-full max-w-sm shadow-lg border border-gray-100">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="p-2 bg-primary/10 rounded-full">
+              <Key className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium">안전한 로그인</h3>
+              <p className="text-sm text-gray-500">모든 데이터는 암호화되어 안전하게 보호됩니다</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg shadow-xl border-0">
+        <CardHeader className="space-y-2 pb-2">
+          <div className="mx-auto bg-primary/10 p-2 rounded-full mb-2">
+            <LockKeyhole className="h-6 w-6 text-primary" />
+          </div>
           <CardTitle className="text-2xl font-bold text-center">관리자 로그인</CardTitle>
           <CardDescription className="text-center">
             관리자 계정으로 로그인하여 시스템을 관리하세요
@@ -82,55 +107,72 @@ export default function AdminLogin() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            <div className="space-y-2">
+              <label htmlFor="username" className="block text-sm font-medium">
                 아이디
               </label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="admin"
-                {...register("username")}
-                className={errors.username ? "border-red-500" : ""}
-              />
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="admin"
+                  {...register("username")}
+                  className={`pl-10 ${errors.username ? "border-red-500" : ""}`}
+                />
+              </div>
               {errors.username && (
-                <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+                <p className="text-sm text-red-600">{errors.username.message}</p>
               )}
             </div>
             
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium">
                 비밀번호
               </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••"
-                {...register("password")}
-                className={errors.password ? "border-red-500" : ""}
-              />
+              <div className="relative">
+                <Key className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••"
+                  {...register("password")}
+                  className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
+                />
+              </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                <p className="text-sm text-red-600">{errors.password.message}</p>
               )}
             </div>
             
             <Button
               type="submit"
-              className="w-full"
+              className="w-full mt-6 flex items-center justify-center"
               disabled={isLoading}
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isLoading ? (
+                <>로그인 중... <User className="ml-2 h-4 w-4 animate-spin" /></>
+              ) : (
+                <>로그인 <LogIn className="ml-2 h-4 w-4" /></>
+              )}
             </Button>
-            
-            <div className="text-center text-sm">
-              <p className="text-gray-600">
-                <strong>관리자 계정 정보:</strong><br />
-                ID: admin<br />
-                비밀번호: admin123
-              </p>
-            </div>
           </form>
         </CardContent>
+        <CardFooter className="bg-gray-50 rounded-b-lg">
+          <div className="w-full text-center text-sm">
+            <p className="text-gray-600 font-medium mb-1">테스트 계정 정보</p>
+            <div className="flex justify-center space-x-6">
+              <div className="flex items-center">
+                <User className="mr-1 h-4 w-4 text-gray-500" />
+                <span className="font-mono">admin</span>
+              </div>
+              <div className="flex items-center">
+                <Key className="mr-1 h-4 w-4 text-gray-500" />
+                <span className="font-mono">admin123</span>
+              </div>
+            </div>
+          </div>
+        </CardFooter>
       </Card>
     </div>
   );
