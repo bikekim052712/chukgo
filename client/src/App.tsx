@@ -26,6 +26,8 @@ import { ProtectedRoute } from "@/lib/protected-route";
 import AboutUs from "@/pages/AboutUs";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import CompanyInfoEdit from "@/pages/admin/CompanyInfoEdit";
+import AuthPage from "@/pages/auth-page";
+import AdminLogin from "@/pages/AdminLogin";
 
 function Router() {
   return (
@@ -49,6 +51,8 @@ function Router() {
       {/* 인증 페이지 */}
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+      <Route path="/auth" component={AuthPage} />
+      <Route path="/admin-login" component={AdminLogin} />
       
       <Route path="/running" component={Running} />
       <Route path="/insurance-analysis/write" component={InsuranceAnalysis} />
