@@ -221,9 +221,16 @@ export default function LessonDetail() {
             
             <TabsContent value="reviews">
               <Card>
-                <CardHeader>
-                  <CardTitle>수강생 후기</CardTitle>
-                  <CardDescription>실제 수강생들의 후기를 확인해보세요</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>수강생 후기</CardTitle>
+                    <CardDescription>실제 수강생들의 후기를 확인해보세요</CardDescription>
+                  </div>
+                  <Button asChild size="sm" className="ml-auto">
+                    <Link href={`/reviews/write/${lesson.id}`}>
+                      후기 작성하기
+                    </Link>
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12">

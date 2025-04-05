@@ -398,11 +398,18 @@ export default function Reviews() {
 
   return (
     <div className="container mx-auto px-4 py-16 mt-10">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">레슨 후기</h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          축고 회원들의 생생한 레슨 후기를 확인해보세요. 실제 경험자들의 이야기가 여러분의 선택에 도움이 될 것입니다.
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+        <div className="text-center md:text-left mb-4 md:mb-0">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">레슨 후기</h1>
+          <p className="text-lg text-gray-600 max-w-3xl">
+            축고 회원들의 생생한 레슨 후기를 확인해보세요. 실제 경험자들의 이야기가 여러분의 선택에 도움이 될 것입니다.
+          </p>
+        </div>
+        <Button asChild className="px-6">
+          <Link href="/reviews/write">
+            후기 작성하기
+          </Link>
+        </Button>
       </div>
 
       {/* 검색 및 필터 섹션 */}
@@ -603,8 +610,10 @@ export default function Reviews() {
           레슨을 받은 경험이 있다면, 솔직한 후기를 남겨 다른 사용자들에게 도움을 주세요.
           여러분의 소중한 의견이 더 나은 축구 교육 환경을 만듭니다.
         </p>
-        <Button className="bg-purple-700 hover:bg-purple-800">
-          레슨 후기 작성하기
+        <Button asChild className="bg-purple-700 hover:bg-purple-800">
+          <Link href="/reviews/write">
+            레슨 후기 작성하기
+          </Link>
         </Button>
       </div>
 

@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InsertReview } from "@shared/schema";
+import { InsertReview, LessonWithDetails } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
@@ -58,7 +58,7 @@ export default function ReviewWrite() {
   const [hoveredRating, setHoveredRating] = useState(0);
   
   // 레슨 데이터 가져오기
-  const { data: lesson, isLoading: isLessonLoading } = useQuery({
+  const { data: lesson, isLoading: isLessonLoading } = useQuery<LessonWithDetails>({
     queryKey: [`/api/lessons/${id}`],
     enabled: !!id,
   });
@@ -183,7 +183,7 @@ export default function ReviewWrite() {
                       <p className="text-sm text-gray-500 mb-1">{lesson.coach?.user?.fullName} 코치</p>
                       <p className="text-sm text-gray-700">{lesson.location}</p>
                       <p className="text-sm text-gray-700 mt-1">
-                        {new Date(lesson.createdAt).toLocaleDateString('ko-KR')} 수강
+                        {new Date().toLocaleDateString('ko-KR')} 수강
                       </p>
                     </div>
                   </div>
