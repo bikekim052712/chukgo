@@ -153,10 +153,11 @@ export default function LessonRequest() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // 검색은 이미 useEffect에서 처리되고 있음
+    // 검색어 삭제
+    setSearchQuery('');
     toast({
-      title: "검색 완료",
-      description: `'${searchQuery}'에 대한 검색 결과입니다.`,
+      title: "삭제 완료",
+      description: "검색어가 삭제되었습니다.",
     });
   };
 
@@ -233,7 +234,7 @@ export default function LessonRequest() {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>코치 검색</CardTitle>
-          <CardDescription>지역이나 키워드로 코치를 검색할 수 있습니다.</CardDescription>
+          <CardDescription>지역이나 키워드로 코치를 검색하고 초록색 삭제 버튼으로 검색어를 지울 수 있습니다.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
@@ -249,7 +250,13 @@ export default function LessonRequest() {
                   className="pl-10"
                 />
               </div>
-              <Button type="submit">검색</Button>
+              <Button 
+                type="submit" 
+                className="bg-green-500 hover:bg-green-600"
+                disabled={!searchQuery}
+              >
+                삭제
+              </Button>
             </form>
 
             {/* 지역 선택 */}
