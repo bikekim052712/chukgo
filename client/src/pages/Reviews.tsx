@@ -319,8 +319,9 @@ export default function Reviews() {
   // 검색 및 필터링 로직
   const filteredReviews = sampleReviews
     .filter(review => {
+      const comment = review.comment || "";
       const searchInReview = 
-        review.comment.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        comment.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.lesson.coach.user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -329,10 +330,54 @@ export default function Reviews() {
         ? review.rating >= parseInt(ratingFilter) 
         : true;
       
-      const matchesCategory = categoryFilter && categoryFilter !== "all"
-        ? review.lesson.lessonType?.name === categoryFilter || 
-          (review.lesson.tags && review.lesson.tags.includes(categoryFilter))
-        : true;
+      let matchesCategory = true;
+      if (categoryFilter && categoryFilter !== "all") {
+        // 카테고리별 필터링 로직
+        const lessonTags = review.lesson.tags || [];
+        const lessonType = review.lesson.lessonType?.name || "";
+        
+        switch (categoryFilter) {
+          case "개인레슨":
+            matchesCategory = lessonTags.includes("개인레슨") || 
+                              lessonType === "개인 레슨" || 
+                              lessonType === "개인레슨";
+            break;
+          case "그룹레슨":
+            matchesCategory = lessonTags.includes("그룹레슨") || 
+                              lessonType === "그룹 레슨" || 
+                              lessonType === "그룹레슨";
+            break;
+          case "골키퍼레슨":
+            matchesCategory = lessonTags.includes("골키퍼레슨") || 
+                              lessonTags.includes("골키퍼") ||
+                              lessonType === "골키퍼레슨";
+            break;
+          case "달리기레슨":
+            matchesCategory = lessonTags.includes("달리기레슨") || 
+                              lessonTags.includes("달리기") ||
+                              lessonType === "달리기레슨";
+            break;
+          case "피지컬레슨":
+            matchesCategory = lessonTags.includes("피지컬레슨") || 
+                              lessonTags.includes("피지컬") ||
+                              lessonType === "피지컬레슨";
+            break;
+          case "기타":
+            const mainCategories = [
+              "개인레슨", "개인 레슨", 
+              "그룹레슨", "그룹 레슨", 
+              "골키퍼레슨", "골키퍼", 
+              "달리기레슨", "달리기", 
+              "피지컬레슨", "피지컬"
+            ];
+            matchesCategory = !mainCategories.some(cat => 
+              lessonTags.includes(cat) || lessonType === cat
+            );
+            break;
+          default:
+            matchesCategory = lessonTags.includes(categoryFilter) || lessonType === categoryFilter;
+        }
+      }
       
       return searchInReview && matchesRating && matchesCategory;
     })
@@ -408,11 +453,12 @@ export default function Reviews() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">전체 카테고리</SelectItem>
-                    <SelectItem value="개인 레슨">개인 레슨</SelectItem>
-                    <SelectItem value="그룹 레슨">그룹 레슨</SelectItem>
-                    <SelectItem value="포지션 전문">포지션 전문</SelectItem>
-                    <SelectItem value="유소년">유소년</SelectItem>
-                    <SelectItem value="골키퍼">골키퍼</SelectItem>
+                    <SelectItem value="개인레슨">개인레슨</SelectItem>
+                    <SelectItem value="그룹레슨">그룹레슨</SelectItem>
+                    <SelectItem value="골키퍼레슨">골키퍼레슨</SelectItem>
+                    <SelectItem value="달리기레슨">달리기레슨</SelectItem>
+                    <SelectItem value="피지컬레슨">피지컬레슨</SelectItem>
+                    <SelectItem value="기타">기타</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -439,9 +485,12 @@ export default function Reviews() {
       <Tabs defaultValue="all" className="mb-8">
         <TabsList>
           <TabsTrigger value="all">전체 후기</TabsTrigger>
-          <TabsTrigger value="individual">개인 레슨</TabsTrigger>
-          <TabsTrigger value="group">그룹 레슨</TabsTrigger>
-          <TabsTrigger value="kids">유소년</TabsTrigger>
+          <TabsTrigger value="개인레슨">개인레슨</TabsTrigger>
+          <TabsTrigger value="그룹레슨">그룹레슨</TabsTrigger>
+          <TabsTrigger value="골키퍼레슨">골키퍼레슨</TabsTrigger>
+          <TabsTrigger value="달리기레슨">달리기레슨</TabsTrigger>
+          <TabsTrigger value="피지컬레슨">피지컬레슨</TabsTrigger>
+          <TabsTrigger value="기타">기타</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="pt-6">
           {/* 리뷰 목록 */}
@@ -460,28 +509,86 @@ export default function Reviews() {
             )}
           </div>
         </TabsContent>
-        <TabsContent value="individual" className="pt-6">
+        <TabsContent value="개인레슨" className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredReviews
-              .filter(review => review.lesson.lessonType?.name === "개인 레슨")
+              .filter(review => 
+                review.lesson.tags?.includes("개인레슨") || 
+                review.lesson.lessonType?.name === "개인 레슨" || 
+                review.lesson.lessonType?.name === "개인레슨")
               .map(review => (
                 <ReviewCard key={review.id} review={review} />
               ))}
           </div>
         </TabsContent>
-        <TabsContent value="group" className="pt-6">
+        <TabsContent value="그룹레슨" className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredReviews
-              .filter(review => review.lesson.lessonType?.name === "그룹 레슨")
+              .filter(review => 
+                review.lesson.tags?.includes("그룹레슨") || 
+                review.lesson.lessonType?.name === "그룹 레슨" || 
+                review.lesson.lessonType?.name === "그룹레슨")
               .map(review => (
                 <ReviewCard key={review.id} review={review} />
               ))}
           </div>
         </TabsContent>
-        <TabsContent value="kids" className="pt-6">
+        <TabsContent value="골키퍼레슨" className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredReviews
-              .filter(review => review.lesson.tags?.includes("유소년"))
+              .filter(review => 
+                review.lesson.tags?.includes("골키퍼레슨") || 
+                review.lesson.tags?.includes("골키퍼") ||
+                review.lesson.lessonType?.name === "골키퍼레슨")
+              .map(review => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="달리기레슨" className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredReviews
+              .filter(review => 
+                review.lesson.tags?.includes("달리기레슨") || 
+                review.lesson.tags?.includes("달리기") ||
+                review.lesson.lessonType?.name === "달리기레슨")
+              .map(review => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="피지컬레슨" className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredReviews
+              .filter(review => 
+                review.lesson.tags?.includes("피지컬레슨") || 
+                review.lesson.tags?.includes("피지컬") ||
+                review.lesson.lessonType?.name === "피지컬레슨")
+              .map(review => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="기타" className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredReviews
+              .filter(review => {
+                // 다른 카테고리에 속하지 않는 리뷰들
+                const mainCategories = [
+                  "개인레슨", "개인 레슨", 
+                  "그룹레슨", "그룹 레슨", 
+                  "골키퍼레슨", "골키퍼", 
+                  "달리기레슨", "달리기", 
+                  "피지컬레슨", "피지컬"
+                ];
+                const reviewTags = review.lesson.tags || [];
+                const lessonType = review.lesson.lessonType?.name || "";
+                
+                // 어떤 메인 카테고리에도 속하지 않으면 기타로 분류
+                return !mainCategories.some(cat => 
+                  reviewTags.includes(cat) || lessonType === cat
+                );
+              })
               .map(review => (
                 <ReviewCard key={review.id} review={review} />
               ))}
