@@ -152,7 +152,8 @@ export class MemStorage implements IStorage {
         phone: "010-1234-5678",
         profileImage: "https://images.pexels.com/photos/3785424/pexels-photo-3785424.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "전 프로축구 선수 출신으로 10년 이상의 코칭 경력을 보유. 기초부터 고급 기술까지 체계적인 교육.",
-        isCoach: true
+        isCoach: true,
+        isAdmin: false
       },
       {
         username: "leejiyeon",
@@ -162,7 +163,8 @@ export class MemStorage implements IStorage {
         phone: "010-2345-6789",
         profileImage: "https://images.pexels.com/photos/6952392/pexels-photo-6952392.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "여성 축구 국가대표 출신으로 여성 및 유소년 선수 전문 코치. 친절하고 체계적인 교육 방식으로 인기가 높음.",
-        isCoach: true
+        isCoach: true,
+        isAdmin: false
       },
       {
         username: "parkjunho",
@@ -172,14 +174,24 @@ export class MemStorage implements IStorage {
         phone: "010-3456-7890",
         profileImage: "https://images.pexels.com/photos/6551072/pexels-photo-6551072.jpeg?auto=compress&cs=tinysrgb&w=800",
         bio: "AFC A급 라이센스 보유, 중/고급자를 위한 전술 훈련 전문. 팀 코칭 및 개인 기술 향상에 특화.",
-        isCoach: true
+        isCoach: true,
+        isAdmin: false
       },
       {
         username: "student1",
         password: "password123",
         email: "student1@example.com",
         fullName: "이영준",
-        isCoach: false
+        isCoach: false,
+        isAdmin: false
+      },
+      {
+        username: "admin",
+        password: "admin123",
+        email: "admin@example.com",
+        fullName: "관리자",
+        isCoach: false,
+        isAdmin: true
       }
     ];
     
