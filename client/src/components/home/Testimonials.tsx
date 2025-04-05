@@ -1,4 +1,5 @@
 import { Star, Star as StarIcon, MessageCircle, Quote, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
 
 type Testimonial = {
   id: number;
@@ -87,13 +88,13 @@ export default function Testimonials() {
                 축고 레슨을 경험한 학부모님들의 생생한 후기
               </p>
             </div>
-            <a 
-              href="#" 
+            <Link
+              href="/reviews" 
               className="flex items-center text-[#5D3FD3] font-medium text-sm mt-4 md:mt-0"
             >
               모든 후기 보기
               <ChevronRight className="h-4 w-4 ml-1" />
-            </a>
+            </Link>
           </div>
           
           <div className="auto-slide-container">
