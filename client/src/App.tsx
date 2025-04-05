@@ -23,6 +23,7 @@ import Signup from "@/pages/Signup";
 import Layout from "@/components/layout/Layout";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { AdminRoute } from "@/lib/admin-route";
 import AboutUs from "@/pages/AboutUs";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import CompanyInfoEdit from "@/pages/admin/CompanyInfoEdit";
@@ -66,9 +67,9 @@ function Router() {
       <Route path="/about-us" component={AboutUs} />
       
       {/* 관리자 페이지 */}
-      <ProtectedRoute path="/admin/company-info/new" component={CompanyInfoEdit} />
-      <ProtectedRoute path="/admin/company-info/:id" component={CompanyInfoEdit} />
-      <ProtectedRoute path="/admin" component={AdminDashboard} />
+      <AdminRoute path="/admin/company-info/new" component={CompanyInfoEdit} />
+      <AdminRoute path="/admin/company-info/:id" component={CompanyInfoEdit} />
+      <AdminRoute path="/admin" component={AdminDashboard} />
       
       <Route component={NotFound} />
     </Switch>
