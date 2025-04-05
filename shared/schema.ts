@@ -75,6 +75,7 @@ export const reviews = pgTable("reviews", {
   lessonId: integer("lesson_id").notNull().references(() => lessons.id),
   rating: integer("rating").notNull(),
   comment: text("comment"),
+  tags: text("tags").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

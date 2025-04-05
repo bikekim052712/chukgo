@@ -13,6 +13,7 @@ import Booking from "@/pages/Booking";
 import CoachSignup from "@/pages/CoachSignup";
 import LessonRequest from "./pages/LessonRequest";
 import Reviews from "./pages/Reviews";
+import ReviewWrite from "./pages/ReviewWrite";
 import CoachFinder from "./pages/CoachFinder";
 import Running from "./pages/Running";
 import InsuranceAnalysis from "@/pages/InsuranceAnalysis";
@@ -37,6 +38,8 @@ function Router() {
       {/* 인증이 필요한 경로 */}
       <Route path="/lesson-request" component={LessonRequest} />
       <Route path="/reviews" component={Reviews} />
+      <ProtectedRoute path="/reviews/write/:id" component={ReviewWrite} />
+      <ProtectedRoute path="/reviews/write" component={ReviewWrite} />
       <ProtectedRoute path="/booking/:lessonId" component={Booking} />
       <Route path="/coach-signup" component={CoachSignup} />
       

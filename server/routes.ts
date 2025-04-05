@@ -1,7 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { contactFormSchema, insertBookingSchema, insertUserSchema } from "@shared/schema";
+import { contactFormSchema, insertBookingSchema, insertReviewSchema, insertUserSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import { z } from "zod";
 import { setupAuth } from "./auth";
@@ -153,6 +153,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid form data', errors: error.errors });
       }
       res.status(500).json({ message: 'Error submitting contact form' });
+    }
+  });
+  
+  // Get all reviews
+  app.get('/api/reviews', async (req: Request, res: Response) => {
+    try {
+      // 코치 ID 필터링
+      const coachId = req.query.coachId ? parseInt(req.query.coachId as string) : undefined;
+      
+      // 레슨 유형 필터링
+      const lessonTypeId = req.query.lessonTypeId ? parseInt(req.query.lessonTypeId as string) : undefined;
+      
+      let reviews = [];
+      
+      if (coachId) {
+        reviews = await storage.getReviewsByCoach(coachId);
+      } else if (req.query.lessonId) {
+        const lessonId = parseInt(req.query.lessonId as string);
+        reviews = await storage.getReviewsByLesson(lessonId);
+      } else {
+        // 모든 리뷰 (나중에 필터링/페이지네이션 추가 예정)
+        const lessons = await storage.getLessons();
+        reviews = [];
+        
+        for (const lesson of lessons) {
+          const lessonReviews = await storage.getReviewsByLesson(lesson.id);
+          if (lessonReviews.length > 0) {
+            reviews.push(...lessonReviews);
+          }
+        }
+      }
+      
+      res.json(reviews);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching reviews' });
+    }
+  });
+  
+  // Get review by ID
+  app.get('/api/reviews/:id', async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const review = await storage.getReview(id);
+      
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+      
+      res.json(review);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching review' });
+    }
+  });
+  
+  // Create review (요청 인증)
+  app.post('/api/reviews', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const reviewData = insertReviewSchema.parse(req.body);
+      
+      // 레슨이 존재하는지 확인
+      const lesson = await storage.getLesson(reviewData.lessonId);
+      if (!lesson) {
+        return res.status(404).json({ message: 'Lesson not found' });
+      }
+      
+      // 리뷰 작성 권한 확인 (사용자가 이 레슨을 예약했는지)
+      const userBookings = await storage.getBookingsByUser(reviewData.userId);
+      const hasBooked = userBookings.some(booking => 
+        booking.lessonId === reviewData.lessonId && booking.status === 'completed'
+      );
+      
+      // 실제 환경에서는 아래 조건을 활성화해야 합니다
+      // if (!hasBooked) {
+      //   return res.status(403).json({ message: 'You must complete this lesson before reviewing it' });
+      // }
+      
+      // 리뷰 중복 작성 방지 (이미 리뷰를 작성했는지 확인)
+      const lessonReviews = await storage.getReviewsByLesson(reviewData.lessonId);
+      const alreadyReviewed = lessonReviews.some(review => review.userId === reviewData.userId);
+      
+      // 실제 환경에서는 아래 조건을 활성화해야 합니다
+      // if (alreadyReviewed) {
+      //   return res.status(400).json({ message: 'You have already reviewed this lesson' });
+      // }
+      
+      // 리뷰 생성
+      const review = await storage.createReview(reviewData);
+      
+      // 코치 평점 업데이트 (평균 평점 계산)
+      const coach = await storage.getCoach(lesson.coachId);
+      if (coach) {
+        // 코치의 모든 레슨 가져오기
+        const coachLessons = await storage.getLessonsByCoach(coach.id);
+        
+        let totalRating = 0;
+        let reviewCount = 0;
+        
+        // 각 레슨별 리뷰 평점 집계
+        for (const coachLesson of coachLessons) {
+          const reviews = await storage.getReviewsByLesson(coachLesson.id);
+          
+          reviews.forEach(review => {
+            totalRating += review.rating;
+            reviewCount++;
+          });
+        }
+        
+        // 평균 평점 및 리뷰 수 업데이트 (실제 환경에서는 storage에 updateCoachRating 메소드를 추가해야 함)
+        // await storage.updateCoachRating(coach.id, totalRating / reviewCount, reviewCount);
+      }
+      
+      res.status(201).json(review);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: 'Invalid review data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Error creating review' });
     }
   });
   
