@@ -53,11 +53,11 @@ export default function Hero() {
           <div className="mb-6">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight text-white drop-shadow-lg tracking-tight whitespace-nowrap">
               <span className="relative inline-block">
-                <span className="relative z-10 text-white font-extrabold text-shadow-lg">축고</span>
+                <span className="relative z-10 text-white font-extrabold text-shadow-lg">축구</span>
                 <span className="absolute -inset-1 bg-[#2563EB] opacity-50 rounded blur-sm"></span>
-              </span><span>에서</span> <span>찾는</span> 
-              <span className="relative inline-block">
-                <span className="relative z-10 text-white font-extrabold text-shadow-lg">축구 레슨 코치</span>
+              </span><span className="mx-1">에서</span> <span className="mx-1">찾는</span> 
+              <span className="relative inline-block ml-1">
+                <span className="relative z-10 text-white font-extrabold text-shadow-lg">"축구 레슨 코치"</span>
                 <span className="absolute -inset-1 bg-[#3B82F6] opacity-50 rounded blur-sm"></span>
               </span>
             </h1>
