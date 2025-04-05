@@ -56,43 +56,43 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">축구 레슨 유형</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">달리기레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">체력훈련레슨</Link></li>
+              <li><Link to="/lesson-types/individual" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인레슨</Link></li>
+              <li><Link to="/lesson-types/group" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹레슨</Link></li>
+              <li><Link to="/lesson-types/goalkeeper" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼레슨</Link></li>
+              <li><Link to="/lesson-types/running" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">달리기레슨</Link></li>
+              <li><Link to="/lesson-types/physical" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">피지컬레슨</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">연령대별 레슨</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">초등학생 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
+              <li><Link to="/lessons?age=elementary" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">초등학생 레슨</Link></li>
+              <li><Link to="/lessons?age=middle" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
+              <li><Link to="/lessons?age=high" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
+              <li><Link to="/lessons?age=adult" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
+              <li><Link to="/lessons?level=elite" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">축고 정보</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">회사 소개</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">코치 지원하기</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">이용 가이드</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">자주 묻는 질문</Link></li>
-              <li><Link href="#" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">제휴 및 파트너십</Link></li>
+              <li><Link to="/about" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">회사 소개</Link></li>
+              <li><Link to="/coach-signup" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">코치 지원하기</Link></li>
+              <li><Link to="/guide" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">이용 가이드</Link></li>
+              <li><Link to="/faq" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">자주 묻는 질문</Link></li>
+              <li><Link to="/partners" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">제휴 및 파트너십</Link></li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-gray-200 pt-6">
           <ul className="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
-            <li><Link href="#" className="hover:underline font-medium">이용약관</Link></li>
-            <li><Link href="#" className="hover:underline font-bold">개인정보처리방침</Link></li>
-            <li><Link href="#" className="hover:underline">위치기반 서비스 이용약관</Link></li>
-            <li><Link href="#" className="hover:underline">사업자 정보확인</Link></li>
+            <li><Link to="/terms" className="hover:underline font-medium">이용약관</Link></li>
+            <li><Link to="/privacy" className="hover:underline font-bold">개인정보처리방침</Link></li>
+            <li><Link to="/location-terms" className="hover:underline">위치기반 서비스 이용약관</Link></li>
+            <li><Link to="/business-info" className="hover:underline">사업자 정보확인</Link></li>
           </ul>
         
           <div className="text-xs text-gray-500 space-y-1">

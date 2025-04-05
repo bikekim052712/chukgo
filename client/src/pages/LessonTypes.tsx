@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { LessonType } from "@shared/schema";
-import { CalendarDays, Clock, Users, MapPin, ChevronRight, ArrowRight, BookOpen } from "lucide-react";
+import { CalendarDays, Clock, Users, MapPin, ChevronRight, ArrowRight, BookOpen, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -25,7 +25,7 @@ export default function LessonTypes() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* 경로 표시 */}
         <div className="flex items-center text-sm text-gray-500 mb-8 gap-2">
-          <Link href="/" className="hover:text-[#5D3FD3]">홈</Link>
+          <Link to="/" className="hover:text-[#5D3FD3]">홈</Link>
           <ChevronRight className="h-4 w-4" />
           <span className="text-gray-800 font-medium">레슨 유형</span>
         </div>
@@ -57,13 +57,13 @@ export default function LessonTypes() {
                 지금 원하는 레슨이 없다면 레슨 요청 페이지에서 상담을 신청하세요.
               </p>
               <div className="flex gap-4">
-                <Link href="/coaches/search">
+                <Link to="/coaches/search">
                   <Button className="bg-[#5D3FD3] hover:bg-[#4C2CB3]">
                     코치 찾기
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/request">
+                <Link to="/request">
                   <Button variant="outline" className="border-[#5D3FD3] text-[#5D3FD3] hover:bg-[#F0EBFF]">
                     맞춤 레슨 요청하기
                   </Button>
@@ -129,6 +129,8 @@ function LessonTypeCard({ lessonType }: { lessonType: LessonType }) {
         return "https://images.pexels.com/photos/8224795/pexels-photo-8224795.jpeg?auto=compress&cs=tinysrgb&w=600";
       case "기술 특화 훈련":
         return "https://images.pexels.com/photos/6764835/pexels-photo-6764835.jpeg?auto=compress&cs=tinysrgb&w=600";
+      case "피지컬레슨":
+        return "https://images.pexels.com/photos/3253501/pexels-photo-3253501.jpeg?auto=compress&cs=tinysrgb&w=600";
       default:
         return "https://images.pexels.com/photos/47730/the-ball-stadion-football-the-pitch-47730.jpeg?auto=compress&cs=tinysrgb&w=600";
     }
@@ -148,6 +150,8 @@ function LessonTypeCard({ lessonType }: { lessonType: LessonType }) {
         return <MapPin className="h-5 w-5" />;
       case "기술 특화 훈련":
         return <Clock className="h-5 w-5" />;
+      case "피지컬레슨":
+        return <Activity className="h-5 w-5" />;
       default:
         return <BookOpen className="h-5 w-5" />;
     }
@@ -176,7 +180,7 @@ function LessonTypeCard({ lessonType }: { lessonType: LessonType }) {
               {getIcon(lessonType.name)}
             </div>
           </div>
-          <Link href={`/lessons?lessonTypeId=${lessonType.id}`}>
+          <Link to={`/lessons?lessonTypeId=${lessonType.id}`}>
             <Button className="bg-[#5D3FD3] hover:bg-[#4C2CB3]">
               레슨 보기
               <ChevronRight className="ml-1 h-4 w-4" />
