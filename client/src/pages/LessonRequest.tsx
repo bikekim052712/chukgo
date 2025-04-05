@@ -40,20 +40,25 @@ export default function LessonRequest() {
       
       if (ageParam) {
         setSelectedAge(ageParam);
-        // 적절한 검색어 설정 (예: "초등학생", "중학생" 등)
-        const ageLabels: Record<string, string> = {
-          'elementary': '초등학생',
-          'middle-school': '중학생',
-          'high-school': '고등학생',
-          'adult': '성인'
-        };
-        
-        if (ageParam in ageLabels && searchQuery !== ageLabels[ageParam]) {
-          setSearchQuery(ageLabels[ageParam]);
-        }
       }
     }
   }, [location]);
+  
+  // 연령대에 따른 검색어 설정 - 별도의 useEffect로 분리
+  useEffect(() => {
+    if (!selectedAge) return;
+    
+    const ageLabels: Record<string, string> = {
+      'elementary': '초등학생',
+      'middle-school': '중학생',
+      'high-school': '고등학생',
+      'adult': '성인'
+    };
+    
+    if (selectedAge in ageLabels && searchQuery === '') {
+      setSearchQuery(ageLabels[selectedAge]);
+    }
+  }, [selectedAge]);
 
   // 코치 목록 불러오기
   const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({

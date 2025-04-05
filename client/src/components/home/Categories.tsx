@@ -41,6 +41,12 @@ const lessonCategories = [
     icon: <Timer className="h-6 w-6 text-[#5D3FD3]" />,
     href: "/lessons/running",
   },
+  {
+    name: "피지컬레슨",
+    description: "축구 전문 체력 및 근력 향상",
+    icon: <Sparkles className="h-6 w-6 text-[#5D3FD3]" />,
+    href: "/lessons/physical",
+  },
 ];
 
 // 연령대별 카테고리
