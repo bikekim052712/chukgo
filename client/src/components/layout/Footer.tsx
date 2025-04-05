@@ -17,8 +17,8 @@ export default function Footer() {
           
           {/* 텍스트 영역 - 더 작게 수정 */}
           <div className="relative text-center md:text-left z-10 max-w-xs">
-            <h3 className="text-lg font-bold text-white">축고 앱 다운로드</h3>
-            <p className="text-white/90 text-sm mt-1">언제 어디서나 쉽고 빠르게 유소년 축구 레슨을 찾아보세요</p>
+            <h3 className="text-lg font-bold text-white mb-1">축고 앱 다운로드</h3>
+            <p className="text-white/90 text-sm whitespace-nowrap">언제 어디서나 쉽고 빠르게 유소년 축구 레슨을 찾아보세요</p>
           </div>
           
           {/* 앱 다운로드 버튼 - 더 세련되게 수정 */}
