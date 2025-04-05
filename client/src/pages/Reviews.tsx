@@ -625,45 +625,491 @@ export default function Reviews() {
 
       {/* 레슨 추천 섹션 */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <span>인기 레슨 추천</span>
-          <span className="ml-2 text-sm font-normal bg-yellow-100 text-yellow-800 py-1 px-2 rounded-full">
-            높은 평점의 레슨
-          </span>
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sampleReviews.slice(0, 3).map(review => (
-            <Card key={review.id} className="h-full">
-              <div className="h-40 overflow-hidden">
-                <img
-                  src={review.lesson.image || "https://via.placeholder.com/300x150?text=축구+레슨"}
-                  alt={review.lesson.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{review.lesson.title}</CardTitle>
-                  <div className="flex items-center">
-                    <FaStar className="text-yellow-400 mr-1" />
-                    <span className="font-medium">{review.lesson.coach.rating}</span>
-                  </div>
+        <h2 className="text-2xl font-bold mb-6">카테고리별 인기 레슨</h2>
+        <Tabs defaultValue="개인레슨" className="mb-8">
+          <TabsList className="grid grid-cols-5 mb-6">
+            <TabsTrigger value="개인레슨">개인레슨</TabsTrigger>
+            <TabsTrigger value="그룹레슨">그룹레슨</TabsTrigger>
+            <TabsTrigger value="골키퍼레슨">골키퍼레슨</TabsTrigger>
+            <TabsTrigger value="달리기레슨">달리기레슨</TabsTrigger>
+            <TabsTrigger value="피지컬레슨">피지컬레슨</TabsTrigger>
+          </TabsList>
+          
+          {/* 개인레슨 */}
+          <TabsContent value="개인레슨">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1531415074968-036ba1b575da"
+                    alt="1:1 기술 향상 프로그램"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <CardDescription>{review.lesson.coach.user.fullName} 코치</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm line-clamp-2">
-                  {review.lesson.description}
-                </p>
-              </CardContent>
-              <CardFooter className="pt-0">
-                <Link to={`/lessons/${review.lesson.id}`}>
-                  <Button variant="outline" size="sm">자세히 보기</Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">1:1 기술 향상 프로그램</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.9</span>
+                    </div>
+                  </div>
+                  <CardDescription>김축구 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    개인별 맞춤형 훈련으로 드리블, 패스, 슈팅 등 기본 기술을 향상시킬 수 있는 1:1 레슨입니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/1">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1606925797300-0b35e9d1794e"
+                    alt="축구 기초 마스터 코스"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">축구 기초 마스터 코스</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.7</span>
+                    </div>
+                  </div>
+                  <CardDescription>박코치 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    축구를 처음 시작하는 분들을 위한 기초 기술 훈련 코스입니다. 8주 과정으로 기본기를 튼튼히 다집니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/5">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1517466787929-bc90951d0974"
+                    alt="중급자를 위한 전술 이해 레슨"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">중급자를 위한 전술 이해 레슨</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.8</span>
+                    </div>
+                  </div>
+                  <CardDescription>이전문 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    기본기가 갖추어진 중급자들을 위한 전술 이해 및 응용 레슨입니다. 포메이션과 전술 이해에 초점을.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/8">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* 그룹레슨 */}
+          <TabsContent value="그룹레슨">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1596467745552-53686335350d"
+                    alt="유소년 축구 교실"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">유소년 축구 교실</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.8</span>
+                    </div>
+                  </div>
+                  <CardDescription>박코치 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    어린이들에게 축구의 기본 규칙과 기술을 가르치는 재미있는 그룹 레슨입니다. 8명까지 참가 가능합니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/2">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e"
+                    alt="주말 축구 클럽"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">주말 축구 클럽</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.6</span>
+                    </div>
+                  </div>
+                  <CardDescription>김축구 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    주말에만 만나서 즐기는 축구 클럽입니다. 팀 플레이와 게임 위주로 진행되며 15명까지 참가 가능합니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/9">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1574629810360-7efbbe195018"
+                    alt="여성 축구 클래스"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">여성 축구 클래스</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.9</span>
+                    </div>
+                  </div>
+                  <CardDescription>박코치 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    여성만을 위한 축구 클래스입니다. 서로 응원하고 배우는 즐거운 환경에서 축구의 기초부터 시작합니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/11">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* 골키퍼레슨 */}
+          <TabsContent value="골키퍼레슨">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1578355283248-ad8c9f554987"
+                    alt="골키퍼 전문 트레이닝"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">골키퍼 전문 트레이닝</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.7</span>
+                    </div>
+                  </div>
+                  <CardDescription>이골키퍼 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    골키퍼를 위한 전문 훈련 프로그램입니다. 포지셔닝, 반사신경, 핸들링 등 골키퍼만의 특화 기술을 배웁니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/3">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1628891890467-b79f2c8ba7fa"
+                    alt="주니어 골키퍼 클래스"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">주니어 골키퍼 클래스</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.5</span>
+                    </div>
+                  </div>
+                  <CardDescription>이골키퍼 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    어린 골키퍼를 위한 기초 훈련 클래스입니다. 안전하고 즐거운 환경에서 골키퍼의 기본 자세와 기술을 배웁니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/12">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1626248801379-51a0748e0deb"
+                    alt="골킥과 패스 마스터하기"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">골킥과 패스 마스터하기</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.6</span>
+                    </div>
+                  </div>
+                  <CardDescription>이골키퍼 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    현대 축구에서 중요해진 골키퍼의 발기술을 향상시키는 특화 레슨입니다. 정확한 골킥과 다양한 패스 기술을 익힙니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/13">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* 달리기레슨 */}
+          <TabsContent value="달리기레슨">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5"
+                    alt="축구 선수를 위한 스피드 훈련"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">축구 선수를 위한 스피드 훈련</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.7</span>
+                    </div>
+                  </div>
+                  <CardDescription>정달리기 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    가속력과 최고 속도를 향상시키는 축구 선수 맞춤형 스피드 훈련입니다. 경기에서 실제로 필요한 주행 패턴을 연습합니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/4">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1533107862482-0e6974b06ec4"
+                    alt="지구력 향상 훈련"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">지구력 향상 훈련</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.5</span>
+                    </div>
+                  </div>
+                  <CardDescription>정달리기 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    90분 내내 최상의 컨디션을 유지하기 위한 지구력 훈련 프로그램입니다. 효율적인 러닝 기술도 함께 배웁니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/14">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b"
+                    alt="민첩성과 방향 전환 훈련"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">민첩성과 방향 전환 훈련</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.8</span>
+                    </div>
+                  </div>
+                  <CardDescription>정달리기 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    빠른 방향 전환과 민첩성을 향상시키는 특화 훈련입니다. 경기 상황에 맞는 다양한 움직임과 변화를 익힙니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/15">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* 피지컬레슨 */}
+          <TabsContent value="피지컬레슨">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd"
+                    alt="축구 선수를 위한 체력 강화 프로그램"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">축구 선수를 위한 체력 강화 프로그램</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.8</span>
+                    </div>
+                  </div>
+                  <CardDescription>김피지컬 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    축구에 필요한 근력, 파워, 지구력을 종합적으로 강화하는 피지컬 트레이닝 프로그램입니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/6">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1599058917212-d750089bc07e"
+                    alt="코어 강화 트레이닝"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">코어 강화 트레이닝</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.9</span>
+                    </div>
+                  </div>
+                  <CardDescription>김피지컬 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    축구 선수의 기본이 되는 코어 근육을 강화하는 특화 트레이닝입니다. 부상 방지와 경기력 향상에 도움을 줍니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/16">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+              
+              <Card className="h-full">
+                <div className="h-40 overflow-hidden">
+                  <img
+                    src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f"
+                    alt="축구 특화 유연성 훈련"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">축구 특화 유연성 훈련</CardTitle>
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="font-medium">4.7</span>
+                    </div>
+                  </div>
+                  <CardDescription>김피지컬 코치</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">
+                    축구 동작에 필요한 관절 가동 범위를 넓히고 부상을 방지하는 스트레칭과 유연성 훈련을 배웁니다.
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Link to="/lessons/17">
+                    <Button variant="outline" size="sm">자세히 보기</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
