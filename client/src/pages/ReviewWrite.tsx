@@ -63,6 +63,12 @@ export default function ReviewWrite() {
     enabled: !!id,
   });
 
+  // 모든 레슨 데이터 가져오기 (id가 없을 때 선택용)
+  const { data: lessons, isLoading: isLessonsLoading } = useQuery<LessonWithDetails[]>({
+    queryKey: ['/api/lessons'],
+    enabled: !id, // id가 없을 때만 모든 레슨 가져오기
+  });
+
   // 태그 입력 관련 상태
   const [tagInput, setTagInput] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -110,6 +116,15 @@ export default function ReviewWrite() {
       toast({
         title: "로그인이 필요합니다",
         description: "후기를 작성하려면 로그인이 필요합니다",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!values.lessonId || values.lessonId <= 0) {
+      toast({
+        title: "레슨을 선택해주세요",
+        description: "후기를 작성할 레슨을 선택해주세요",
         variant: "destructive",
       });
       return;
@@ -328,6 +343,57 @@ export default function ReviewWrite() {
               </div>
             </form>
           </Form>
+        ) : isLessonsLoading ? (
+          <Card className="animate-pulse">
+            <CardHeader>
+              <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-24 bg-gray-200 rounded w-full mb-4"></div>
+              <div className="h-10 bg-gray-200 rounded w-full"></div>
+            </CardContent>
+          </Card>
+        ) : lessons && lessons.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>후기를 작성할 레슨 선택</CardTitle>
+              <CardDescription>후기를 작성하고 싶은 레슨을 선택해주세요</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {lessons.map((lessonItem) => (
+                    <Card 
+                      key={lessonItem.id} 
+                      className="cursor-pointer hover:border-purple-400 transition-all"
+                      onClick={() => navigate(`/reviews/write/${lessonItem.id}`)}
+                    >
+                      <CardContent className="p-4 flex gap-3 items-center">
+                        <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                          <img 
+                            src={lessonItem.image || "https://via.placeholder.com/64x64?text=레슨"} 
+                            alt={lessonItem.title} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{lessonItem.title}</h3>
+                          <p className="text-sm text-gray-500">{lessonItem.coach?.user?.fullName} 코치</p>
+                          <p className="text-xs text-gray-400">{lessonItem.location}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <div className="flex justify-center">
+                  <Button onClick={() => navigate("/reviews")} variant="outline">
+                    후기 목록으로 돌아가기
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
           <Card>
             <CardHeader>
