@@ -49,25 +49,25 @@ const ageCategories = [
     name: "초등학생",
     description: "체계적인 기본기 훈련",
     icon: <School className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/elementary",
+    href: "/lesson-request?age=elementary",
   },
   {
     name: "중학생",
     description: "포지션별 전문 훈련",
     icon: <Backpack className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/middle-school",
+    href: "/lesson-request?age=middle-school",
   },
   {
     name: "고등학생",
     description: "전술 및 경기 운영 훈련",
     icon: <Flag className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/high-school",
+    href: "/lesson-request?age=high-school",
   },
   {
     name: "성인",
     description: "취미 및 프로 지망생 맞춤형",
     icon: <UserCircle className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/ages/adult",
+    href: "/lesson-request?age=adult",
   },
 ];
 

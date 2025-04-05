@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { PROVINCES, DISTRICTS } from "@/lib/constants";
 import { Separator } from "@/components/ui/separator";
@@ -20,14 +20,37 @@ import { FaStar, FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 
 export default function LessonRequest() {
   const { toast } = useToast();
+  const [location] = useLocation();
   const [selectedProvince, setSelectedProvince] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredCoaches, setFilteredCoaches] = useState<CoachWithUser[]>([]);
+  const [selectedAge, setSelectedAge] = useState<string>("");
 
   // 지역 필터링을 위한 상태
   const [showDistrictSelector, setShowDistrictSelector] = useState(false);
   const [districtsForProvince, setDistrictsForProvince] = useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+
+  // URL에서 age 파라미터 처리
+  useEffect(() => {
+    const params = new URLSearchParams(location.split('?')[1]);
+    const ageParam = params.get('age');
+    
+    if (ageParam) {
+      setSelectedAge(ageParam);
+      // 적절한 검색어 설정 (예: "초등학생", "중학생" 등)
+      const ageLabels: Record<string, string> = {
+        'elementary': '초등학생',
+        'middle-school': '중학생',
+        'high-school': '고등학생',
+        'adult': '성인'
+      };
+      
+      if (ageParam in ageLabels) {
+        setSearchQuery(ageLabels[ageParam]);
+      }
+    }
+  }, [location]);
 
   // 코치 목록 불러오기
   const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({
@@ -93,12 +116,44 @@ export default function LessonRequest() {
     });
   };
 
+  // 페이지 타이틀 생성
+  const getPageTitle = () => {
+    const ageLabels: Record<string, string> = {
+      'elementary': '초등학생',
+      'middle-school': '중학생',
+      'high-school': '고등학생',
+      'adult': '성인'
+    };
+    
+    if (selectedAge && selectedAge in ageLabels) {
+      return `${ageLabels[selectedAge]} 맞춤 축구 코치`;
+    }
+    
+    return "지역별 축구 코치 찾기";
+  };
+  
+  // 페이지 설명 생성
+  const getPageDescription = () => {
+    const ageLabels: Record<string, string> = {
+      'elementary': '초등학생',
+      'middle-school': '중학생',
+      'high-school': '고등학생',
+      'adult': '성인'
+    };
+    
+    if (selectedAge && selectedAge in ageLabels) {
+      return `${ageLabels[selectedAge]}을 위한 맞춤 축구 트레이닝을 제공하는 최고의 코치를 찾아보세요. 체계적인 커리큘럼으로 실력 향상을 도와드립니다.`;
+    }
+    
+    return "원하는 지역에서 최고의 축구 코치를 찾아보세요. 전문성과 경험을 갖춘 코치들이 여러분의 레슨을 기다리고 있습니다.";
+  };
+
   return (
     <div className="container mx-auto px-4 py-16 mt-10">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">지역별 축구 코치 찾기</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{getPageTitle()}</h1>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          원하는 지역에서 최고의 축구 코치를 찾아보세요. 전문성과 경험을 갖춘 코치들이 여러분의 레슨을 기다리고 있습니다.
+          {getPageDescription()}
         </p>
       </div>
 
