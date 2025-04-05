@@ -21,31 +21,31 @@ const lessonCategories = [
     name: "개인레슨",
     description: "1:1 맞춤형 축구 지도",
     icon: <User className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/lessons/individual",
+    href: "/lesson-request?type=individual",
   },
   {
     name: "그룹레슨",
     description: "친구들과 함께하는 그룹 훈련",
     icon: <Users className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/lessons/group",
+    href: "/lesson-request?type=group",
   },
   {
     name: "골키퍼레슨",
     description: "전문 골키퍼 기술 트레이닝",
     icon: <ShieldCheck className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/lessons/goalkeeper",
+    href: "/lesson-request?type=goalkeeper",
   },
   {
     name: "달리기레슨",
     description: "체력 및 스피드 향상 훈련",
     icon: <Timer className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/lessons/running",
+    href: "/lesson-request?type=running",
   },
   {
     name: "피지컬레슨",
     description: "축구 전문 체력 및 근력 향상",
     icon: <Sparkles className="h-6 w-6 text-[#5D3FD3]" />,
-    href: "/lessons/physical",
+    href: "/lesson-request?type=physical",
   },
 ];
 
@@ -89,7 +89,7 @@ export default function Categories() {
                 목표와 수준에 맞는 최적의 레슨 방식을 선택하세요
               </p>
             </div>
-            <Link href="/lesson-types" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
+            <Link href="/lesson-request" className="flex items-center text-[#5D3FD3] font-medium mt-4 md:mt-0 text-sm">
               모든 레슨 유형 보기
               <ChevronRight className="h-4 w-4 ml-1" />
             </Link>

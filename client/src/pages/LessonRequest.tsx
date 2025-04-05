@@ -25,40 +25,68 @@ export default function LessonRequest() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredCoaches, setFilteredCoaches] = useState<CoachWithUser[]>([]);
   const [selectedAge, setSelectedAge] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("");
 
   // 지역 필터링을 위한 상태
   const [showDistrictSelector, setShowDistrictSelector] = useState(false);
   const [districtsForProvince, setDistrictsForProvince] = useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
 
-  // URL에서 age 파라미터 처리
+  // URL에서 파라미터 처리
   useEffect(() => {
     // location이 query string을 포함하는지 확인
     if (location.includes('?')) {
       const params = new URLSearchParams(location.split('?')[1]);
-      const ageParam = params.get('age');
       
+      // 연령대 파라미터 처리
+      const ageParam = params.get('age');
       if (ageParam) {
         setSelectedAge(ageParam);
+      }
+      
+      // 레슨 유형 파라미터 처리
+      const typeParam = params.get('type');
+      if (typeParam) {
+        setSelectedType(typeParam);
       }
     }
   }, [location]);
   
-  // 연령대에 따른 검색어 설정 - 별도의 useEffect로 분리
+  // 연령대/레슨 유형에 따른 검색어 설정 - 별도의 useEffect로 분리
   useEffect(() => {
-    if (!selectedAge) return;
+    // 이미 검색어가 있으면 덮어쓰지 않음
+    if (searchQuery !== '') return;
     
-    const ageLabels: Record<string, string> = {
-      'elementary': '초등학생',
-      'middle-school': '중학생',
-      'high-school': '고등학생',
-      'adult': '성인'
-    };
-    
-    if (selectedAge in ageLabels && searchQuery === '') {
-      setSearchQuery(ageLabels[selectedAge]);
+    // 연령대 검색어 설정
+    if (selectedAge) {
+      const ageLabels: Record<string, string> = {
+        'elementary': '초등학생',
+        'middle-school': '중학생',
+        'high-school': '고등학생',
+        'adult': '성인'
+      };
+      
+      if (selectedAge in ageLabels) {
+        setSearchQuery(ageLabels[selectedAge]);
+        return; // 연령대가 설정된 경우 여기서 종료
+      }
     }
-  }, [selectedAge]);
+    
+    // 레슨 유형 검색어 설정
+    if (selectedType) {
+      const typeLabels: Record<string, string> = {
+        'individual': '개인레슨',
+        'group': '그룹레슨',
+        'goalkeeper': '골키퍼레슨',
+        'running': '달리기레슨',
+        'physical': '피지컬레슨'
+      };
+      
+      if (selectedType in typeLabels) {
+        setSearchQuery(typeLabels[selectedType]);
+      }
+    }
+  }, [selectedAge, selectedType]);
 
   // 코치 목록 불러오기
   const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({
@@ -126,6 +154,7 @@ export default function LessonRequest() {
 
   // 페이지 타이틀 생성
   const getPageTitle = () => {
+    // 연령대 기반 타이틀
     const ageLabels: Record<string, string> = {
       'elementary': '초등학생',
       'middle-school': '중학생',
@@ -137,11 +166,25 @@ export default function LessonRequest() {
       return `${ageLabels[selectedAge]} 맞춤 축구 코치`;
     }
     
+    // 레슨 유형 기반 타이틀
+    const typeLabels: Record<string, string> = {
+      'individual': '개인레슨',
+      'group': '그룹레슨',
+      'goalkeeper': '골키퍼레슨',
+      'running': '달리기레슨',
+      'physical': '피지컬레슨'
+    };
+    
+    if (selectedType && selectedType in typeLabels) {
+      return `${typeLabels[selectedType]} 전문 축구 코치`;
+    }
+    
     return "지역별 축구 코치 찾기";
   };
   
   // 페이지 설명 생성
   const getPageDescription = () => {
+    // 연령대 기반 설명
     const ageLabels: Record<string, string> = {
       'elementary': '초등학생',
       'middle-school': '중학생',
@@ -151,6 +194,19 @@ export default function LessonRequest() {
     
     if (selectedAge && selectedAge in ageLabels) {
       return `${ageLabels[selectedAge]}을 위한 맞춤 축구 트레이닝을 제공하는 최고의 코치를 찾아보세요. 체계적인 커리큘럼으로 실력 향상을 도와드립니다.`;
+    }
+    
+    // 레슨 유형 기반 설명
+    const typeDescriptions: Record<string, string> = {
+      'individual': '1:1 맞춤형 개인레슨을 제공하는 전문 코치를 찾아보세요. 개인의 실력과 목표에 맞는 맞춤형 트레이닝으로 빠르게 실력을 향상시킵니다.',
+      'group': '효율적인 그룹레슨을 제공하는 코치를 찾아보세요. 팀워크와 협동심을 기르며 경제적인 가격으로 축구 실력을 향상시킵니다.',
+      'goalkeeper': '골키퍼 전문 코치를 찾아보세요. 포지셔닝, 세이브 기술, 경기 운영 등 골키퍼만을 위한 특화된 트레이닝을 받을 수 있습니다.',
+      'running': '축구에 필수적인 스피드와 지구력 향상을 위한 달리기 전문 코치를 찾아보세요. 체계적인 러닝 트레이닝으로 경기력을 향상시킵니다.',
+      'physical': '축구 선수로서의 피지컬 향상을 위한 전문 코치를 찾아보세요. 근력, 균형, 민첩성 등 축구에 필요한 체력 요소를 전문적으로 향상시킵니다.'
+    };
+    
+    if (selectedType && selectedType in typeDescriptions) {
+      return typeDescriptions[selectedType];
     }
     
     return "원하는 지역에서 최고의 축구 코치를 찾아보세요. 전문성과 경험을 갖춘 코치들이 여러분의 레슨을 기다리고 있습니다.";
