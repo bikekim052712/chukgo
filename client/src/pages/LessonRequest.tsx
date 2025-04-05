@@ -42,20 +42,28 @@ export default function LessonRequest() {
       const ageParam = params.get('age');
       if (ageParam) {
         setSelectedAge(ageParam);
+      } else {
+        setSelectedAge("");
       }
       
       // 레슨 유형 파라미터 처리
       const typeParam = params.get('type');
       if (typeParam) {
         setSelectedType(typeParam);
+      } else {
+        setSelectedType("");
       }
+    } else {
+      // 파라미터가 없으면 초기화
+      setSelectedAge("");
+      setSelectedType("");
     }
   }, [location]);
   
   // 연령대/레슨 유형에 따른 검색어 설정 - 별도의 useEffect로 분리
   useEffect(() => {
     // 이미 검색어가 있으면 덮어쓰지 않음
-    if (searchQuery !== '') return;
+    if (searchQuery !== '' && !selectedAge && !selectedType) return;
     
     // 연령대 검색어 설정
     if (selectedAge) {
@@ -86,7 +94,7 @@ export default function LessonRequest() {
         setSearchQuery(typeLabels[selectedType]);
       }
     }
-  }, [selectedAge, selectedType]);
+  }, [selectedAge, selectedType, searchQuery]);
 
   // 코치 목록 불러오기
   const { data: coaches = [], isLoading } = useQuery<CoachWithUser[]>({
@@ -322,7 +330,7 @@ export default function LessonRequest() {
           특정 지역이나 전문성을 가진 코치를 찾고 계시다면, 맞춤 레슨 요청을 통해 적합한 코치를 연결해 드립니다.
         </p>
         <Button asChild className="bg-purple-700 hover:bg-purple-800">
-          <Link href="/lesson-request/custom">맞춤 레슨 요청하기</Link>
+          <Link to="/lesson-request/custom">맞춤 레슨 요청하기</Link>
         </Button>
       </div>
 
@@ -359,7 +367,7 @@ export default function LessonRequest() {
 
 function CoachCard({ coach }: { coach: CoachWithUser }) {
   return (
-    <Link href={`/coaches/${coach.id}`}>
+    <Link to={`/coaches/${coach.id}`}>
       <Card className="h-full hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
         <div className="h-48 overflow-hidden relative">
           <img

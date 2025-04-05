@@ -56,22 +56,22 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">축구 레슨 유형</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/lesson-types/individual" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인레슨</Link></li>
-              <li><Link to="/lesson-types/group" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹레슨</Link></li>
-              <li><Link to="/lesson-types/goalkeeper" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼레슨</Link></li>
-              <li><Link to="/lesson-types/running" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">달리기레슨</Link></li>
-              <li><Link to="/lesson-types/physical" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">피지컬레슨</Link></li>
+              <li><Link to="/lesson-request?type=individual" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">개인레슨</Link></li>
+              <li><Link to="/lesson-request?type=group" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">그룹레슨</Link></li>
+              <li><Link to="/lesson-request?type=goalkeeper" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">골키퍼레슨</Link></li>
+              <li><Link to="/lesson-request?type=running" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">달리기레슨</Link></li>
+              <li><Link to="/lesson-request?type=physical" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">피지컬레슨</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">연령대별 레슨</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/lessons?age=elementary" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">초등학생 레슨</Link></li>
-              <li><Link to="/lessons?age=middle" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
-              <li><Link to="/lessons?age=high" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
-              <li><Link to="/lessons?age=adult" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
-              <li><Link to="/lessons?level=elite" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
+              <li><Link to="/lesson-request?age=elementary" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">초등학생 레슨</Link></li>
+              <li><Link to="/lesson-request?age=middle-school" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">중학생 레슨</Link></li>
+              <li><Link to="/lesson-request?age=high-school" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">고등학생 레슨</Link></li>
+              <li><Link to="/lesson-request?age=adult" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">성인 레슨</Link></li>
+              <li><Link to="/lesson-request?level=elite" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">엘리트 선수 훈련</Link></li>
             </ul>
           </div>
           
