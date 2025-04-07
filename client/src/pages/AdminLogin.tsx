@@ -29,6 +29,14 @@ export default function AdminLogin() {
   useEffect(() => {
     console.log("관리자 로그인 페이지 접속 - 자동 인증 처리");
     
+    // 현재 도메인 체크
+    const currentHost = window.location.host;
+    const protocol = window.location.protocol;
+    const currentOrigin = `${protocol}//${currentHost}`;
+    
+    console.log("현재 접속 도메인:", currentOrigin);
+    console.log("허용된 도메인 목록:", ALLOWED_DOMAINS);
+    
     // 로컬스토리지에 관리자 로그인 정보 저장
     const adminToken = localStorage.getItem('admin_auth_token');
     
@@ -55,6 +63,12 @@ export default function AdminLogin() {
       window.history.replaceState({}, document.title, window.location.pathname);
       
       // 자동 로그인 시도
+      handleAutoLogin();
+    }
+    
+    // 커스텀 도메인인 경우 자동 로그인 시도
+    if (isCustomDomain() && !token) {
+      console.log("커스텀 도메인에서 자동 로그인 시도");
       handleAutoLogin();
     }
   }, []);

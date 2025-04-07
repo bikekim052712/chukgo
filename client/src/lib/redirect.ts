@@ -4,7 +4,13 @@
  */
 
 // 실제 API 서버 URL (Replit 호스팅 URL)
-const API_SERVER = "https://soccer-forland-bikekim0527.replit.app";
+export const API_SERVER = "https://soccer-forland-bikekim0527.replit.app";
+
+// 특정 도메인 간 허용 목록
+export const ALLOWED_DOMAINS = [
+  "https://www.chukgo.kr", 
+  "https://soccer-forland-bikekim0527.replit.app"
+];
 
 // 관리자 계정 정보
 export const ADMIN_CREDENTIALS = {

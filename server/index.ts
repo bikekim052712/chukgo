@@ -16,7 +16,7 @@ const app = express();
 
 // CORS 설정 추가 (도메인 간 인증을 위한 설정)
 const corsOptions = {
-  origin: true, // 모든 도메인 허용 (개발 및 테스트 목적)
+  origin: ["https://www.chukgo.kr", "https://soccer-forland-bikekim0527.replit.app"],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'X-Cross-Domain-Login'],
