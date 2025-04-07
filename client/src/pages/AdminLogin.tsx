@@ -40,17 +40,35 @@ export default function AdminLogin() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      // 로그인 요청
-      await loginMutation.mutateAsync(data);
+      console.log("로그인 시도:", data);
       
-      // 사용자 정보 가져오기 (loginMutation이 성공하면 이미 queryClient에 저장됨)
-      const user = queryClient.getQueryData<SelectUser>(["/api/user"]);
+      // 직접 API 요청 방식으로 시도
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
       
-      if (user?.isAdmin) {
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("로그인 응답 에러:", response.status, errorText);
+        throw new Error(errorText || "로그인 실패");
+      }
+      
+      const userData = await response.json();
+      console.log("로그인 성공, 사용자 데이터:", userData);
+      
+      // 쿼리 캐시 수동 업데이트
+      queryClient.setQueryData(["/api/user"], userData);
+      
+      if (userData.isAdmin) {
         // 관리자 페이지로 이동
         toast({
           title: "관리자 로그인 성공",
-          description: `${user.fullName}님, 환영합니다!`,
+          description: `${userData.fullName}님, 환영합니다!`,
         });
         setLocation("/admin");
       } else {
@@ -62,11 +80,11 @@ export default function AdminLogin() {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       toast({
         title: "로그인 실패",
-        description: "아이디 또는 비밀번호가 일치하지 않습니다.",
+        description: error.message || "아이디 또는 비밀번호가 일치하지 않습니다.",
         variant: "destructive",
       });
     } finally {
