@@ -23,6 +23,7 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
+  const { loginMutation } = useAuth();
   
   const {
     register,
@@ -39,9 +40,6 @@ export default function AdminLogin() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      // useAuth 훅의 로그인 뮤테이션 활용
-      const { loginMutation } = useAuth();
-      
       // 로그인 요청
       await loginMutation.mutateAsync(data);
       
