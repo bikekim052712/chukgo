@@ -173,20 +173,45 @@ export default function AdminLogin() {
           <Shield className="h-16 w-16 text-primary" />
         </div>
         <h1 className="text-3xl font-bold text-center mb-2">축고 관리자 시스템</h1>
-        <p className="text-center text-gray-600 mb-8">
+        <p className="text-center text-gray-600 mb-6">
           관리자 전용 페이지입니다. 회사 정보 관리, 리뷰 관리, 사용자 관리 등의 작업을 수행할 수 있습니다.
         </p>
-        <div className="bg-white/60 backdrop-blur-sm rounded-lg p-6 w-full max-w-sm shadow-lg border border-gray-100">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <Key className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-medium">안전한 로그인</h3>
-              <p className="text-sm text-gray-500">모든 데이터는 암호화되어 안전하게 보호됩니다</p>
+        
+        {window.location.hostname === "chukgo.kr" || window.location.hostname === "www.chukgo.kr" ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 w-full max-w-sm shadow-lg mb-6">
+            <div className="flex items-start space-x-4">
+              <div className="p-2 bg-amber-100 rounded-full mt-1">
+                <Key className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-amber-800">중요 안내</h3>
+                <p className="text-sm text-amber-700 mb-3">
+                  쿠키 인증 문제로 인해 관리자 기능은 Replit 도메인에서만 정상 작동합니다.
+                </p>
+                <a 
+                  href="https://soccer-forland-bikekim0527.replit.app/admin-login" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-amber-800 underline hover:text-amber-600"
+                >
+                  Replit 페이지에서 로그인하기
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-white/60 backdrop-blur-sm rounded-lg p-6 w-full max-w-sm shadow-lg border border-gray-100">
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <Key className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-medium">안전한 로그인</h3>
+                <p className="text-sm text-gray-500">모든 데이터는 암호화되어 안전하게 보호됩니다</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg shadow-xl border-0">

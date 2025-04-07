@@ -4,6 +4,14 @@ import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+// 환경 설정 로깅
+const isProduction = process.env.NODE_ENV === 'production';
+console.log('환경 설정:', { 
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  isProduction,
+  SESSION_SECRET: process.env.SESSION_SECRET ? '[설정됨]' : '[설정안됨]'
+});
+
 const app = express();
 
 // CORS 설정 추가 (도메인 간 인증을 위한 설정)
