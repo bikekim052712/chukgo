@@ -45,11 +45,13 @@ export function setupAuth(app: Express) {
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
+    proxy: true, // 프록시를 신뢰 (Replit은 프록시 사용)
     cookie: {
-      secure: false, // https 환경에서는 true로 설정
-      sameSite: 'lax' as 'lax', // 명시적 타입 캐스팅
+      secure: process.env.NODE_ENV === 'production', // HTTPS에서는 true
+      sameSite: 'none' as 'none', // 크로스 사이트 요청 허용
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 // 1 day
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      domain: undefined // 도메인 자동 설정 (브라우저가 결정하도록)
     }
   };
   
@@ -141,6 +143,12 @@ export function setupAuth(app: Express) {
 
   app.post("/api/login", (req, res, next) => {
     console.log("로그인 요청 받음:", req.body);
+    console.log("요청 헤더:", req.headers);
+    console.log("요청 쿠키:", req.cookies);
+    
+    // 크로스 도메인 인증을 위한 헤더 추가
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
     
     passport.authenticate("local", (err: any, user: any, info: any) => {
       console.log("인증 결과:", { err, user: user?.username, info });
@@ -164,19 +172,52 @@ export function setupAuth(app: Express) {
         // 비밀번호 필드 제외하고 응답
         const { password, ...userWithoutPassword } = user;
         console.log("로그인 성공:", userWithoutPassword);
+        console.log("세션 ID:", req.sessionID);
+        
+        // 응답 보내기
         res.json(userWithoutPassword);
       });
     })(req, res, next);
   });
 
   app.post("/api/logout", (req, res, next) => {
+    console.log("로그아웃 요청:", {
+      sessionID: req.sessionID,
+      isAuthenticated: req.isAuthenticated()
+    });
+    
+    // 크로스 도메인 인증을 위한 헤더 추가
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    
     req.logout((err) => {
       if (err) return next(err);
-      res.json({ message: "로그아웃 성공" });
+      
+      // 세션 삭제도 함께 수행
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("세션 삭제 실패:", err);
+          return next(err);
+        }
+        
+        // 쿠키 삭제를 위한 설정
+        res.clearCookie('connect.sid');
+        res.json({ message: "로그아웃 성공" });
+      });
     });
   });
 
   app.get("/api/user", (req, res) => {
+    console.log("사용자 인증 상태 확인:", { 
+      isAuthenticated: req.isAuthenticated(),
+      sessionID: req.sessionID,
+      cookies: req.cookies
+    });
+    
+    // 크로스 도메인 인증을 위한 헤더 추가
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "로그인이 필요합니다." });
     }

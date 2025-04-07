@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Search, ChevronDown, MapPin } from "lucide-react";
+import { Menu, X, Search, ChevronDown, MapPin, LogOut, User } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const { user, logoutMutation } = useAuth();
 
   // 메뉴 토글
   const toggleMobileMenu = () => {
@@ -14,6 +16,12 @@ export default function Header() {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+  
+  // 로그아웃 처리
+  const handleLogout = () => {
+    logoutMutation.mutate();
+    closeMobileMenu();
   };
 
   // 네비게이션 아이템
@@ -73,16 +81,38 @@ export default function Header() {
             ))}
           </nav>
           
-          {/* 데스크톱 로그인/회원가입/코치가입 버튼 */}
+          {/* 데스크톱 로그인/로그아웃 버튼 */}
           <div className="hidden md:flex items-center space-x-3">
-            <div className="text-sm font-medium">
-              <Link href="/login" className="text-gray-700 hover:text-[#5D3FD3]">로그인</Link>
-              <span className="mx-1 text-gray-400">/</span>
-              <Link href="/signup" className="text-gray-700 hover:text-[#5D3FD3]">회원가입</Link>
-            </div>
-            <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
-              <Link href="/coach-signup">코치가입</Link>
-            </Button>
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-full">
+                  <User className="h-4 w-4 text-[#5D3FD3]" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {user.fullName || user.username}
+                    {user.isAdmin && <span className="ml-1 text-xs text-[#5D3FD3]">(관리자)</span>}
+                    {user.isCoach && <span className="ml-1 text-xs text-[#5D3FD3]">(코치)</span>}
+                  </span>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="flex items-center space-x-1 h-9"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>로그아웃</span>
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <div className="text-sm font-medium">
+                  <Link href="/auth" className="text-gray-700 hover:text-[#5D3FD3]">로그인/회원가입</Link>
+                </div>
+                <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white text-sm font-medium rounded-md h-9">
+                  <Link href="/coach-signup">코치가입</Link>
+                </Button>
+              </div>
+            )}
           </div>
           
           {/* 모바일 메뉴 버튼 */}
@@ -131,26 +161,41 @@ export default function Header() {
               ))}
               
               <div className="pt-3 border-t border-gray-100 mt-2 flex flex-col space-y-2">
-                <div className="py-2 text-sm font-medium text-gray-700">
-                  <Link 
-                    href="/login" 
-                    className="text-gray-700 hover:text-[#5D3FD3]"
-                    onClick={closeMobileMenu}
-                  >
-                    로그인
-                  </Link>
-                  <span className="mx-1 text-gray-400">/</span>
-                  <Link 
-                    href="/signup" 
-                    className="text-gray-700 hover:text-[#5D3FD3]"
-                    onClick={closeMobileMenu}
-                  >
-                    회원가입
-                  </Link>
-                </div>
-                <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white justify-center">
-                  <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
-                </Button>
+                {user ? (
+                  <>
+                    <div className="py-2 flex items-center space-x-2">
+                      <User className="h-4 w-4 text-[#5D3FD3]" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {user.fullName || user.username}
+                        {user.isAdmin && <span className="ml-1 text-xs text-[#5D3FD3]">(관리자)</span>}
+                        {user.isCoach && <span className="ml-1 text-xs text-[#5D3FD3]">(코치)</span>}
+                      </span>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center space-x-1"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>로그아웃</span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <div className="py-2 text-sm font-medium text-gray-700">
+                      <Link 
+                        href="/auth" 
+                        className="text-gray-700 hover:text-[#5D3FD3]"
+                        onClick={closeMobileMenu}
+                      >
+                        로그인/회원가입
+                      </Link>
+                    </div>
+                    <Button asChild className="bg-[#5D3FD3] hover:bg-[#4A00E0] text-white justify-center">
+                      <Link href="/coach-signup" onClick={closeMobileMenu}>코치가입</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

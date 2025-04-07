@@ -2,19 +2,24 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
-// CORS 설정 추가
+// CORS 설정 추가 (도메인 간 인증을 위한 설정)
 const corsOptions = {
   origin: process.env.NODE_ENV === "production" 
     ? ['https://chukgo.kr', 'https://www.chukgo.kr', 'https://soccer-forland-bikekim0527.replit.app']
     : true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie']
 };
 app.use(cors(corsOptions));
+
+// 쿠키 파서 추가
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
