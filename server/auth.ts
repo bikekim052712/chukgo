@@ -48,14 +48,19 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
+        console.log("Attempting login with:", username, password);
         const user = await storage.getUserByUsername(username);
         if (!user) {
+          console.log("User not found:", username);
           return done(null, false, { message: "유저명이 존재하지 않습니다." });
         }
+        
+        console.log("Found user:", user.username, user.isAdmin);
         
         // 개발 환경에서는 비밀번호 일치 여부만 확인
         // 실제 환경에서는 해싱된 비밀번호 비교 필요
         const passwordMatch = user.password === password;
+        console.log("Password match:", passwordMatch, "Expected:", user.password, "Received:", password);
         //const passwordMatch = await comparePasswords(password, user.password);
         
         if (!passwordMatch) {
@@ -64,6 +69,7 @@ export function setupAuth(app: Express) {
         
         return done(null, user);
       } catch (error) {
+        console.error("Login error:", error);
         return done(error);
       }
     }),

@@ -42,6 +42,8 @@ export default function AdminLogin() {
     try {
       console.log("로그인 시도:", data);
       
+      console.log("로그인 데이터:", JSON.stringify(data));
+      
       // 직접 API 요청 방식으로 시도
       const response = await fetch("/api/login", {
         method: "POST",
@@ -51,6 +53,8 @@ export default function AdminLogin() {
         body: JSON.stringify(data),
         credentials: "include",
       });
+      
+      console.log("응답 상태:", response.status, response.statusText);
       
       if (!response.ok) {
         const errorText = await response.text();
