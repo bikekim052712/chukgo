@@ -83,9 +83,9 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      refetchOnWindowFocus: true, // 창이 포커스될 때 데이터 다시 가져오기
+      staleTime: 60000, // 1분 동안 캐시 유지
+      retry: 1, // 실패 시 1번 재시도
     },
     mutations: {
       retry: false,
