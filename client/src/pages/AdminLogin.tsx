@@ -30,13 +30,18 @@ export default function AdminLogin() {
       setIsLoading(true);
       console.log("자동 로그인 시도 중...");
       
-      // 자동 로그인 시도
-      const response = await fetch("/api/login", {
+      // 자동 로그인 시도 - 절대 URL 사용
+      const apiUrl = window.location.origin + "/api/login";
+      console.log("자동 로그인 API URL:", apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: "admin", password: "admin123" }),
         credentials: "include",
       });
+      
+      console.log("자동 로그인 응답:", response.status, response.statusText);
       
       if (!response.ok) {
         console.log("자동 로그인 실패:", response.status);
@@ -99,13 +104,19 @@ export default function AdminLogin() {
     setIsLoading(true);
     
     try {
-      // API 요청
-      const response = await fetch("/api/login", {
+      // API 요청 - 절대 URL 사용
+      console.log("로그인 요청 전송:", data);
+      const apiUrl = window.location.origin + "/api/login";
+      console.log("API URL:", apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
         credentials: "include",
       });
+      
+      console.log("로그인 응답:", response.status, response.statusText);
       
       if (!response.ok) {
         let errorMessage = "로그인에 실패했습니다";

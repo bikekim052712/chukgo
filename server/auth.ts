@@ -29,19 +29,36 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // 환경 변수 설정 (직접 설정)
+  process.env.NODE_ENV = "production";
+  process.env.SESSION_SECRET = "축고_관리자_세션_암호화_키";
+  
+  console.log("환경 설정:", { 
+    NODE_ENV: process.env.NODE_ENV, 
+    isProduction: process.env.NODE_ENV === "production",
+    SESSION_SECRET: process.env.SESSION_SECRET ? "[설정됨]" : "[없음]"
+  });
+  
+  // 세션 설정
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "soccer-coach-finder-secret",
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: 'lax',
+      secure: false, // https 환경에서는 true로 설정
+      sameSite: 'lax' as 'lax', // 명시적 타입 캐스팅
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-      domain: process.env.NODE_ENV === "production" ? '.chukgo.kr' : undefined
+      maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
   };
+  
+  console.log("세션 설정:", {
+    secret: sessionSettings.secret ? "[설정됨]" : "[설정안됨]",
+    resave: sessionSettings.resave,
+    saveUninitialized: sessionSettings.saveUninitialized,
+    cookie: sessionSettings.cookie
+  });
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
@@ -60,11 +77,12 @@ export function setupAuth(app: Express) {
         
         console.log("Found user:", user.username, user.isAdmin);
         
-        // 개발 환경에서는 비밀번호 일치 여부만 확인
-        // 실제 환경에서는 해싱된 비밀번호 비교 필요
+        // 비밀번호 일치 여부 확인 (직접 비교)
         const passwordMatch = user.password === password;
         console.log("Password match:", passwordMatch, "Expected:", user.password, "Received:", password);
-        //const passwordMatch = await comparePasswords(password, user.password);
+        
+        // 참고: 실제 배포 환경에서는 아래와 같이 비밀번호 해싱 비교를 사용해야 함
+        // const passwordMatch = await comparePasswords(password, user.password);
         
         if (!passwordMatch) {
           return done(null, false, { message: "비밀번호가 일치하지 않습니다." });
