@@ -30,11 +30,7 @@ export default function CompanyInfoList() {
   }
 
   if (companyInfos.length === 0) {
-    return (
-      <div className="text-sm text-gray-500 py-2">
-        등록된 회사 정보가 없습니다.
-      </div>
-    );
+    return null;
   }
 
   return (

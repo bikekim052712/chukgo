@@ -37,7 +37,7 @@ export default function CompanyInfoListPage() {
       <div className="container mx-auto py-16 px-4 min-h-[60vh] flex flex-col justify-center items-center">
         <Info className="h-12 w-12 text-blue-500 mb-4" />
         <h1 className="text-2xl font-bold text-gray-900 mb-2">회사 소개 정보</h1>
-        <p className="text-gray-600 mb-4">현재 등록된 회사 소개 정보가 없습니다.</p>
+        <p className="text-gray-600 mb-4">관리자 페이지에서 회사 소개 정보를 추가해 주세요.</p>
         <Button asChild>
           <Link to="/">홈으로 돌아가기</Link>
         </Button>
