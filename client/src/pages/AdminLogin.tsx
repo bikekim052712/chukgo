@@ -25,35 +25,37 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
   
-  // 커스텀 도메인에서 접속 시 Replit 도메인으로 바로 리디렉션
+  // 모든 도메인에서 동작하도록 수정
   useEffect(() => {
-    if (isCustomDomain()) {
-      console.log("커스텀 도메인에서 접속 감지, Replit 도메인으로 자동 리디렉션");
-      
+    console.log("관리자 로그인 페이지 접속 - 자동 인증 처리");
+    
+    // 로컬스토리지에 관리자 로그인 정보 저장
+    const adminToken = localStorage.getItem('admin_auth_token');
+    
+    if (!adminToken) {
       // 단일 사인온 토큰 생성 (timestamp + 랜덤값 hash)
       const timestamp = new Date().getTime();
       const randomValue = Math.random().toString(36).substring(2, 15);
       const token = `${timestamp}_${randomValue}`;
       
-      // localStorage에 토큰 저장 (크로스 도메인 문제 없음)
+      // localStorage에 토큰 저장
       localStorage.setItem('admin_auth_token', token);
-      
-      // 토큰과 함께 Replit 도메인으로 리디렉션
-      const redirectUrl = getAdminUrl("/admin-login") + `?token=${token}`;
-      window.location.href = redirectUrl;
+      console.log("신규 인증 토큰 생성:", token);
     } else {
-      // Replit 도메인에서 토큰 확인
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      console.log("기존 인증 토큰 감지:", adminToken);
+    }
+    
+    // URL 파라미터 체크
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (token) {
+      console.log("URL에서 인증 토큰 감지, 자동 로그인 시도");
+      // URL에서 토큰 파라미터 제거 (보안)
+      window.history.replaceState({}, document.title, window.location.pathname);
       
-      if (token) {
-        console.log("인증 토큰 감지, 자동 로그인 시도");
-        // URL에서 토큰 파라미터 제거 (보안)
-        window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // 자동 로그인 시도
-        handleAutoLogin();
-      }
+      // 자동 로그인 시도
+      handleAutoLogin();
     }
   }, []);
   
@@ -162,7 +164,8 @@ export default function AdminLogin() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": "AdminLogin" // 자동 로그인을 위한 특별 헤더 추가
+          "Authorization": "AdminLogin", // 자동 로그인을 위한 특별 헤더 추가
+          "X-Cross-Domain-Login": "true" // 크로스 도메인 로그인 식별자
         },
         body: JSON.stringify(data),
         mode: "cors",

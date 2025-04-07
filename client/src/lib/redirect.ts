@@ -52,9 +52,10 @@ export function getApiUrl(endpoint: string): string {
   // 엔드포인트가 이미 슬래시로 시작하면 그대로 사용, 아니면 슬래시 추가
   const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   
-  // 커스텀 도메인에서 인증 관련 API는 Replit 서버로 리디렉션
-  if (isCustomDomain() && isAuthEndpoint(endpoint)) {
-    console.log(`인증 요청을 Replit 서버로 리디렉션: ${API_SERVER}${formattedEndpoint}`);
+  // 모든 도메인에서 모든 API 요청을 항상 Replit 서버로 리디렉션
+  // 크로스 도메인 문제를 해결하기 위한 직접적인 방법
+  if (isCustomDomain()) {
+    console.log(`API 요청을 Replit 서버로 리디렉션: ${API_SERVER}${formattedEndpoint}`);
     return `${API_SERVER}${formattedEndpoint}`;
   }
   
