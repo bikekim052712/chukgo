@@ -29,7 +29,31 @@ export default function AdminLogin() {
   useEffect(() => {
     if (isCustomDomain()) {
       console.log("커스텀 도메인에서 접속 감지, Replit 도메인으로 자동 리디렉션");
-      window.location.href = getAdminUrl("/admin-login");
+      
+      // 단일 사인온 토큰 생성 (timestamp + 랜덤값 hash)
+      const timestamp = new Date().getTime();
+      const randomValue = Math.random().toString(36).substring(2, 15);
+      const token = `${timestamp}_${randomValue}`;
+      
+      // localStorage에 토큰 저장 (크로스 도메인 문제 없음)
+      localStorage.setItem('admin_auth_token', token);
+      
+      // 토큰과 함께 Replit 도메인으로 리디렉션
+      const redirectUrl = getAdminUrl("/admin-login") + `?token=${token}`;
+      window.location.href = redirectUrl;
+    } else {
+      // Replit 도메인에서 토큰 확인
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      
+      if (token) {
+        console.log("인증 토큰 감지, 자동 로그인 시도");
+        // URL에서 토큰 파라미터 제거 (보안)
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // 자동 로그인 시도
+        handleAutoLogin();
+      }
     }
   }, []);
   

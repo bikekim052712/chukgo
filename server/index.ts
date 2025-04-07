@@ -16,12 +16,26 @@ const app = express();
 
 // CORS 설정 추가 (도메인 간 인증을 위한 설정)
 const corsOptions = {
-  origin: process.env.NODE_ENV === "production" 
-    ? ['https://chukgo.kr', 'https://www.chukgo.kr', 'https://soccer-forland-bikekim0527.replit.app']
-    : true,
+  origin: function(origin: string | undefined, callback: (err: Error | null, origin?: boolean | string) => void) {
+    // 허용할 도메인 목록
+    const allowedOrigins = [
+      'https://chukgo.kr',
+      'https://www.chukgo.kr',
+      'https://soccer-forland-bikekim0527.replit.app',
+      'https://e86b4446-0b3c-4054-bc06-598b63fcc248-00-1ju27h41dvhaj.spock.replit.dev'
+    ];
+    
+    // origin이 없는 경우 (같은 도메인) 또는 허용된 도메인이면 허용
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS 거부된 도메인:', origin);
+      callback(null, false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
   exposedHeaders: ['Set-Cookie']
 };
 app.use(cors(corsOptions));

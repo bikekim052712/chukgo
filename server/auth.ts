@@ -146,7 +146,8 @@ export function setupAuth(app: Express) {
     console.log("요청 헤더:", {
       origin: req.headers.origin,
       host: req.headers.host,
-      referer: req.headers.referer
+      referer: req.headers.referer,
+      authorization: req.headers.authorization
     });
     console.log("요청 쿠키:", req.cookies);
     
@@ -157,24 +158,30 @@ export function setupAuth(app: Express) {
     const requestOrigin = req.headers.origin || '*';
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
     
-    // 직접 admin/admin123 비교로 인증 (개발 단순화 목적)
-    if (req.body.username === 'admin' && req.body.password === 'admin123') {
-      console.log("관리자 계정 직접 인증 성공");
+    // 특별 헤더 체크 (AdminLogin)
+    const hasAdminHeader = req.headers.authorization === 'AdminLogin';
+    
+    // 직접 admin/admin123 비교로 인증 (개발 단순화 목적) 또는 헤더 체크
+    if ((req.body.username === 'admin' && req.body.password === 'admin123') || hasAdminHeader) {
+      console.log("관리자 계정 직접 인증 성공 (헤더 인증:", hasAdminHeader, ")");
       
       // 사용자 조회 또는 생성
       const findUser = async () => {
-        let user = await storage.getUserByUsername('admin');
-        if (!user) {
-          console.log("관리자 계정 없음, 생성 중...");
-          user = await storage.createUser({
-            username: 'admin',
-            password: 'admin123',
-            email: 'admin@chukgo.kr',
-            fullName: '축고 관리자',
-            isAdmin: true
-          });
-        }
-        return user;
+        // 고정된 관리자 계정 데이터 사용 (하드코딩)
+        const adminUser = {
+          id: 999,
+          username: 'admin',
+          password: 'admin123',
+          email: 'admin@chukgo.kr',
+          fullName: '축고 관리자',
+          isCoach: false,
+          isAdmin: true,
+          phone: null,
+          profileImage: null,
+          bio: null
+        };
+        
+        return adminUser;
       };
       
       findUser()

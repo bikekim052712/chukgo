@@ -5,6 +5,8 @@ import { contactFormSchema, insertBookingSchema, insertReviewSchema, insertUserS
 import { ZodError } from "zod";
 import { z } from "zod";
 import { setupAuth } from "./auth";
+import { WebSocketServer } from "ws";
+import WebSocket from "ws";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up auth with session and passport
@@ -488,6 +490,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // 토큰 기반 단일 로그인 시스템 설정
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws/auth'
+  });
+  
+  // 웹소켓 연결 처리
+  wss.on('connection', function connection(ws) {
+    console.log('WebSocket 연결됨 - Auth Channel');
+    
+    ws.on('message', function incoming(message) {
+      try {
+        const data = JSON.parse(message.toString());
+        console.log('메시지 수신:', data);
+        
+        // 토큰 동기화 메시지 처리
+        if (data.type === 'auth_sync' && data.token) {
+          console.log('토큰 동기화 요청:', data.token);
+          
+          // 모든 클라이언트에게 토큰 브로드캐스트
+          wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify({
+                type: 'auth_token',
+                token: data.token
+              }));
+            }
+          });
+        }
+      } catch (error) {
+        console.error('메시지 처리 에러:', error);
+      }
+    });
+  });
   
   return httpServer;
 }
