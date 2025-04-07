@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { getApiUrl } from "@/lib/redirect"; // 리디렉션 함수 추가
+import { getApiUrl, isCustomDomain, getAdminUrl } from "@/lib/redirect"; // 리디렉션 함수들 추가
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -27,12 +27,9 @@ export default function AdminLogin() {
   
   // 커스텀 도메인에서 접속 시 Replit 도메인으로 바로 리디렉션
   useEffect(() => {
-    const isCustomDomain = window.location.hostname === "chukgo.kr" || 
-                          window.location.hostname === "www.chukgo.kr";
-    
-    if (isCustomDomain) {
+    if (isCustomDomain()) {
       console.log("커스텀 도메인에서 접속 감지, Replit 도메인으로 자동 리디렉션");
-      window.location.href = "https://soccer-forland-bikekim0527.replit.app/admin-login";
+      window.location.href = getAdminUrl("/admin-login");
     }
   }, []);
   
@@ -41,6 +38,9 @@ export default function AdminLogin() {
     try {
       setIsLoading(true);
       console.log("자동 로그인 시도 중...");
+      
+      // admin_auto_login 쿠키 설정 (자동 로그인 활성화)
+      document.cookie = "admin_auto_login=true; path=/; max-age=86400; secure; samesite=none";
       
       // 자동 로그인 시도 - 리디렉션 함수 사용
       const apiUrl = getApiUrl("/api/login");
@@ -62,6 +62,9 @@ export default function AdminLogin() {
           description: "직접 로그인해 주세요.",
           variant: "destructive",
         });
+        
+        // 쿠키 제거
+        document.cookie = "admin_auto_login=; path=/; max-age=0; secure; samesite=none";
         return;
       }
       
@@ -85,6 +88,9 @@ export default function AdminLogin() {
           description: "관리자 권한이 필요합니다.",
           variant: "destructive",
         });
+        
+        // 쿠키 제거
+        document.cookie = "admin_auto_login=; path=/; max-age=0; secure; samesite=none";
       }
     } catch (error) {
       console.error("자동 로그인 중 오류 발생:", error);
@@ -93,6 +99,9 @@ export default function AdminLogin() {
         description: "서버와의 연결에 문제가 있습니다.",
         variant: "destructive",
       });
+      
+      // 쿠키 제거
+      document.cookie = "admin_auto_login=; path=/; max-age=0; secure; samesite=none";
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +197,7 @@ export default function AdminLogin() {
           관리자 전용 페이지입니다. 회사 정보 관리, 리뷰 관리, 사용자 관리 등의 작업을 수행할 수 있습니다.
         </p>
         
-        {window.location.hostname === "chukgo.kr" || window.location.hostname === "www.chukgo.kr" ? (
+        {isCustomDomain() ? (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 w-full max-w-sm shadow-lg mb-6">
             <div className="flex items-start space-x-4">
               <div className="p-2 bg-amber-100 rounded-full mt-1">
@@ -200,7 +209,7 @@ export default function AdminLogin() {
                   쿠키 인증 문제로 인해 관리자 기능은 Replit 도메인에서만 정상 작동합니다.
                 </p>
                 <a 
-                  href="https://soccer-forland-bikekim0527.replit.app/admin-login" 
+                  href={getAdminUrl("/admin-login")}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-amber-800 underline hover:text-amber-600"
