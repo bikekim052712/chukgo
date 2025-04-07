@@ -29,6 +29,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import CompanyInfoEdit from "@/pages/admin/CompanyInfoEdit";
 import AuthPage from "@/pages/auth-page";
 import AdminLogin from "@/pages/AdminLogin";
+import CompanyInfoPage from "@/pages/CompanyInfoPage";
 
 function Router() {
   return (
@@ -65,6 +66,7 @@ function Router() {
       
       {/* 회사 정보 */}
       <Route path="/about-us" component={AboutUs} />
+      <Route path="/company-info/:id" component={CompanyInfoPage} />
       
       {/* 관리자 페이지 */}
       <AdminRoute path="/admin/company-info/new" component={CompanyInfoEdit} />
