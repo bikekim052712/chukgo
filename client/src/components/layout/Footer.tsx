@@ -1,7 +1,6 @@
 import { Link } from "wouter";
 import { FaInstagram, FaFacebookF, FaYoutube, FaBlog, FaApple, FaAndroid } from "react-icons/fa";
 import { SiKakao } from "react-icons/si";
-import CompanyInfoList from "../company/CompanyInfoList";
 
 export default function Footer() {
   return (
@@ -106,11 +105,7 @@ export default function Footer() {
               <li><Link to="/partners" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">제휴 및 파트너십</Link></li>
             </ul>
             
-            {/* 회사 정보 목록 컴포넌트 추가 */}
-            <div className="mt-4">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">회사 소개 글</h3>
-              <CompanyInfoList />
-            </div>
+
           </div>
         </div>
         
