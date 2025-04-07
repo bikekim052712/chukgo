@@ -119,16 +119,30 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    console.log("로그인 요청 받음:", req.body);
+    
     passport.authenticate("local", (err: any, user: any, info: any) => {
-      if (err) return next(err);
+      console.log("인증 결과:", { err, user: user?.username, info });
+      
+      if (err) {
+        console.error("로그인 에러:", err);
+        return next(err);
+      }
+      
       if (!user) {
-        return res.status(401).json({ message: info.message || "로그인에 실패했습니다." });
+        console.log("인증 실패:", info?.message);
+        return res.status(401).json({ message: info?.message || "로그인에 실패했습니다." });
       }
       
       req.login(user, (err) => {
-        if (err) return next(err);
+        if (err) {
+          console.error("세션 저장 에러:", err);
+          return next(err);
+        }
+        
         // 비밀번호 필드 제외하고 응답
         const { password, ...userWithoutPassword } = user;
+        console.log("로그인 성공:", userWithoutPassword);
         res.json(userWithoutPassword);
       });
     })(req, res, next);

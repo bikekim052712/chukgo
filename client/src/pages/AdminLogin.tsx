@@ -13,8 +13,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { User as SelectUser } from "@shared/schema";
 
 const loginSchema = z.object({
-  username: z.string().min(3, "아이디는 3글자 이상이어야 합니다"),
-  password: z.string().min(6, "비밀번호는 6글자 이상이어야 합니다"),
+  username: z.string().min(1, "아이디를 입력해주세요"),
+  password: z.string().min(1, "비밀번호를 입력해주세요"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -32,8 +32,8 @@ export default function AdminLogin() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: "admin",
+      password: "admin123",
     },
   });
 
@@ -57,9 +57,17 @@ export default function AdminLogin() {
       console.log("응답 상태:", response.status, response.statusText);
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("로그인 응답 에러:", response.status, errorText);
-        throw new Error(errorText || "로그인 실패");
+        let errorMessage = "로그인에 실패했습니다";
+        try {
+          const errorData = await response.json();
+          console.error("로그인 응답 에러:", response.status, errorData);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          const errorText = await response.text();
+          console.error("로그인 응답 에러(텍스트):", response.status, errorText);
+          errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
       
       const userData = await response.json();
