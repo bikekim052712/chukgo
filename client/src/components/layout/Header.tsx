@@ -93,6 +93,32 @@ export default function Header() {
                     {user.isCoach && <span className="ml-1 text-xs text-[#5D3FD3]">(코치)</span>}
                   </span>
                 </div>
+                
+                {/* 관리자인 경우 관리자 페이지 버튼 표시 */}
+                {user.isAdmin && (
+                  window.location.hostname === "chukgo.kr" || 
+                  window.location.hostname === "www.chukgo.kr" ? (
+                    <Button 
+                      size="sm" 
+                      className="flex items-center space-x-1 h-9 bg-amber-500 hover:bg-amber-600 text-white"
+                      onClick={() => window.open("https://soccer-forland-bikekim0527.replit.app/admin", "_blank")}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>관리자 페이지</span>
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="sm"
+                      variant="default"
+                      className="flex items-center space-x-1 h-9"
+                      onClick={() => setLocation("/admin")}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>관리자 페이지</span>
+                    </Button>
+                  )
+                )}
+                
                 <Button 
                   size="sm" 
                   variant="outline" 
@@ -171,6 +197,36 @@ export default function Header() {
                         {user.isCoach && <span className="ml-1 text-xs text-[#5D3FD3]">(코치)</span>}
                       </span>
                     </div>
+                    
+                    {/* 모바일 - 관리자인 경우 관리자 페이지 버튼 표시 */}
+                    {user.isAdmin && (
+                      window.location.hostname === "chukgo.kr" || 
+                      window.location.hostname === "www.chukgo.kr" ? (
+                        <Button 
+                          className="flex items-center justify-center space-x-1 bg-amber-500 hover:bg-amber-600 text-white"
+                          onClick={() => {
+                            window.open("https://soccer-forland-bikekim0527.replit.app/admin", "_blank");
+                            closeMobileMenu();
+                          }}
+                        >
+                          <User className="h-4 w-4" />
+                          <span>관리자 페이지</span>
+                        </Button>
+                      ) : (
+                        <Button 
+                          variant="default"
+                          className="flex items-center justify-center space-x-1"
+                          onClick={() => {
+                            setLocation("/admin");
+                            closeMobileMenu();
+                          }}
+                        >
+                          <User className="h-4 w-4" />
+                          <span>관리자 페이지</span>
+                        </Button>
+                      )
+                    )}
+                    
                     <Button 
                       variant="outline" 
                       className="flex items-center justify-center space-x-1"
