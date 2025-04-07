@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { getApiUrl } from "@/lib/redirect"; // 리디렉션 함수 추가
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -30,8 +31,8 @@ export default function AdminLogin() {
       setIsLoading(true);
       console.log("자동 로그인 시도 중...");
       
-      // 자동 로그인 시도 - 절대 URL 사용
-      const apiUrl = window.location.origin + "/api/login";
+      // 자동 로그인 시도 - 리디렉션 함수 사용
+      const apiUrl = getApiUrl("/api/login");
       console.log("자동 로그인 API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -104,9 +105,9 @@ export default function AdminLogin() {
     setIsLoading(true);
     
     try {
-      // API 요청 - 절대 URL 사용
+      // API 요청 - 리디렉션 함수 사용
       console.log("로그인 요청 전송:", data);
-      const apiUrl = window.location.origin + "/api/login";
+      const apiUrl = getApiUrl("/api/login");
       console.log("API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
