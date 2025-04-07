@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -24,6 +24,17 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
+  
+  // 커스텀 도메인에서 접속 시 Replit 도메인으로 바로 리디렉션
+  useEffect(() => {
+    const isCustomDomain = window.location.hostname === "chukgo.kr" || 
+                          window.location.hostname === "www.chukgo.kr";
+    
+    if (isCustomDomain) {
+      console.log("커스텀 도메인에서 접속 감지, Replit 도메인으로 자동 리디렉션");
+      window.location.href = "https://soccer-forland-bikekim0527.replit.app/admin-login";
+    }
+  }, []);
   
   // 자동 로그인 함수
   const handleAutoLogin = async () => {
