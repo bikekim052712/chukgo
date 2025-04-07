@@ -17,7 +17,13 @@ import {
   FileText, 
   History, 
   Star, 
-  Users2 
+  Users2,
+  BookOpen,
+  MessageSquare,
+  Shield,
+  HelpCircle,
+  FileQuestion,
+  ClipboardCheck
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -97,16 +103,36 @@ export default function AdminDashboard() {
                 대시보드
               </Button>
               <Button variant="ghost" className="w-full justify-start" onClick={() => setLocation("/admin/company-info/new")}>
-                <FileText className="h-4 w-4 mr-2" />
-                회사 정보
+                <Building2 className="h-4 w-4 mr-2" />
+                회사소개관리
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <Users2 className="h-4 w-4 mr-2" />
+                코치관리
               </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <Users className="h-4 w-4 mr-2" />
-                사용자 관리
+                회원관리
               </Button>
               <Button variant="ghost" className="w-full justify-start">
-                <ListTodo className="h-4 w-4 mr-2" />
-                레슨 관리
+                <ClipboardCheck className="h-4 w-4 mr-2" />
+                레슨신청관리
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <Star className="h-4 w-4 mr-2" />
+                레슨후기관리
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <Shield className="h-4 w-4 mr-2" />
+                보험보장분석관리
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <BookOpen className="h-4 w-4 mr-2" />
+                이용가이드
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <FileQuestion className="h-4 w-4 mr-2" />
+                자주하는질문
               </Button>
             </div>
             
@@ -132,18 +158,42 @@ export default function AdminDashboard() {
             </div>
 
             <Tabs defaultValue="company-info" className="w-full">
-              <TabsList className="grid w-full grid-cols-1 md:grid-cols-3">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-9">
                 <TabsTrigger value="company-info" className="flex items-center">
-                  <FileText className="h-4 w-4 mr-2" />
-                  회사 정보 관리
+                  <Building2 className="h-4 w-4 mr-2" />
+                  회사소개
+                </TabsTrigger>
+                <TabsTrigger value="coaches" className="flex items-center">
+                  <Users2 className="h-4 w-4 mr-2" />
+                  코치
                 </TabsTrigger>
                 <TabsTrigger value="users" className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  사용자 관리
+                  회원
                 </TabsTrigger>
                 <TabsTrigger value="lessons" className="flex items-center">
-                  <ListTodo className="h-4 w-4 mr-2" />
-                  레슨 관리
+                  <ClipboardCheck className="h-4 w-4 mr-2" />
+                  레슨신청
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="flex items-center">
+                  <Star className="h-4 w-4 mr-2" />
+                  레슨후기
+                </TabsTrigger>
+                <TabsTrigger value="insurance" className="flex items-center">
+                  <Shield className="h-4 w-4 mr-2" />
+                  보험보장분석
+                </TabsTrigger>
+                <TabsTrigger value="guide" className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  이용가이드
+                </TabsTrigger>
+                <TabsTrigger value="faq" className="flex items-center">
+                  <FileQuestion className="h-4 w-4 mr-2" />
+                  자주하는질문
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="flex items-center">
+                  <Settings className="h-4 w-4 mr-2" />
+                  설정
                 </TabsTrigger>
               </TabsList>
 
@@ -326,25 +376,91 @@ export default function AdminDashboard() {
                 )}
               </TabsContent>
 
-              <TabsContent value="users" className="py-4">
+              <TabsContent value="coaches" className="py-4">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">사용자 관리</h2>
+                  <h2 className="text-2xl font-bold">코치 관리</h2>
                 </div>
                 <div className="p-8 text-center">
-                  <Building2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <Users2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
-                  <p className="text-muted-foreground">사용자 관리 기능은 현재 개발 중입니다.</p>
+                  <p className="text-muted-foreground">코치 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="users" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">회원 관리</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">회원 관리 기능은 현재 개발 중입니다.</p>
                 </div>
               </TabsContent>
 
               <TabsContent value="lessons" className="py-4">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">레슨 관리</h2>
+                  <h2 className="text-2xl font-bold">레슨 신청 관리</h2>
                 </div>
                 <div className="p-8 text-center">
-                  <Building2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <ClipboardCheck className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
-                  <p className="text-muted-foreground">레슨 관리 기능은 현재 개발 중입니다.</p>
+                  <p className="text-muted-foreground">레슨 신청 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="reviews" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">레슨 후기 관리</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <Star className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">레슨 후기 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="insurance" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">보험 보장 분석 관리</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <Shield className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">보험 보장 분석 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="guide" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">이용 가이드 관리</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <BookOpen className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">이용 가이드 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="faq" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">자주 하는 질문 관리</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <FileQuestion className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">자주 하는 질문 관리 기능은 현재 개발 중입니다.</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="settings" className="py-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">시스템 설정</h2>
+                </div>
+                <div className="p-8 text-center">
+                  <Settings className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
+                  <p className="text-muted-foreground">시스템 설정 기능은 현재 개발 중입니다.</p>
                 </div>
               </TabsContent>
             </Tabs>
