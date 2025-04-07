@@ -35,7 +35,6 @@ export default function AdminLogin() {
     const currentOrigin = `${protocol}//${currentHost}`;
     
     console.log("현재 접속 도메인:", currentOrigin);
-    console.log("허용된 도메인 목록:", ALLOWED_DOMAINS);
     
     // 로컬스토리지에 관리자 로그인 정보 저장
     const adminToken = localStorage.getItem('admin_auth_token');
