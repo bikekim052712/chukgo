@@ -1,8 +1,21 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from "cors";
 
 const app = express();
+
+// CORS 설정 추가
+const corsOptions = {
+  origin: process.env.NODE_ENV === "production" 
+    ? ['https://chukgo.kr', 'https://www.chukgo.kr', 'https://soccer-forland-bikekim0527.replit.app']
+    : true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
