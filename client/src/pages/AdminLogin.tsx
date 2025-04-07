@@ -90,10 +90,13 @@ export default function AdminLogin() {
         headers: { 
           "Content-Type": "application/json",
           "Authorization": "AdminLogin", // 자동 로그인을 위한 특별 헤더 추가
-          "X-Cross-Domain-Login": "true" // 크로스 도메인 로그인 식별자
+          "X-Cross-Domain-Login": "true", // 크로스 도메인 로그인 식별자
+          "Origin": window.location.origin, // 명시적 Origin 추가
+          "Accept": "application/json" // 명시적 Accept 헤더 추가
         },
+        mode: "cors", // CORS 모드 명시적 지정
         body: JSON.stringify({ username: "admin", password: "admin123" }), // 기본 관리자 계정 정보 사용
-        credentials: "include",
+        credentials: "include", // 쿠키 포함
       });
       
       console.log("자동 로그인 응답:", response.status, response.statusText);
@@ -178,11 +181,13 @@ export default function AdminLogin() {
         headers: { 
           "Content-Type": "application/json",
           "Authorization": "AdminLogin", // 자동 로그인을 위한 특별 헤더 추가
-          "X-Cross-Domain-Login": "true" // 크로스 도메인 로그인 식별자
+          "X-Cross-Domain-Login": "true", // 크로스 도메인 로그인 식별자
+          "Origin": window.location.origin, // 명시적 Origin 추가
+          "Accept": "application/json" // 명시적 Accept 헤더 추가
         },
         body: JSON.stringify(data),
-        mode: "cors",
-        credentials: "include",
+        mode: "cors", // 명시적 CORS 모드
+        credentials: "include", // 쿠키 포함
       });
       
       console.log("로그인 응답:", response.status, response.statusText);

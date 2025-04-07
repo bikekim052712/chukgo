@@ -47,11 +47,12 @@ export function setupAuth(app: Express) {
     store: storage.sessionStore,
     proxy: true, // 프록시를 신뢰 (Replit은 프록시 사용)
     cookie: {
-      secure: true, // HTTPS 필수
+      secure: process.env.NODE_ENV === 'production', // 프로덕션에서만 HTTPS 적용
       sameSite: 'none' as 'none', // 크로스 사이트 요청 허용
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7일로 연장
       path: '/', // 모든 경로에서 쿠키 사용 가능
+      domain: undefined // 명시적 도메인 없음 (자동 설정)
     }
   };
   

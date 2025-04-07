@@ -14,13 +14,14 @@ console.log('환경 설정:', {
 
 const app = express();
 
-// CORS 설정 추가 (도메인 간 인증을 위한 설정)
+// CORS 설정 추가 (도메인 간 인증을 위한 설정) - Replit 환경에서는 모든 출처 허용
 const corsOptions = {
-  origin: ["https://www.chukgo.kr", "https://soccer-forland-bikekim0527.replit.app"],
+  // 개발 환경에서는 모든 출처 허용
+  origin: true, 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'X-Cross-Domain-Login'],
-  exposedHeaders: ['Set-Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'X-Cross-Domain-Login', 'Origin', 'Accept'],
+  exposedHeaders: ['Set-Cookie', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials']
 };
 app.use(cors(corsOptions));
 

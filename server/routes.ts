@@ -10,13 +10,7 @@ import WebSocket from "ws";
 import cors from "cors";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // CORS 설정
-  app.use(cors({
-    origin: ["https://www.chukgo.kr", "https://chukgo.kr", "https://soccer-forland-bikekim0527.replit.app"],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Cross-Domain-Login']
-  }));
+  // CORS 설정은 이미 index.ts에서 전역으로 적용되므로 여기서는 제거
   
   // Set up auth with session and passport
   const { requireAuth, requireCoach } = setupAuth(app);
