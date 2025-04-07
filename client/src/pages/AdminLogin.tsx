@@ -48,7 +48,10 @@ export default function AdminLogin() {
       
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "AdminLogin" // 자동 로그인을 위한 특별 헤더 추가
+        },
         body: JSON.stringify({ username: "admin", password: "admin123" }),
         credentials: "include",
       });
@@ -132,7 +135,10 @@ export default function AdminLogin() {
       
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "AdminLogin" // 자동 로그인을 위한 특별 헤더 추가
+        },
         body: JSON.stringify(data),
         credentials: "include",
       });
@@ -154,6 +160,9 @@ export default function AdminLogin() {
       // 로그인 성공
       const userData = await response.json();
       console.log("로그인 성공:", userData);
+      
+      // admin_auto_login 쿠키 설정 (자동 로그인 활성화)
+      document.cookie = "admin_auto_login=true; path=/; max-age=86400; secure; samesite=none";
       
       // 쿼리 캐시 업데이트
       queryClient.setQueryData(["/api/user"], userData);

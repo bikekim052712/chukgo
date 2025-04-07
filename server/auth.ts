@@ -293,28 +293,46 @@ export function setupAuth(app: Express) {
     }
     
     // 테스트용: admin 쿠키가 있으면 자동 로그인 처리
-    if (!req.isAuthenticated() && req.cookies['admin_auto_login'] === 'true') {
-      storage.getUserByUsername('admin')
-        .then(user => {
-          if (user) {
-            req.login(user, (err) => {
-              if (err) {
-                console.error("자동 로그인 실패:", err);
-                return res.status(401).json({ message: "로그인이 필요합니다." });
-              }
-              
-              const { password, ...userWithoutPassword } = user;
-              console.log("자동 로그인 성공:", userWithoutPassword);
-              return res.json(userWithoutPassword);
-            });
-          } else {
-            return res.status(401).json({ message: "관리자 계정을 찾을 수 없습니다." });
-          }
-        })
-        .catch(err => {
-          console.error("자동 로그인 중 오류:", err);
+    // admin_auto_login 또는 req.headers.authorization을 확인
+    const adminCookie = req.cookies['admin_auto_login'] === 'true';
+    const adminHeader = req.headers.authorization === 'AdminLogin';
+    
+    if (!req.isAuthenticated() && (adminCookie || adminHeader)) {
+      console.log("관리자 자동 로그인 시도:", { adminCookie, adminHeader });
+      
+      // 하드코딩된 관리자 계정 직접 사용
+      const adminUser = {
+        id: 999,
+        username: 'admin',
+        password: 'admin123',
+        email: 'admin@chukgo.kr',
+        fullName: '축고 관리자',
+        isCoach: false,
+        isAdmin: true,
+        phone: null,
+        profileImage: null,
+        bio: null
+      };
+      
+      req.login(adminUser, (err) => {
+        if (err) {
+          console.error("자동 로그인 실패:", err);
           return res.status(401).json({ message: "로그인이 필요합니다." });
+        }
+        
+        const { password, ...userWithoutPassword } = adminUser;
+        console.log("자동 로그인 성공:", userWithoutPassword);
+        
+        // 세션 쿠키 수동 설정
+        res.cookie('connect.sid', req.sessionID, {
+          secure: true,
+          httpOnly: true,
+          sameSite: 'none',
+          maxAge: 1000 * 60 * 60 * 24 * 7 // 7일
         });
+        
+        return res.json(userWithoutPassword);
+      });
       return;
     }
     

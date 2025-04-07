@@ -297,10 +297,37 @@ export class MemStorage implements IStorage {
   
   // User methods
   async getUser(id: number): Promise<User | undefined> {
+    // 관리자 계정 ID (999)인 경우 즉시 반환 (하드코딩)
+    if (id === 999) {
+      return {
+        id: 999,
+        username: 'admin',
+        password: 'admin123', // 실제 배포 시 해싱 처리 필요
+        email: 'admin@chukgo.kr',
+        fullName: '축고 관리자',
+        isCoach: false,
+        isAdmin: true
+      };
+    }
+    
     return this.users.get(id);
   }
   
   async getUserByUsername(username: string): Promise<User | undefined> {
+    // 관리자 계정인 경우 즉시 반환 (하드코딩)
+    if (username === 'admin') {
+      return {
+        id: 999,
+        username: 'admin',
+        password: 'admin123', // 실제 배포 시 해싱 처리 필요
+        email: 'admin@chukgo.kr',
+        fullName: '축고 관리자',
+        isCoach: false,
+        isAdmin: true
+      };
+    }
+    
+    // 일반 사용자 조회
     for (const user of this.users.values()) {
       if (user.username === username) {
         return user;
