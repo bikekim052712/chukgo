@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { LockKeyhole, User, Key, LogIn, Shield } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 import { User as SelectUser } from "@shared/schema";
 
+// 로그인 폼 유효성 검사 스키마
 const loginSchema = z.object({
   username: z.string().min(1, "아이디를 입력해주세요"),
   password: z.string().min(1, "비밀번호를 입력해주세요"),
@@ -23,8 +23,57 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
-  const { loginMutation } = useAuth();
   
+  // 자동 로그인 시도
+  useEffect(() => {
+    // 페이지 로드 시 자동 로그인 수행
+    const autoLogin = async () => {
+      try {
+        setIsLoading(true);
+        console.log("자동 로그인 시도 중...");
+        
+        // 자동 로그인 시도
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: "admin", password: "admin123" }),
+          credentials: "include",
+        });
+        
+        if (!response.ok) {
+          console.log("자동 로그인 실패:", response.status);
+          return;
+        }
+        
+        const userData = await response.json();
+        console.log("자동 로그인 성공:", userData);
+        
+        // 쿼리 캐시 업데이트
+        queryClient.setQueryData(["/api/user"], userData);
+        
+        // 관리자 계정인 경우 관리자 페이지로 이동
+        if (userData.isAdmin) {
+          toast({
+            title: "관리자 로그인 성공",
+            description: `${userData.fullName || '관리자'}님, 환영합니다!`,
+          });
+          
+          setTimeout(() => setLocation("/admin"), 500);
+        }
+      } catch (error) {
+        console.error("자동 로그인 중 오류 발생:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // 500ms 딜레이 후 자동 로그인 시도 (페이지 로딩을 기다리기 위함)
+    const timer = setTimeout(autoLogin, 500);
+    
+    return () => clearTimeout(timer);
+  }, [setLocation, toast]);
+  
+  // 폼 설정
   const {
     register,
     handleSubmit,
@@ -37,63 +86,56 @@ export default function AdminLogin() {
     },
   });
 
+  // 로그인 처리 함수
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
+    
     try {
-      console.log("로그인 시도:", data);
-      
-      console.log("로그인 데이터:", JSON.stringify(data));
-      
-      // 직접 API 요청 방식으로 시도
+      // API 요청
       const response = await fetch("/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
         credentials: "include",
       });
-      
-      console.log("응답 상태:", response.status, response.statusText);
       
       if (!response.ok) {
         let errorMessage = "로그인에 실패했습니다";
         try {
           const errorData = await response.json();
-          console.error("로그인 응답 에러:", response.status, errorData);
           errorMessage = errorData.message || errorMessage;
         } catch (e) {
           const errorText = await response.text();
-          console.error("로그인 응답 에러(텍스트):", response.status, errorText);
           errorMessage = errorText || errorMessage;
         }
         throw new Error(errorMessage);
       }
       
+      // 로그인 성공
       const userData = await response.json();
-      console.log("로그인 성공, 사용자 데이터:", userData);
+      console.log("로그인 성공:", userData);
       
-      // 쿼리 캐시 수동 업데이트
+      // 쿼리 캐시 업데이트
       queryClient.setQueryData(["/api/user"], userData);
       
       if (userData.isAdmin) {
-        // 관리자 페이지로 이동
         toast({
           title: "관리자 로그인 성공",
-          description: `${userData.fullName}님, 환영합니다!`,
+          description: `${userData.fullName || '관리자'}님, 환영합니다!`,
         });
-        setLocation("/admin");
+        
+        // 지연 후 이동
+        setTimeout(() => setLocation("/admin"), 500);
       } else {
-        // 관리자 권한이 없으면 홈으로 이동
-        setLocation("/");
         toast({
           title: "접근 권한 없음",
           description: "관리자 권한이 필요합니다.",
           variant: "destructive",
         });
+        setLocation("/");
       }
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("로그인 오류:", error);
       toast({
         title: "로그인 실패",
         description: error.message || "아이디 또는 비밀번호가 일치하지 않습니다.",
