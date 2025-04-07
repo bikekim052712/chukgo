@@ -99,7 +99,7 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-3">축고 정보</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/about-us" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">회사 소개</Link></li>
+              <li><Link to="/company-info" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">회사 소개</Link></li>
               <li><Link to="/coach-signup" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">코치 지원하기</Link></li>
               <li><Link to="/guide" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">이용 가이드</Link></li>
               <li><Link to="/faq" className="text-gray-600 hover:text-[#6b21ff] transition duration-300">자주 묻는 질문</Link></li>
