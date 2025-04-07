@@ -9,6 +9,7 @@ export const API_SERVER = "https://soccer-forland-bikekim0527.replit.app";
 // 특정 도메인 간 허용 목록
 export const ALLOWED_DOMAINS = [
   "https://www.chukgo.kr", 
+  "https://chukgo.kr",
   "https://soccer-forland-bikekim0527.replit.app"
 ];
 

@@ -7,8 +7,17 @@ import { z } from "zod";
 import { setupAuth } from "./auth";
 import { WebSocketServer } from "ws";
 import WebSocket from "ws";
+import cors from "cors";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // CORS 설정
+  app.use(cors({
+    origin: ["https://www.chukgo.kr", "https://chukgo.kr", "https://soccer-forland-bikekim0527.replit.app"],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Cross-Domain-Login']
+  }));
+  
   // Set up auth with session and passport
   const { requireAuth, requireCoach } = setupAuth(app);
   // Get all lesson types
