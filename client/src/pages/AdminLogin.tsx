@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -24,54 +24,62 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
   
-  // 자동 로그인 시도
-  useEffect(() => {
-    // 페이지 로드 시 자동 로그인 수행
-    const autoLogin = async () => {
-      try {
-        setIsLoading(true);
-        console.log("자동 로그인 시도 중...");
-        
-        // 자동 로그인 시도
-        const response = await fetch("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: "admin", password: "admin123" }),
-          credentials: "include",
+  // 자동 로그인 함수
+  const handleAutoLogin = async () => {
+    try {
+      setIsLoading(true);
+      console.log("자동 로그인 시도 중...");
+      
+      // 자동 로그인 시도
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "admin", password: "admin123" }),
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        console.log("자동 로그인 실패:", response.status);
+        toast({
+          title: "자동 로그인 실패",
+          description: "직접 로그인해 주세요.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const userData = await response.json();
+      console.log("자동 로그인 성공:", userData);
+      
+      // 쿼리 캐시 업데이트
+      queryClient.setQueryData(["/api/user"], userData);
+      
+      // 관리자 계정인 경우 관리자 페이지로 이동
+      if (userData.isAdmin) {
+        toast({
+          title: "관리자 로그인 성공",
+          description: `${userData.fullName || '관리자'}님, 환영합니다!`,
         });
         
-        if (!response.ok) {
-          console.log("자동 로그인 실패:", response.status);
-          return;
-        }
-        
-        const userData = await response.json();
-        console.log("자동 로그인 성공:", userData);
-        
-        // 쿼리 캐시 업데이트
-        queryClient.setQueryData(["/api/user"], userData);
-        
-        // 관리자 계정인 경우 관리자 페이지로 이동
-        if (userData.isAdmin) {
-          toast({
-            title: "관리자 로그인 성공",
-            description: `${userData.fullName || '관리자'}님, 환영합니다!`,
-          });
-          
-          setTimeout(() => setLocation("/admin"), 500);
-        }
-      } catch (error) {
-        console.error("자동 로그인 중 오류 발생:", error);
-      } finally {
-        setIsLoading(false);
+        setTimeout(() => setLocation("/admin"), 500);
+      } else {
+        toast({
+          title: "접근 권한 없음",
+          description: "관리자 권한이 필요합니다.",
+          variant: "destructive",
+        });
       }
-    };
-    
-    // 500ms 딜레이 후 자동 로그인 시도 (페이지 로딩을 기다리기 위함)
-    const timer = setTimeout(autoLogin, 500);
-    
-    return () => clearTimeout(timer);
-  }, [setLocation, toast]);
+    } catch (error) {
+      console.error("자동 로그인 중 오류 발생:", error);
+      toast({
+        title: "로그인 오류",
+        description: "서버와의 연결에 문제가 있습니다.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // 폼 설정
   const {
@@ -219,17 +227,33 @@ export default function AdminLogin() {
               )}
             </div>
             
-            <Button
-              type="submit"
-              className="w-full mt-6 flex items-center justify-center"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>로그인 중... <User className="ml-2 h-4 w-4 animate-spin" /></>
-              ) : (
-                <>로그인 <LogIn className="ml-2 h-4 w-4" /></>
-              )}
-            </Button>
+            <div className="space-y-2">
+              <Button
+                type="submit"
+                className="w-full mt-6 flex items-center justify-center"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>로그인 중... <User className="ml-2 h-4 w-4 animate-spin" /></>
+                ) : (
+                  <>로그인 <LogIn className="ml-2 h-4 w-4" /></>
+                )}
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex items-center justify-center"
+                onClick={handleAutoLogin}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>자동 로그인 중... <User className="ml-2 h-4 w-4 animate-spin" /></>
+                ) : (
+                  <>자동 로그인 <Key className="ml-2 h-4 w-4" /></>
+                )}
+              </Button>
+            </div>
           </form>
         </CardContent>
         <CardFooter className="bg-gray-50 rounded-b-lg">
