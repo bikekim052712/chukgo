@@ -6,6 +6,12 @@
 // 실제 API 서버 URL (Replit 호스팅 URL)
 const API_SERVER = "https://soccer-forland-bikekim0527.replit.app";
 
+// 관리자 계정 정보
+export const ADMIN_CREDENTIALS = {
+  username: "admin",
+  password: "admin123"
+};
+
 // 추가 도메인 헬퍼 함수
 export function isCustomDomain(): boolean {
   const currentHost = window.location.hostname;

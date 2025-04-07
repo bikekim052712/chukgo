@@ -74,9 +74,10 @@ export default function AdminLogin() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": "AdminLogin" // 자동 로그인을 위한 특별 헤더 추가
+          "Authorization": "AdminLogin", // 자동 로그인을 위한 특별 헤더 추가
+          "X-Cross-Domain-Login": "true" // 크로스 도메인 로그인 식별자
         },
-        body: JSON.stringify({ username: "admin", password: "admin123" }),
+        body: JSON.stringify({ username: "admin", password: "admin123" }), // 기본 관리자 계정 정보 사용
         credentials: "include",
       });
       
@@ -164,6 +165,7 @@ export default function AdminLogin() {
           "Authorization": "AdminLogin" // 자동 로그인을 위한 특별 헤더 추가
         },
         body: JSON.stringify(data),
+        mode: "cors",
         credentials: "include",
       });
       
