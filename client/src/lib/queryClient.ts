@@ -3,8 +3,15 @@ import { getApiUrl } from "@/lib/redirect";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    try {
+      const errorData = await res.json();
+      console.error(`API 오류 ${res.status}: `, errorData);
+      throw new Error(errorData.message || res.statusText);
+    } catch (e) {
+      const text = await res.text();
+      console.error(`API 오류 ${res.status}: `, text || res.statusText);
+      throw new Error(text || `${res.status}: ${res.statusText}`);
+    }
   }
 }
 
@@ -29,23 +36,29 @@ export async function apiRequest(
     payload = urlOrData;
   }
 
-  console.log(`API Request: ${method} ${url}`);
-  // 인증 관련 요청에는 더 자세한 로깅 추가
-  if (url.includes('login') || url.includes('logout') || url.includes('user')) {
-    console.log(`인증 요청: ${method} ${url}`, payload ? `데이터: ${JSON.stringify(payload)}` : '데이터 없음');
-  }
+  console.log(`API 요청: ${method} ${url}`, payload ? JSON.stringify(payload) : '');
   
-  const res = await fetch(url, {
-    method,
-    headers: {
-      ...(payload ? { "Content-Type": "application/json" } : {}),
-    },
-    body: payload ? JSON.stringify(payload) : undefined,
-    credentials: "include", // 크로스 도메인에서도 쿠키 전송
-  });
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        ...(payload ? { "Content-Type": "application/json" } : {}),
+      },
+      body: payload ? JSON.stringify(payload) : undefined,
+      credentials: "include", // 크로스 도메인에서도 쿠키 전송
+    });
 
-  await throwIfResNotOk(res);
-  return res.json();
+    if (!res.ok) {
+      await throwIfResNotOk(res);
+    }
+    
+    const responseData = await res.json();
+    console.log(`API 응답: ${method} ${url}`, responseData);
+    return responseData;
+  } catch (error) {
+    console.error(`API 요청 실패: ${method} ${url}`, error);
+    throw error;
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
@@ -55,27 +68,32 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const url = getApiUrl(queryKey[0] as string);
-    console.log(`Query Request: ${url}`);
+    console.log(`쿼리 요청: ${url}`);
     
-    // 인증 관련 요청에는 더 자세한 로깅
-    if (url.includes('user') || url.includes('login') || url.includes('logout')) {
-      console.log(`인증 상태 확인 요청: ${url}`);
-    }
-    
-    const res = await fetch(url, {
-      credentials: "include", // 크로스 도메인에서도 쿠키 전송
-    });
+    try {
+      const res = await fetch(url, {
+        credentials: "include", // 크로스 도메인에서도 쿠키 전송
+      });
 
-    // 인증 실패 처리
-    if (res.status === 401) {
-      console.log(`인증 실패 (401): ${url}`);
-      if (unauthorizedBehavior === "returnNull") {
-        return null;
+      // 인증 실패 처리
+      if (res.status === 401) {
+        console.log(`인증 실패 (401): ${url}`);
+        if (unauthorizedBehavior === "returnNull") {
+          return null;
+        }
       }
-    }
 
-    await throwIfResNotOk(res);
-    return await res.json();
+      if (!res.ok) {
+        await throwIfResNotOk(res);
+      }
+      
+      const data = await res.json();
+      console.log(`쿼리 응답: ${url}`, data);
+      return data;
+    } catch (error) {
+      console.error(`쿼리 요청 실패: ${url}`, error);
+      throw error;
+    }
   };
 
 export const queryClient = new QueryClient({
@@ -83,7 +101,7 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: true, // 창이 포커스될 때 데이터 다시 가져오기
+      refetchOnWindowFocus: true,
       staleTime: 60000, // 1분 동안 캐시 유지
       retry: 1, // 실패 시 1번 재시도
     },

@@ -18,15 +18,13 @@ log(`환경 설정: 개발 모드=${!effectiveProduction}`);
 const app: Express = express();
 const server = createServer(app);
 
-// CORS 설정 추가 (도메인 간 인증을 위한 설정) - Replit 환경에서는 모든 출처 허용
+// CORS 설정 추가 (도메인 간 인증을 위한 설정) - 로컬 환경에서는 모든 출처 허용
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4000",
-      "http://localhost:3000",
-    ],
+    origin: true, // 모든 출처 허용
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
 
@@ -42,14 +40,12 @@ app.use(
     }),
     secret: process.env.SESSION_SECRET || "supersecretkey",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
-      secure: false, // HTTP에서 쿠키가 작동하도록 항상 false로 설정
+      secure: false, // HTTP에서 쿠키가 작동하도록 false로 설정
       sameSite: "lax", // 크로스 사이트 요청에서도 쿠키 전송 허용
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-      path: "/",
-      domain: undefined,
     },
   })
 );

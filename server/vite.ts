@@ -26,7 +26,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: 'all',
   };
 
   const vite = await createViteServer({
@@ -36,7 +36,8 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        // 심각한 오류가 있을 때 서버를 종료하지 않도록 수정
+        // process.exit(1);
       },
     },
     server: serverOptions,
@@ -48,6 +49,11 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      // API 요청은 Vite 처리에서 제외
+      if (url.startsWith('/api')) {
+        return next();
+      }
+
       const clientTemplate = path.resolve(
         __dirname,
         "..",
