@@ -1,19 +1,20 @@
 import express, { Express, Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { createServer } from "http";
+import path from "path";
+
+// 로그 함수 추가
+const log = (message: string) => {
+  console.log(`[server] ${message}`);
+};
 
 // 환경 설정 로깅
 const isProduction = process.env.NODE_ENV === "production";
-// 개발 환경으로 강제 설정
-const forceDevelopment = true;
-const effectiveProduction = forceDevelopment ? false : isProduction;
-
-log(`환경 설정: 개발 모드=${!effectiveProduction}`);
+log(`환경 설정: 개발 모드=${!isProduction}`);
 
 const app: Express = express();
 const server = createServer(app);
@@ -94,13 +95,20 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  // 프로덕션 환경에서는 정적 파일 제공
+  if (isProduction) {
+    const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+    app.use(express.static(clientDistPath));
+    
+    // SPA를 위한 폴백 라우트
+    app.get('*', (req, res) => {
+      // API 요청이 아닌 경우에만 index.html 제공
+      if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(clientDistPath, 'index.html'));
+      }
+    });
+    
+    log(`정적 파일 제공 경로: ${clientDistPath}`);
   }
 
   // ALWAYS serve the app on port 4000

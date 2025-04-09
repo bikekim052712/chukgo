@@ -1,30 +1,29 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "client/dist",
   "builds": [
     {
-      "src": "dist/index.js",
+      "src": "server/index.ts",
       "use": "@vercel/node"
-    },
-    {
-      "src": "dist/client/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "dist/index.js"
+      "dest": "server/index.ts"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "dist/client/assets/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "dist/client/$1"
+      "dest": "/client/dist/$1"
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "PORT": "4000"
   }
 } 
