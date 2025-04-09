@@ -33,7 +33,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, loginMutation, registerMutation, socialLogin } = useAuth();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   
   // 이미 로그인한 경우 메인 페이지로 리다이렉트
@@ -125,6 +125,43 @@ export default function AuthPage() {
                     >
                       {loginMutation.isPending ? "로그인 중..." : "로그인"}
                     </Button>
+                    
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">또는</span>
+                      </div>
+                    </div>
+                    
+                    {/* 소셜 로그인 버튼 */}
+                    <div className="flex flex-col space-y-2">
+                      <Button 
+                        type="button"
+                        variant="kakao"
+                        className="w-full"
+                        onClick={() => socialLogin('kakao')}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                          <path d="M10 2C4.48 2 0 5.38 0 9.5C0 12.02 1.56 14.19 3.93 15.46C3.75 16.09 3.28 18.1 3.23 18.37C3.17 18.74 3.44 18.75 3.63 18.62C3.78 18.51 6.21 16.83 7.15 16.16C8.07 16.31 9.02 16.39 10 16.39C15.52 16.39 20 13.01 20 8.89C20 4.77 15.52 2 10 2Z" fill="#191919"/>
+                        </svg>
+                        카카오 로그인
+                      </Button>
+                      
+                      <Button 
+                        type="button"
+                        variant="naver"
+                        className="w-full"
+                        onClick={() => socialLogin('naver')}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                          <path d="M18.1245 0H1.875C0.839466 0 0 0.839466 0 1.875V18.125C0 19.1605 0.839466 20 1.875 20H18.1245C19.1605 20 19.9999 19.1605 19.9999 18.125V1.875C20 0.839466 19.1605 0 18.1245 0Z" fill="#03C75A"/>
+                          <path d="M11.8148 10.2499L8.0148 5H5.5V15H8.1852V9.7499L12.0148 15H14.5V5H11.8148V10.2499Z" fill="white"/>
+                        </svg>
+                        네이버 로그인
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               </TabsContent>
@@ -196,6 +233,43 @@ export default function AuthPage() {
                     >
                       {registerMutation.isPending ? "가입 중..." : "회원가입"}
                     </Button>
+                    
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">소셜 계정으로 간편 가입</span>
+                      </div>
+                    </div>
+                    
+                    {/* 소셜 회원가입 버튼 */}
+                    <div className="flex flex-col space-y-2">
+                      <Button 
+                        type="button"
+                        variant="kakao"
+                        className="w-full"
+                        onClick={() => socialLogin('kakao')}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                          <path d="M10 2C4.48 2 0 5.38 0 9.5C0 12.02 1.56 14.19 3.93 15.46C3.75 16.09 3.28 18.1 3.23 18.37C3.17 18.74 3.44 18.75 3.63 18.62C3.78 18.51 6.21 16.83 7.15 16.16C8.07 16.31 9.02 16.39 10 16.39C15.52 16.39 20 13.01 20 8.89C20 4.77 15.52 2 10 2Z" fill="#191919"/>
+                        </svg>
+                        카카오로 회원가입
+                      </Button>
+                      
+                      <Button 
+                        type="button"
+                        variant="naver"
+                        className="w-full"
+                        onClick={() => socialLogin('naver')}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                          <path d="M18.1245 0H1.875C0.839466 0 0 0.839466 0 1.875V18.125C0 19.1605 0.839466 20 1.875 20H18.1245C19.1605 20 19.9999 19.1605 19.9999 18.125V1.875C20 0.839466 19.1605 0 18.1245 0Z" fill="#03C75A"/>
+                          <path d="M11.8148 10.2499L8.0148 5H5.5V15H8.1852V9.7499L12.0148 15H14.5V5H11.8148V10.2499Z" fill="white"/>
+                        </svg>
+                        네이버로 회원가입
+                      </Button>
+                    </div>
                   </form>
                 </Form>
               </TabsContent>

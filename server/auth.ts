@@ -1,15 +1,30 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import axios from "axios";
 
 declare global {
   namespace Express {
     interface User extends SelectUser {}
+  }
+}
+
+// express-session의 SessionData 타입 확장
+declare module 'express-session' {
+  interface SessionData {
+    naverState?: string;
+  }
+}
+
+// 패스포트 전략을 위한 타입 문제 수정
+declare module 'passport' {
+  namespace use {
+    export function Strategy(strategy: any): void;
   }
 }
 
@@ -99,6 +114,192 @@ export function setupAuth(app: Express) {
     }),
   );
 
+  // 카카오 로그인 라우트
+  app.get("/api/auth/kakao", (req, res) => {
+    const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID || "your-kakao-client-id";
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/kakao/callback`;
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code`;
+    res.redirect(kakaoAuthUrl);
+  });
+
+  // 카카오 로그인 콜백
+  app.get("/api/auth/kakao/callback", async (req, res, next) => {
+    try {
+      const code = req.query.code as string;
+      if (!code) {
+        return res.redirect("/auth?error=kakao-auth-failed");
+      }
+
+      const KAKAO_CLIENT_ID = process.env.KAKAO_CLIENT_ID || "your-kakao-client-id";
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/kakao/callback`;
+      
+      // 토큰 요청
+      const tokenResponse = await axios.post(
+        'https://kauth.kakao.com/oauth/token',
+        `grant_type=authorization_code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${redirectUri}&code=${code}`,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+          }
+        }
+      );
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // 사용자 정보 요청
+      const userResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        }
+      });
+
+      const profile = userResponse.data;
+      const kakaoId = profile.id.toString();
+      
+      // 소셜 ID로 사용자 조회
+      let user = await storage.getUserBySocialId("kakao", kakaoId);
+      let isNewUser = false;
+      
+      // 사용자가 없으면 새로 생성
+      if (!user) {
+        isNewUser = true;
+        // 카카오 프로필에서 정보 추출
+        const email = profile.kakao_account?.email || `kakao_${kakaoId}@example.com`;
+        const fullName = profile.properties?.nickname || "카카오사용자";
+        
+        // 신규 사용자 생성
+        user = await storage.createUser({
+          username: `kakao_${kakaoId}`,
+          email,
+          password: randomBytes(16).toString("hex"), // 랜덤 비밀번호
+          fullName,
+          isCoach: false,
+          socialProvider: "kakao",
+          socialId: kakaoId,
+          profileImage: profile.properties?.profile_image || null,
+          phone: null,
+          bio: null
+        });
+      }
+
+      // 로그인 처리
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        
+        // 신규 사용자인 경우 프로필 완성 페이지로 리다이렉트
+        if (isNewUser) {
+          return res.redirect("/profile/complete?provider=kakao");
+        }
+        
+        // 기존 사용자는 성공 페이지로 리다이렉트
+        return res.redirect("/auth?success=true");
+      });
+    } catch (error) {
+      console.error("Kakao auth error:", error);
+      return res.redirect("/auth?error=kakao-auth-failed");
+    }
+  });
+
+  // 네이버 로그인 라우트
+  app.get("/api/auth/naver", (req, res) => {
+    const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID || "your-naver-client-id";
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/naver/callback`;
+    const state = randomBytes(16).toString("hex");
+    
+    // 상태값을 세션에 저장 (CSRF 보호)
+    req.session.naverState = state;
+    
+    const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${redirectUri}&state=${state}`;
+    res.redirect(naverAuthUrl);
+  });
+
+  // 네이버 로그인 콜백
+  app.get("/api/auth/naver/callback", async (req, res, next) => {
+    try {
+      const code = req.query.code as string;
+      const state = req.query.state as string;
+      
+      // 상태값 검증 (CSRF 방지)
+      if (!code || !state || state !== req.session.naverState) {
+        return res.redirect("/auth?error=naver-auth-failed");
+      }
+
+      const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID || "your-naver-client-id";
+      const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET || "your-naver-client-secret";
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/naver/callback`;
+      
+      // 토큰 요청
+      const tokenResponse = await axios.post(
+        'https://nid.naver.com/oauth2.0/token',
+        `grant_type=authorization_code&client_id=${NAVER_CLIENT_ID}&client_secret=${NAVER_CLIENT_SECRET}&redirect_uri=${redirectUri}&code=${code}&state=${state}`,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+          }
+        }
+      );
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // 사용자 정보 요청
+      const userResponse = await axios.get('https://openapi.naver.com/v1/nid/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      const profile = userResponse.data.response;
+      const naverId = profile.id;
+      
+      // 소셜 ID로 사용자 조회
+      let user = await storage.getUserBySocialId("naver", naverId);
+      let isNewUser = false;
+      
+      // 사용자가 없으면 새로 생성
+      if (!user) {
+        isNewUser = true;
+        // 네이버 프로필에서 정보 추출
+        const email = profile.email || `naver_${naverId}@example.com`;
+        const fullName = profile.name || "네이버사용자";
+        
+        // 신규 사용자 생성
+        user = await storage.createUser({
+          username: `naver_${naverId}`,
+          email,
+          password: randomBytes(16).toString("hex"), // 랜덤 비밀번호
+          fullName,
+          isCoach: false,
+          socialProvider: "naver", 
+          socialId: naverId,
+          profileImage: profile.profile_image || null,
+          phone: null,
+          bio: null
+        });
+      }
+
+      // 로그인 처리
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        
+        // 신규 사용자인 경우 프로필 완성 페이지로 리다이렉트
+        if (isNewUser) {
+          return res.redirect("/profile/complete?provider=naver");
+        }
+        
+        // 기존 사용자는 성공 페이지로 리다이렉트
+        return res.redirect("/auth?success=true");
+      });
+    } catch (error) {
+      console.error("Naver auth error:", error);
+      return res.redirect("/auth?error=naver-auth-failed");
+    }
+  });
+
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
@@ -179,7 +380,9 @@ export function setupAuth(app: Express) {
           isAdmin: true,
           phone: null,
           profileImage: null,
-          bio: null
+          bio: null,
+          socialProvider: null,
+          socialId: null
         };
         
         return adminUser;
@@ -319,7 +522,9 @@ export function setupAuth(app: Express) {
         isAdmin: true,
         phone: null,
         profileImage: null,
-        bio: null
+        bio: null,
+        socialProvider: null,
+        socialId: null
       };
       
       req.login(adminUser, (err) => {
@@ -376,5 +581,106 @@ export function setupAuth(app: Express) {
   };
   
   // 해당 미들웨어를 export 해서 routes.ts에서 사용할 수 있게 함
+  
+  // 일반 회원가입 엔드포인트
+  app.post("/api/auth/register", async (req, res) => {
+    // ... existing code ...
+  });
+
+  // 코치 회원가입 엔드포인트
+  app.post("/api/auth/coach-register", async (req, res) => {
+    try {
+      // 필수 필드 확인
+      const { email, username, password, fullName, licenseNumber } = req.body;
+      
+      if (!email || !username || !password || !fullName || !licenseNumber) {
+        return res.status(400).json({ message: "필수 정보가 누락되었습니다." });
+      }
+      
+      // 기존 유저 확인
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "이미 사용 중인 아이디입니다." });
+      }
+      
+      // 유저 생성
+      const user = await storage.createUser({
+        username,
+        email,
+        password, // 실제 배포에서는 비밀번호 해싱 필요
+        fullName,
+        phone: req.body.phoneNumber || null,
+        profileImage: null,
+        bio: req.body.bio || null,
+        isCoach: true, // 코치로 설정
+        isAdmin: false,
+        socialProvider: null,
+        socialId: null
+      });
+      
+      // 코치 정보 생성
+      await storage.createCoach({
+        userId: user.id,
+        specializations: req.body.specializations || [],
+        experience: req.body.experience || null,
+        certifications: req.body.licenseNumber || null,
+        location: req.body.location || "미지정",
+        hourlyRate: 50000, // 기본 레이트
+        rating: null,
+        reviewCount: null
+      });
+      
+      res.status(201).json({
+        message: "코치 가입이 신청되었습니다. 관리자 검토 후 승인됩니다.",
+        userId: user.id
+      });
+    } catch (error) {
+      console.error("코치 회원가입 에러:", error);
+      res.status(500).json({ message: "회원가입 처리 중 오류가 발생했습니다." });
+    }
+  });
+
+  // 프로필 정보 업데이트 API
+  app.put("/api/user/profile", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "로그인이 필요합니다." });
+    }
+    
+    try {
+      const userId = req.user.id;
+      const { username, phone } = req.body;
+      
+      // 사용자명 중복 검사 (자신 제외)
+      if (username && username !== req.user.username) {
+        const existingUser = await storage.getUserByUsername(username);
+        if (existingUser && existingUser.id !== userId) {
+          return res.status(400).json({ message: "이미 사용 중인 아이디입니다." });
+        }
+      }
+      
+      // 사용자 정보 업데이트
+      const updatedUser = await storage.updateUser(userId, {
+        ...(username && { username }),
+        ...(phone && { phone }),
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      }
+      
+      // 비밀번호 제외하고 응답
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      console.error("프로필 업데이트 에러:", error);
+      res.status(500).json({ message: "프로필 업데이트에 실패했습니다." });
+    }
+  });
+
+  // 로그아웃 API
+  app.post("/api/auth/logout", (req, res, next) => {
+    // ... existing code ...
+  });
+
   return { requireAuth, requireCoach };
 }

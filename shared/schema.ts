@@ -14,6 +14,8 @@ export const users = pgTable("users", {
   bio: text("bio"),
   isCoach: boolean("is_coach").default(false).notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
+  socialProvider: text("social_provider"),
+  socialId: text("social_id"),
 });
 
 // Coach specific details

@@ -1,16 +1,20 @@
 /**
- * API 요청을 Replit 서버로 리디렉션하는 함수
+ * API 요청을 서버로 리디렉션하는 함수
  * chukgo.kr 같은 커스텀 도메인에서 API 요청을 처리하기 위함
  */
 
-// 실제 API 서버 URL (Replit 호스팅 URL)
-export const API_SERVER = "https://soccer-forland-bikekim0527.replit.app";
+// 실제 API 서버 URL (배포 환경)
+export const API_SERVER = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}` 
+  : 'http://localhost:4000';
 
 // 특정 도메인 간 허용 목록
 export const ALLOWED_DOMAINS = [
   "https://www.chukgo.kr", 
   "https://chukgo.kr",
-  "https://soccer-forland-bikekim0527.replit.app"
+  "https://chukgo.vercel.app",
+  "http://localhost:4000",
+  "http://localhost:3000"
 ];
 
 // 관리자 계정 정보
@@ -21,6 +25,11 @@ export const ADMIN_CREDENTIALS = {
 
 // 추가 도메인 헬퍼 함수
 export function isCustomDomain(): boolean {
+  // 개발 환경이나 Vercel 환경에서는 항상 false 반환
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname.includes('vercel.app')) {
+    return false;
+  }
   const currentHost = window.location.hostname;
   return currentHost === "chukgo.kr" || currentHost === "www.chukgo.kr";
 }
@@ -59,10 +68,14 @@ export function getApiUrl(endpoint: string): string {
   // 엔드포인트가 이미 슬래시로 시작하면 그대로 사용, 아니면 슬래시 추가
   const formattedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   
-  // 모든 도메인에서 모든 API 요청을 항상 Replit 서버로 리디렉션
-  // 크로스 도메인 문제를 해결하기 위한 직접적인 방법
+  // 로컬 개발 환경인 경우 localhost:4000에 직접 연결
+  if (currentHost === 'localhost') {
+    return `http://localhost:4000${formattedEndpoint}`;
+  }
+  
+  // 커스텀 도메인에서는 API 서버로 리디렉션
   if (isCustomDomain()) {
-    console.log(`API 요청을 Replit 서버로 리디렉션: ${API_SERVER}${formattedEndpoint}`);
+    console.log(`API 요청을 API 서버로 리디렉션: ${API_SERVER}${formattedEndpoint}`);
     return `${API_SERVER}${formattedEndpoint}`;
   }
   

@@ -31,6 +31,7 @@ import AuthPage from "@/pages/auth-page";
 import AdminLogin from "@/pages/AdminLogin";
 import CompanyInfoPage from "@/pages/CompanyInfoPage";
 import CompanyInfoListPage from "@/pages/CompanyInfo";
+import ProfileComplete from "@/pages/ProfileComplete";
 
 function Router() {
   return (
@@ -49,6 +50,7 @@ function Router() {
       <ProtectedRoute path="/reviews/write/:id" component={ReviewWrite} />
       <ProtectedRoute path="/reviews/write" component={ReviewWrite} />
       <ProtectedRoute path="/booking/:lessonId" component={Booking} />
+      <ProtectedRoute path="/profile/complete" component={ProfileComplete} />
       <Route path="/coach-signup" component={CoachSignup} />
       
       {/* 인증 페이지 */}

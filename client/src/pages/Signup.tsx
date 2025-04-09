@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
 // 소셜 아이콘 불러오기
@@ -13,6 +13,7 @@ import { SiNaver } from "react-icons/si";
 // 회원가입 폼 검증 스키마
 const signupSchema = z.object({
   email: z.string().email("유효한 이메일 주소를 입력해 주세요."),
+  username: z.string().min(3, "아이디는 3자 이상이어야 합니다."),
   password: z
     .string()
     .min(8, "비밀번호는 8자 이상이어야 합니다.")
@@ -41,7 +42,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function Signup() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const { registerMutation, socialLogin } = useAuth();
   
   const {
     register,
@@ -51,6 +52,7 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
+      username: "",
       password: "",
       confirmPassword: "",
       fullName: "",
@@ -61,35 +63,23 @@ export default function Signup() {
   });
 
   const onSubmit = async (data: SignupFormValues) => {
-    setIsLoading(true);
-    try {
-      // API 요청에 필요한 데이터만 추출
-      const { confirmPassword, agreeTerms, agreePrivacy, ...requestData } = data;
-      
-      // 실제 API 연동 시 구현
-      await apiRequest("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify(requestData),
-      });
-      
-      // 성공 메시지 표시
-      toast({
-        title: "회원가입 성공",
-        description: "축고에 오신 것을 환영합니다! 로그인 페이지로 이동합니다.",
-      });
-      
-      // 로그인 페이지로 이동
-      setLocation("/login");
-    } catch (error) {
-      console.error("Signup error:", error);
-      toast({
-        title: "회원가입 실패",
-        description: "회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // API 요청에 필요한 데이터만 추출
+    const { confirmPassword, agreeTerms, agreePrivacy, ...requestData } = data;
+    
+    registerMutation.mutate(requestData, {
+      onSuccess: () => {
+        // 로그인 페이지로 이동
+        setLocation("/login");
+      }
+    });
+  };
+
+  const handleKakaoLogin = () => {
+    socialLogin("kakao");
+  };
+
+  const handleNaverLogin = () => {
+    socialLogin("naver");
   };
 
   return (
@@ -103,12 +93,18 @@ export default function Signup() {
         </div>
         
         <div className="flex flex-col space-y-4">
-          <button className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+          <button 
+            onClick={handleKakaoLogin}
+            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+          >
             <RiKakaoTalkFill className="w-5 h-5 mr-2 text-black" />
             <span className="text-black font-medium">카카오로 시작하기</span>
           </button>
           
-          <button className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          <button 
+            onClick={handleNaverLogin}
+            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
             <SiNaver className="w-4 h-4 mr-2 text-white" />
             <span className="text-white font-medium">네이버로 시작하기</span>
           </button>
@@ -143,6 +139,28 @@ export default function Signup() {
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
+              </div>
+            </div>
+            
+            {/* 아이디 */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                아이디
+              </label>
+              <div className="mt-1">
+                <input
+                  id="username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="사용할 아이디를 입력해 주세요"
+                  className={`appearance-none block w-full px-3 py-2 border ${
+                    errors.username ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                  {...register("username")}
+                />
+                {errors.username && (
+                  <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
                 )}
               </div>
             </div>
@@ -279,10 +297,10 @@ export default function Signup() {
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={registerMutation.isPending}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#5D3FD3] hover:bg-[#4C2CB3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              {isLoading ? "처리 중..." : "회원가입"}
+              {registerMutation.isPending ? "처리 중..." : "회원가입"}
             </button>
           </div>
         </form>

@@ -3,8 +3,7 @@ import { Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
 // 로고 아이콘 불러오기
@@ -15,7 +14,7 @@ import { SiNaver } from "react-icons/si";
 
 // 폼 검증 스키마
 const loginSchema = z.object({
-  email: z.string().email("유효한 이메일 주소를 입력해 주세요."),
+  username: z.string().min(1, "아이디를 입력해 주세요."),
   password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다."),
 });
 
@@ -23,8 +22,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [isLoading, setIsLoading] = useState(false);
+  const { loginMutation, socialLogin } = useAuth();
   
   const {
     register,
@@ -33,41 +31,25 @@ export default function Login() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    setIsLoading(true);
-    try {
-      // 실제 API 연동 시 구현
-      await apiRequest("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      
-      // 로그인 성공 후 쿼리 캐시 갱신
-      queryClient.invalidateQueries();
-      
-      // 성공 메시지 표시
-      toast({
-        title: "로그인 성공",
-        description: "축고에 오신 것을 환영합니다!",
-      });
-      
-      // 홈 페이지로 리다이렉트
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "로그인 실패",
-        description: "이메일 또는 비밀번호가 일치하지 않습니다.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        window.location.href = "/";
+      }
+    });
+  };
+  
+  const handleKakaoLogin = () => {
+    socialLogin("kakao");
+  };
+
+  const handleNaverLogin = () => {
+    socialLogin("naver");
   };
   
   return (
@@ -80,23 +62,23 @@ export default function Login() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                이메일
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                아이디
               </label>
               <div className="mt-1 relative">
                 <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="example@soomgo.com"
+                  id="username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="아이디를 입력해 주세요"
                   className={`appearance-none block w-full px-3 py-2 border ${
-                    errors.email ? "border-red-300" : "border-gray-300"
+                    errors.username ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
-                  {...register("email")}
+                  {...register("username")}
                 />
-                {errors.email && (
+                {errors.username && (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.email.message}
+                    {errors.username.message}
                   </p>
                 )}
               </div>
@@ -129,10 +111,10 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#5D3FD3] hover:bg-[#4C2CB3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              {isLoading ? "로그인 중..." : "이메일 로그인"}
+              {loginMutation.isPending ? "로그인 중..." : "이메일 로그인"}
             </button>
           </div>
           
@@ -157,12 +139,18 @@ export default function Login() {
             </div>
           </div>
           
-          <button className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+          <button 
+            onClick={handleKakaoLogin}
+            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+          >
             <RiKakaoTalkFill className="w-5 h-5 mr-2 text-black" />
             <span className="text-black font-medium">카카오로 시작하기</span>
           </button>
           
-          <button className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          <button 
+            onClick={handleNaverLogin}
+            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
             <SiNaver className="w-4 h-4 mr-2 text-white" />
             <span className="text-white font-medium">네이버로 시작하기</span>
           </button>

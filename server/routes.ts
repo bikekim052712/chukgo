@@ -414,6 +414,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   }
   
+  // 코치 관리 API 엔드포인트
+  // 모든 코치 정보 가져오기 (관리자용)
+  app.get('/api/admin/coaches', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const coaches = await storage.getCoaches();
+      
+      // 코치 상태 정보 및 추가 정보 첨부
+      const coachesWithStatus = coaches.map(coach => ({
+        ...coach,
+        status: coach.user.isCoach ? "approved" : coach.user.socialId ? "social_pending" : "pending",
+        createdAt: new Date().toISOString(), // 실제로는 DB에서 가져와야 함
+        rejectionReason: null
+      }));
+      
+      res.json(coachesWithStatus);
+    } catch (error) {
+      console.error('Error fetching coaches for admin:', error);
+      res.status(500).json({ message: '코치 정보를 가져오는 중 오류가 발생했습니다.' });
+    }
+  });
+  
+  // 코치 상태 업데이트 (승인/거절)
+  app.put('/api/admin/coaches/:id/status', requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const coachId = parseInt(req.params.id);
+      const { status, reason } = req.body;
+      
+      if (status !== 'approved' && status !== 'rejected') {
+        return res.status(400).json({ message: '유효하지 않은 상태값입니다.' });
+      }
+      
+      const coach = await storage.getCoach(coachId);
+      if (!coach) {
+        return res.status(404).json({ message: '코치 정보를 찾을 수 없습니다.' });
+      }
+      
+      const user = await storage.getUser(coach.userId);
+      if (!user) {
+        return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
+      }
+      
+      // 코치 상태 업데이트 (메모리 스토리지에서는 간략하게 구현)
+      if (status === 'approved') {
+        // 코치로 승인
+        user.isCoach = true;
+        // TODO: 이메일 알림 등 추가 처리
+      } else {
+        // 코치 신청 거절
+        user.isCoach = false;
+        // 거절 사유 저장 로직 (실제 DB에서는 별도 테이블에 저장)
+        // TODO: 이메일 알림 등 추가 처리
+      }
+      
+      res.json({ 
+        success: true, 
+        message: status === 'approved' ? '코치가 승인되었습니다.' : '코치 신청이 거절되었습니다.'
+      });
+    } catch (error) {
+      console.error('Error updating coach status:', error);
+      res.status(500).json({ message: '코치 상태 업데이트 중 오류가 발생했습니다.' });
+    }
+  });
+
   // Company info routes
   // Get all company info
   app.get('/api/company-info', async (req: Request, res: Response) => {

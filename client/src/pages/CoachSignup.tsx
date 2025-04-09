@@ -1,21 +1,35 @@
 import { useState } from "react";
-import { useLocation, Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { useQueryClient } from "@tanstack/react-query";
-import { SPECIALIZATIONS, PROVINCES, DISTRICTS } from "@/lib/constants";
 
-// 소셜 아이콘 불러오기
+// 아이콘 불러오기
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { SiNaver } from "react-icons/si";
-import { FaAngleRight, FaCheck } from "react-icons/fa";
+import { FaCheck, FaAngleRight } from "react-icons/fa";
+import { apiRequest } from "@/lib/queryClient";
 
-// 코치 가입 스키마
+// 지역 데이터
+const PROVINCES = [
+  "서울특별시", "부산광역시", "인천광역시", "대구광역시", "광주광역시",
+  "대전광역시", "울산광역시", "세종특별자치시", "경기도", "강원도",
+  "충청북도", "충청남도", "전라북도", "전라남도", "경상북도",
+  "경상남도", "제주특별자치도"
+];
+
+// 전문 분야 데이터
+const SPECIALIZATIONS = [
+  "개인 레슨", "그룹 레슨", "골키퍼 트레이닝", "유소년 코칭",
+  "피지컬 트레이닝", "전술 분석", "슈팅 클리닉", "피니싱", "수비 기술"
+];
+
+// 코치 회원가입 폼 검증 스키마
 const coachSignupSchema = z.object({
   email: z.string().email("유효한 이메일 주소를 입력해 주세요."),
+  username: z.string().min(3, "아이디는 3자 이상이어야 합니다."),
   password: z
     .string()
     .min(8, "비밀번호는 8자 이상이어야 합니다.")
@@ -28,12 +42,13 @@ const coachSignupSchema = z.object({
   phoneNumber: z
     .string()
     .regex(/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/, "올바른 휴대폰 번호를 입력해 주세요."),
-  province: z.string().min(1, "지역을 선택해 주세요."),
-  district: z.string().min(1, "상세 지역을 선택해 주세요."),
-  specializations: z.array(z.string()).min(1, "최소 1개 이상의 전문 분야를 선택해 주세요."),
-  experience: z.enum(["1년 미만", "1-3년", "3-5년", "5-10년", "10년 이상"]),
-  introduction: z.string().min(30, "자기소개는 최소 30자 이상 작성해 주세요."),
-  personalHistory: z.string().min(30, "개인 이력은 최소 30자 이상 작성해 주세요."),
+  licenseNumber: z.string().min(1, "라이센스 번호를 입력해 주세요."),
+  province: z.string().optional(),
+  district: z.string().optional(),
+  specializations: z.array(z.string()).optional(),
+  experience: z.string().optional(),
+  introduction: z.string().optional(),
+  personalHistory: z.string().optional(),
   certifications: z.string().optional(),
   agreeTerms: z.boolean().refine((val) => val === true, {
     message: "이용약관에 동의해 주세요.",
@@ -51,33 +66,35 @@ type CoachSignupFormValues = z.infer<typeof coachSignupSchema>;
 export default function CoachSignup() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { registerCoachMutation, socialLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [specializations, setSpecializations] = useState<string[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<string>("");
+  const [selectedProvince, setSelectedProvince] = useState("");
   const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
+  const [specializations, setSpecializations] = useState<string[]>([]);
+  
+  // 도/광역시별 시군구 데이터
+  const DISTRICTS: Record<string, string[]> = {
+    "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+    "부산광역시": ["강서구", "금정구", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구", "기장군"],
+    "인천광역시": ["계양구", "남구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "강화군", "옹진군"],
+  };
   
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
+    setValue
   } = useForm<CoachSignupFormValues>({
     resolver: zodResolver(coachSignupSchema),
     defaultValues: {
       email: "",
+      username: "",
       password: "",
       confirmPassword: "",
       fullName: "",
       phoneNumber: "",
-      province: "",
-      district: "",
+      licenseNumber: "",
       specializations: [],
-      experience: "1년 미만",
-      introduction: "",
-      personalHistory: "",
-      certifications: "",
       agreeTerms: false,
       agreePrivacy: false,
     },

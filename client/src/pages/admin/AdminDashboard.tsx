@@ -380,11 +380,96 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold">코치 관리</h2>
                 </div>
-                <div className="p-8 text-center">
-                  <Users2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">준비 중입니다</h3>
-                  <p className="text-muted-foreground">코치 관리 기능은 현재 개발 중입니다.</p>
-                </div>
+                
+                <Tabs defaultValue="pending" className="w-full">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="pending">승인 대기 중</TabsTrigger>
+                    <TabsTrigger value="approved">승인된 코치</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="pending">
+                    <div className="bg-white rounded-md shadow">
+                      <div className="p-4 border-b">
+                        <h3 className="font-medium">승인 대기 중인 코치</h3>
+                      </div>
+                      
+                      {/* 데이터가 없을 때 */}
+                      <div className="p-8 text-center">
+                        <Users2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-medium mb-2">승인 대기 중인 코치가 없습니다</h3>
+                        <p className="text-muted-foreground">새로운 코치 신청이 들어오면 이곳에 표시됩니다.</p>
+                      </div>
+                      
+                      {/* 대기 중인 코치 목록 (예시) */}
+                      <div className="hidden">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b bg-gray-50">
+                              <th className="text-left p-3">이름</th>
+                              <th className="text-left p-3">이메일</th>
+                              <th className="text-left p-3">라이센스</th>
+                              <th className="text-left p-3">신청일</th>
+                              <th className="text-right p-3">관리</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="p-3">홍길동</td>
+                              <td className="p-3">coach@example.com</td>
+                              <td className="p-3">AFC C</td>
+                              <td className="p-3">2023-05-20</td>
+                              <td className="p-3 text-right">
+                                <Button size="sm" className="mr-2">승인</Button>
+                                <Button size="sm" variant="outline">거부</Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="approved">
+                    <div className="bg-white rounded-md shadow">
+                      <div className="p-4 border-b">
+                        <h3 className="font-medium">승인된 코치</h3>
+                      </div>
+                      
+                      {/* 데이터가 없을 때 */}
+                      <div className="p-8 text-center">
+                        <Users2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-medium mb-2">승인된 코치가 없습니다</h3>
+                        <p className="text-muted-foreground">코치를 승인하면 이곳에 표시됩니다.</p>
+                      </div>
+                      
+                      {/* 승인된 코치 목록 (예시) */}
+                      <div className="hidden">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b bg-gray-50">
+                              <th className="text-left p-3">이름</th>
+                              <th className="text-left p-3">이메일</th>
+                              <th className="text-left p-3">라이센스</th>
+                              <th className="text-left p-3">승인일</th>
+                              <th className="text-right p-3">관리</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="p-3">김철수</td>
+                              <td className="p-3">coach2@example.com</td>
+                              <td className="p-3">AFC B</td>
+                              <td className="p-3">2023-04-15</td>
+                              <td className="p-3 text-right">
+                                <Button size="sm" variant="outline">상세보기</Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </TabsContent>
 
               <TabsContent value="users" className="py-4">

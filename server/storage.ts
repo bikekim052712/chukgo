@@ -1,9 +1,7 @@
-import {
-  User, InsertUser, Coach, InsertCoach, Lesson, InsertLesson,
-  Booking, InsertBooking, Review, InsertReview, Schedule, InsertSchedule,
-  Inquiry, InsertInquiry, LessonType, InsertLessonType, SkillLevel, InsertSkillLevel,
-  CoachWithUser, LessonWithDetails
-} from "@shared/schema";
+import { User, Coach, LessonType, SkillLevel, Lesson, Booking, Review, Schedule, Inquiry,
+         InsertUser, InsertCoach, InsertLessonType, InsertSkillLevel, InsertLesson, InsertBooking,
+         InsertReview, InsertSchedule, InsertInquiry, 
+         CoachWithUser, LessonWithDetails } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 
@@ -675,6 +673,31 @@ export class MemStorage implements IStorage {
     if (!info) return false;
     
     return this.companyInfos.delete(id);
+  }
+
+  // 소셜 로그인 ID로 사용자 조회
+  async getUserBySocialId(provider: string, socialId: string): Promise<User | null> {
+    for (const user of [...this.users.values()]) {
+      if (user.socialProvider === provider && user.socialId === socialId) {
+        return user;
+      }
+    }
+    return null;
+  }
+
+  // 사용자 정보 업데이트
+  async updateUser(userId: number, userData: Partial<User>): Promise<User | null> {
+    const user = this.users.get(userId);
+    
+    if (!user) {
+      return null;
+    }
+    
+    // 기존 사용자 정보와 병합
+    const updatedUser = { ...user, ...userData };
+    this.users.set(userId, updatedUser);
+    
+    return updatedUser;
   }
 }
 
