@@ -7,9 +7,11 @@
   },
   "scripts": {
     "build": "cd client && npm install && npm run build",
-    "start": "node server/index.js",
+    "start": "node dist/server/index.js",
     "dev": "tsx server/index.ts",
-    "vercel-build": "npm run build"
+    "deploy": "vercel --prod",
+    "deploy:win": "vercel --prod -c -m",
+    "vercel-build": "npm install && cd client && npm install && npm run build"
   },
   "dependencies": {
     "@types/axios": "^0.9.36",
@@ -18,5 +20,9 @@
     "axios": "^1.8.4",
     "express": "^4.21.2",
     "tsx": "^4.19.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.86",
+    "typescript": "^5.8.3"
   }
 }
