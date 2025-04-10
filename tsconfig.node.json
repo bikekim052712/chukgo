@@ -28,5 +28,15 @@
     "isolatedModules": true,
     "composite": true,
     "moduleResolution": "Node"
+  },
+ 
+}{
+    "compilerOptions": {
+      "composite": true,
+      "module": "ESNext",
+      "moduleResolution": "Node",
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true
+    },
+    "include": ["vite.config.ts", "client/vite.config.ts"]
   }
-}

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 // 프로필 완성 폼 검증 스키마
 const profileCompleteSchema = z.object({
   username: z.string().min(3, "아이디는 3자 이상이어야 합니다."),
+  fullName: z.string().min(2, "이름은 2자 이상이어야 합니다.").optional(),
   phoneNumber: z
     .string()
     .regex(/^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/, "올바른 휴대폰 번호를 입력해 주세요."),
@@ -28,6 +29,7 @@ export default function ProfileComplete() {
   const { toast } = useToast();
   const { user } = useAuth();
   const [provider, setProvider] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   useEffect(() => {
     // URL에서 소셜 로그인 프로바이더 정보 가져오기
@@ -48,7 +50,8 @@ export default function ProfileComplete() {
   } = useForm<ProfileCompleteFormValues>({
     resolver: zodResolver(profileCompleteSchema),
     defaultValues: {
-      username: user?.username || "",
+      username: user?.username?.startsWith(provider || '') ? '' : user?.username || "",
+      fullName: user?.fullName || "",
       phoneNumber: user?.phone || "",
       agreeTerms: false,
       agreePrivacy: false,
@@ -57,6 +60,8 @@ export default function ProfileComplete() {
 
   const onSubmit = async (data: ProfileCompleteFormValues) => {
     try {
+      setIsSubmitting(true);
+      
       // 프로필 업데이트 API 호출
       const response = await fetch("/api/user/profile", {
         method: "PUT",
@@ -66,6 +71,7 @@ export default function ProfileComplete() {
         body: JSON.stringify({
           username: data.username,
           phone: data.phoneNumber,
+          fullName: data.fullName,
         }),
         credentials: "include",
       });
@@ -88,6 +94,8 @@ export default function ProfileComplete() {
         description: error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,22 +107,31 @@ export default function ProfileComplete() {
     );
   }
 
+  const providerLabel = provider === "kakao" ? "카카오" : "네이버";
+  const providerColor = provider === "kakao" ? "warning" : "success";
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-sm">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900">프로필 완성하기</h2>
           <p className="mt-2 text-sm text-gray-600">
-            소셜 로그인 이후 필요한 추가 정보를 입력해 주세요
+            {providerLabel} 로그인 이후 필요한 추가 정보를 입력해 주세요
           </p>
           <div className="mt-2 flex justify-center">
             <Badge 
-              variant={provider === "kakao" ? "warning" : "success"}
+              variant={providerColor as any}
               className="text-sm"
             >
-              {provider === "kakao" ? "카카오" : "네이버"} 로그인 완료
+              {providerLabel} 로그인 완료
             </Badge>
           </div>
+          
+          {user.email && (
+            <div className="mt-4 text-sm">
+              <span className="font-medium">가입 이메일:</span> {user.email}
+            </div>
+          )}
         </div>
         
         <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -122,7 +139,7 @@ export default function ProfileComplete() {
             {/* 아이디 */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                아이디
+                아이디 <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
@@ -141,10 +158,32 @@ export default function ProfileComplete() {
               </div>
             </div>
             
+            {/* 이름 */}
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                이름
+              </label>
+              <div className="mt-1">
+                <input
+                  id="fullName"
+                  type="text"
+                  placeholder="실명을 입력해 주세요"
+                  className={`appearance-none block w-full px-3 py-2 border ${
+                    errors.fullName ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500`}
+                  {...register("fullName")}
+                  defaultValue={user.fullName || ""}
+                />
+                {errors.fullName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.fullName.message}</p>
+                )}
+              </div>
+            </div>
+            
             {/* 휴대폰 번호 */}
             <div>
               <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-                휴대폰 번호
+                휴대폰 번호 <span className="text-red-500">*</span>
               </label>
               <div className="mt-1">
                 <input
@@ -210,9 +249,17 @@ export default function ProfileComplete() {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#5D3FD3] hover:bg-[#4C2CB3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              disabled={isSubmitting}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#5D3FD3] hover:bg-[#4C2CB3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
             >
-              프로필 완성하기
+              {isSubmitting ? (
+                <>
+                  <span className="mr-2 animate-spin">⟳</span>
+                  처리 중...
+                </>
+              ) : (
+                "프로필 완성하기"
+              )}
             </button>
           </div>
         </form>

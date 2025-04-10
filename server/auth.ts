@@ -8,9 +8,23 @@ import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import axios from "axios";
 
+// Express.User 타입 정의를 올바르게 확장
 declare global {
   namespace Express {
-    interface User extends SelectUser {}
+    interface User {
+      id: number;
+      username: string;
+      email: string;
+      password: string;
+      fullName: string | null;
+      isCoach: boolean;
+      isAdmin?: boolean;
+      phone: string | null;
+      profileImage: string | null;
+      bio: string | null;
+      socialProvider: string | null;
+      socialId: string | null;
+    }
   }
 }
 
@@ -18,13 +32,6 @@ declare global {
 declare module 'express-session' {
   interface SessionData {
     naverState?: string;
-  }
-}
-
-// 패스포트 전략을 위한 타입 문제 수정
-declare module 'passport' {
-  namespace use {
-    export function Strategy(strategy: any): void;
   }
 }
 
@@ -640,7 +647,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // 프로필 정보 업데이트 API
+  // 프로필 정보 업데이트 API - 소셜 로그인 이후 프로필 완성에 사용됨
   app.put("/api/user/profile", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "로그인이 필요합니다." });
@@ -648,7 +655,7 @@ export function setupAuth(app: Express) {
     
     try {
       const userId = req.user.id;
-      const { username, phone } = req.body;
+      const { username, phone, fullName } = req.body;
       
       // 사용자명 중복 검사 (자신 제외)
       if (username && username !== req.user.username) {
@@ -658,10 +665,18 @@ export function setupAuth(app: Express) {
         }
       }
       
+      // 필수 필드 검증 (소셜 로그인 사용자의 경우)
+      if (req.user.socialProvider && (!username || !phone)) {
+        return res.status(400).json({ 
+          message: "소셜 로그인 사용자는 아이디와 휴대폰 번호를 반드시 입력해야 합니다." 
+        });
+      }
+      
       // 사용자 정보 업데이트
       const updatedUser = await storage.updateUser(userId, {
         ...(username && { username }),
         ...(phone && { phone }),
+        ...(fullName && { fullName }),
       });
       
       if (!updatedUser) {

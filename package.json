@@ -12,6 +12,10 @@
     "vercel-build": "npm run build"
   },
   "dependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
+    "axios": "^1.8.4",
     "express": "^4.21.2",
     "tsx": "^4.19.1"
   }
