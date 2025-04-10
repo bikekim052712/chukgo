@@ -2,9 +2,17 @@
   "name": "chukgo-web",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "build": "cd client && npm install && npm run build",
-    "start": "cd server && npm install && node index.js",
-    "dev": "cd server && npm install && tsx index.ts"
+    "start": "node server/index.js",
+    "dev": "tsx server/index.ts",
+    "vercel-build": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "tsx": "^4.19.1"
   }
 }
